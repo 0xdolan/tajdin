@@ -1,0 +1,307 @@
+
+
+
+ZENG
+Radio Browser Extension
+Product Requirements Document
+
+Version	1.0.0
+Status	Active Development
+Date	April 2026
+Classification	Confidential
+Owner	Zeng Engineering Team
+Branches	main / develop / release/*
+
+
+A modern, fully-typed browser extension for worldwide radio streaming
+
+SECTION 1 — EXECUTIVE SUMMARY
+
+1. Executive Summary
+Zeng is a professional-grade browser extension that brings the world's radio stations directly into the user's browser. It leverages the Radio Browser public API to aggregate thousands of stations from every country and language, presenting them in a polished, accessible popup UI with persistent background playback, playlist management, custom station support, and full settings portability via JSON export/import.
+
+1.1 Vision
+To be the definitive radio extension — one that feels as native and responsive as a desktop app, works silently in the background, and makes discovering global radio effortless through language-based categorization, smart search, and personal organization tools.
+
+1.2 Goals
+    • Deliver a production-quality Manifest V3 Chrome extension named 'zeng'
+    • Support worldwide radio discovery via Radio Browser API with language categorization
+    • Enable background audio playback that persists across browser tab changes
+    • Provide rich station management: playlists, groups, custom stations, favourites
+    • Ensure full TypeScript typing, comprehensive tests, and CI/CD pipeline
+    • Maintain cybersecurity best practices throughout (CSP, input sanitization, XSS prevention)
+    • Support settings portability via JSON export/import
+
+1.3 Non-Goals
+    • Native desktop application (extension only)
+    • Firefox / Safari support in v1 (Chrome-first)
+    • User accounts or cloud sync in v1 (local storage only)
+    • Audio recording or download features
+
+SECTION 2 — ARCHITECTURE & FOLDER STRUCTURE
+
+2. Architecture Overview
+Zeng follows a feature-sliced, domain-driven folder structure aligned with modern TypeScript extension development best practices. The architecture separates concerns cleanly across background service workers, popup UI, settings page, content scripts, and shared utilities.
+
+2.1 High-Level Architecture
+The extension consists of four primary runtime contexts:
+    • Background Service Worker (SW): Audio playback engine, state management, API caching, alarm scheduling
+    • Popup (React + Vite): Primary user interface rendered when clicking the extension icon
+    • Settings Page (React + Vite): Full-page options UI accessible from popup and browser settings
+    • Shared Layer: TypeScript types, constants, API client, storage utilities, and validation schemas
+
+2.2 Folder Structure
+Root Structure
+zeng/
+├── .github/
+│   ├── workflows/
+│   │   ├── ci.yml                  # Lint, type-check, test on push/PR
+│   │   ├── release.yml             # Build, pack, publish on release branch
+│   │   └── security-audit.yml      # npm audit + CodeQL on schedule
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   ├── ISSUE_TEMPLATE/
+│   │   ├── bug_report.md
+│   │   └── feature_request.md
+│   └── CODEOWNERS
+├── .cursor/
+│   └── rules.json                  # Cursor AI rules (see Section 9)
+├── .taskmaster/
+│   ├── tasks.json                  # Task Master AI task registry
+│   └── config.json
+├── src/
+│   ├── background/                 # Service Worker
+│   │   ├── index.ts
+│   │   ├── audio-engine.ts
+│   │   ├── state-manager.ts
+│   │   ├── api-cache.ts
+│   │   └── message-handler.ts
+│   ├── popup/                      # Popup UI
+│   │   ├── index.html
+│   │   ├── main.tsx
+│   │   ├── App.tsx
+│   │   ├── components/
+│   │   │   ├── Player/             # Fixed bottom player
+│   │   │   │   ├── Player.tsx
+│   │   │   │   ├── Player.test.tsx
+│   │   │   │   └── Player.module.css
+│   │   │   ├── StationCard/
+│   │   │   │   ├── StationCard.tsx
+│   │   │   │   ├── StationCard.test.tsx
+│   │   │   │   └── StationCard.module.css
+│   │   │   ├── StationList/
+│   │   │   ├── SearchBar/
+│   │   │   ├── LanguageFilter/
+│   │   │   ├── PlaylistPanel/
+│   │   │   ├── GroupPanel/
+│   │   │   ├── AddStationModal/
+│   │   │   ├── EditStationModal/
+│   │   │   └── SettingsLink/
+│   │   ├── hooks/
+│   │   │   ├── usePlayer.ts
+│   │   │   ├── useStations.ts
+│   │   │   ├── usePlaylists.ts
+│   │   │   ├── useSearch.ts
+│   │   │   └── useGroups.ts
+│   │   ├── pages/
+│   │   │   ├── BrowsePage.tsx
+│   │   │   ├── FavouritesPage.tsx
+│   │   │   ├── PlaylistsPage.tsx
+│   │   │   └── GroupsPage.tsx
+│   │   └── store/                  # Zustand store
+│   │       ├── playerStore.ts
+│   │       ├── stationStore.ts
+│   │       └── uiStore.ts
+│   ├── settings/                   # Settings page
+│   │   ├── index.html
+│   │   ├── main.tsx
+│   │   ├── App.tsx
+│   │   └── sections/
+│   │       ├── GeneralSection.tsx
+│   │       ├── StationsSection.tsx
+│   │       ├── PlaylistsSection.tsx
+│   │       ├── GroupsSection.tsx
+│   │       └── ImportExportSection.tsx
+│   └── shared/                     # Shared across all contexts
+│       ├── types/
+│       │   ├── station.types.ts
+│       │   ├── playlist.types.ts
+│       │   ├── group.types.ts
+│       │   ├── player.types.ts
+│       │   ├── settings.types.ts
+│       │   └── api.types.ts
+│       ├── api/
+│       │   ├── radio-browser.api.ts
+│       │   ├── endpoints.ts
+│       │   └── rate-limiter.ts
+│       ├── storage/
+│       │   ├── chrome-storage.ts
+│       │   ├── migrations.ts
+│       │   └── schema-validator.ts
+│       ├── constants/
+│       │   ├── languages.ts
+│       │   └── defaults.ts
+│       ├── utils/
+│       │   ├── sanitize.ts
+│       │   ├── fuzzy-search.ts
+│       │   ├── url-validator.ts
+│       │   └── language-mapper.ts
+│       └── messages/
+│           ├── message-types.ts
+│           └── message-schema.ts
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   ├── e2e/
+│   └── mocks/
+├── public/
+│   ├── icons/                      # Extension icons 16/48/128
+│   └── _locales/
+├── manifest.json
+├── vite.config.ts
+├── tsconfig.json
+├── vitest.config.ts
+├── playwright.config.ts
+├── .eslintrc.json
+├── .prettierrc
+├── package.json
+└── README.md
+
+SECTION 3 — FEATURES & FUNCTIONAL REQUIREMENTS
+
+3. Features & Functional Requirements
+3.1 Radio Station Discovery (FR-001)
+The extension fetches stations from the Radio Browser API using two primary endpoints:
+    • https://all.api.radio-browser.info/json/stations/search — primary endpoint
+    • https://de1.api.radio-browser.info/json/stations/search — fallback endpoint
+API queries support parameters including: tag, language, name, country, codec, limit, offset, order, and reverse. The extension supports paginated lazy loading of results in batches of 50 stations.
+
+Station Metadata Model
+Each station object exposes the following fields (mapped from Radio Browser API response):
+Field	Type	Description
+stationuuid	string	Unique station identifier (UUID)
+name	string	Station display name
+url	string	Primary stream URL
+url_resolved	string	Resolved/canonical stream URL
+homepage	string	Station website URL
+favicon	string	Station logo/icon URL
+tags	string	Comma-separated genre/topic tags
+country	string	Full country name
+countrycode	string	ISO 3166-1 alpha-2 country code
+state	string	State/region within country
+language	string	Comma-separated language names
+languagecodes	string	ISO 639-1 language codes
+codec	string	Audio codec (MP3, AAC, OGG, etc.)
+bitrate	number	Stream bitrate in kbps
+votes	number	Community votes/rating
+clickcount	number	Total click/listen count
+clicktrend	number	Recent trend score
+lastcheckok	0 | 1	Whether stream was online last check
+lastchecktime	string	ISO 8601 last check timestamp
+geo_lat	number | null	Geographic latitude
+geo_long	number | null	Geographic longitude
+ssl_error	0 | 1	Whether SSL error was detected
+hls	0 | 1	Whether stream uses HLS protocol
+has_extended_info	boolean	Extended metadata available
+
+3.2 Language-Based Categorization (FR-002)
+Stations are organized into language categories derived from the 'language' and 'languagecodes' API fields. The system normalizes language codes to ISO 639-1 and groups minor variants under their parent language (e.g., 'es-MX', 'es-AR' both appear under 'Spanish'). A language sidebar or dropdown filter allows users to browse by language. The 'All Languages' view presents stations sorted by click popularity.
+
+3.3 Background Audio Playback (FR-003)
+Audio playback is handled entirely within the Manifest V3 Service Worker using the Web Audio API and HTML5 Audio element, persisted via offscreen document. Playback continues when the popup is closed, browser tabs are switched, or the browser window is minimized. The current station, playback state, volume, and position are stored in chrome.storage.session for real-time sync.
+    • Service Worker keeps alive via chrome.alarms API pinging every 20 seconds
+    • Offscreen document hosts the actual Audio element to bypass SW audio restrictions
+    • Message passing protocol (typed) synchronizes state between popup and SW
+    • Volume is persisted in chrome.storage.local and restored on SW restart
+
+3.4 Popup UI (FR-004)
+The popup opens at 400px wide × 600px tall as a fixed-size overlay. It is built with React 18 + TypeScript + Vite + Tailwind CSS. Design follows a modern dark-mode-by-default aesthetic with smooth animations.
+Layout Zones
+    • Top Bar (48px): Logo, search icon, settings gear icon, navigation tabs
+    • Main Content Area (variable): Station list / playlist / groups — scrollable with virtual list
+    • Fixed Bottom Player (72px): Always visible, shows current station, controls, volume
+Navigation Tabs
+    • Browse — language-filtered station discovery
+    • Favourites — bookmarked stations
+    • Playlists — user-created playlists
+    • Groups — user-defined station groups
+
+3.5 Fixed Bottom Player (FR-005)
+The player component is absolutely positioned at the bottom of the popup and is never hidden by scrollable content. It displays:
+    • Station favicon/logo (32x32, with animated equalizer overlay when playing)
+    • Station name (truncated with ellipsis, max 24 chars)
+    • Country flag emoji and language tag
+    • Play/Pause button with loading spinner state
+    • Volume slider (range 0–100, stored persistently)
+    • Mute toggle button
+    • Station info tooltip on hover (full name, tags, codec, bitrate)
+    • Connection status indicator (connecting / live / error)
+
+3.6 Station Cards & Lazy Loading (FR-006)
+Station cards are rendered using react-virtuoso for efficient virtual list rendering. Cards include: favicon (with fallback to a Heroicons radio icon), station name, country, language, codec badge, bitrate, and vote count. Lazy loading fetches the next page automatically as the user scrolls within 200px of the list bottom. A skeleton loader is shown during fetch.
+
+3.7 Search (FR-007)
+The search bar supports three modes toggled by a dropdown:
+    • Name Search — fuzzy matching using Fuse.js with a threshold of 0.4
+    • Exact Search — case-insensitive exact string matching on name field
+    • Regex Search — validated regex applied against name, tags, and country fields
+Search is debounced at 300ms. Input is sanitized before API or local matching. Regex mode validates the pattern before applying and shows a red border with error tooltip on invalid regex. Search results merge local custom stations with API results.
+
+3.8 Playlists (FR-008)
+Users can create named playlists and add any station (API or custom) to one or more playlists. Playlist operations:
+    • Create playlist (name, optional description, optional colour tag)
+    • Rename / delete playlist
+    • Add station to playlist (via station card context menu)
+    • Remove station from playlist
+    • Reorder stations within playlist via drag-and-drop (@dnd-kit)
+    • Play entire playlist sequentially (auto-advance to next station on error)
+    • Export single playlist as JSON
+    • Import playlist from JSON
+
+3.9 Custom Stations (FR-009)
+Users can add stations not present in the Radio Browser API. The 'Add Station' modal collects:
+    • Name (required, max 100 chars)
+    • Stream URL (required, validated as HTTP/HTTPS)
+    • Homepage URL (optional)
+    • Favicon URL (optional, validated)
+    • Language (optional, searchable dropdown)
+    • Country (optional, searchable dropdown)
+    • Tags (optional, comma-separated)
+    • Codec (optional, free text)
+    • Bitrate (optional, number)
+Custom stations are stored in chrome.storage.local with a 'custom:' prefix on their UUID. They appear in all search results and can be added to playlists and groups. Edit and delete are supported both from the popup and the settings page.
+
+3.10 Groups (FR-010)
+Groups are user-defined collections that can contain stations from any language or source. Unlike playlists (which are ordered for playback), groups are organizational containers. A station can belong to multiple groups. Groups support:
+    • Create / rename / delete group
+    • Assign custom icon (Heroicons selection)
+    • Add/remove stations
+    • Collapse/expand in sidebar
+    • Export / import group definitions in JSON
+
+3.11 Settings Page (FR-011)
+The settings page is a full browser tab (chrome.runtime.openOptionsPage()) with a sidebar navigation. Sections:
+    • General — theme (dark/light/system), default language, popup size, audio buffer size
+    • Stations — manage custom stations (add, edit, delete table view)
+    • Playlists — manage all playlists, reorder, bulk delete
+    • Groups — manage all groups
+    • Import / Export — export entire settings as JSON, import and merge or replace
+The settings page shares the same component library and store as the popup but runs in its own React root. Changes propagate to the popup via chrome.storage.onChanged events.
+
+3.12 Import / Export (FR-012)
+The export produces a single JSON file with the following top-level structure:
+{
+  "version": "1.0.0",
+  "exportedAt": "2026-04-02T00:00:00Z",
+  "customStations": [ ...Station[] ],
+  "playlists": [ ...Playlist[] ],
+  "groups": [ ...Group[] ],
+  "favourites": [ ...stationuuid[] ],
+  "settings": { ...UserSettings }
+}
+On import, the JSON is validated against a Zod schema before applying. The user is presented with a diff summary (counts of new/updated/skipped items) and chooses 'Merge' or 'Replace'. Replace wipes existing user data; Merge intelligently upserts by UUID.
+
+SECTION 4 — TECHNICAL STACK
+
+4. Technical Stack
+Category	Technology	Rationale
+Rationale
