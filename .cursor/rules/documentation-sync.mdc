@@ -14,7 +14,7 @@ alwaysApply: true
 In the **same change** (or an immediately following commit), update that file whenever you alter any of:
 
 - **`package.json` scripts** (add/remove/rename `build`, `dev`, `typecheck`, watch targets, etc.)
-- **Build or tooling**: `vite.config.ts`, `manifest.json` (paths, permissions, new entry points), Tailwind/PostCSS, TypeScript config that affects how people run or load the app
+- **Build or tooling**: `vite.config.ts`, `vitest.config.ts`, `manifest.json` (paths, permissions, new entry points), Tailwind/PostCSS, TypeScript config that affects how people run or load the app
 - **Extension load procedure** (e.g. output directory no longer `dist/`, new browser steps, CRXJS / HMR workflow)
 - **Prerequisites** (Node major version, new global CLIs, environment variables required for dev)
 - **Source layout** that developers must know (`src/*` structure, new contexts like content scripts)
