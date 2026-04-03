@@ -36,7 +36,19 @@ Optional:
    npm run build
    ```
 
-4. **Load the extension in Chrome**
+4. **Sanity-check the build** (optional but recommended; same checks run in CI after `build`):
+
+   ```bash
+   npm run verify:dist
+   ```
+
+   Or build and verify in one step:
+
+   ```bash
+   npm run verify:extension
+   ```
+
+5. **Load the extension in Chrome**
 
    - Open `chrome://extensions`
    - Enable **Developer mode**
@@ -44,6 +56,18 @@ Optional:
    - Select the **`dist/`** directory inside the repo (not the repository root)
 
 The popup, options page, and service worker paths in `manifest.json` match the files Vite emits under `dist/` (for example `src/popup/index.html` inside `dist/`).
+
+## Manual checklist (Chrome)
+
+After `npm run build` (or `build:watch`), load **`dist/`** as unpacked and confirm:
+
+- [ ] **No manifest errors** on the extension card on `chrome://extensions`.
+- [ ] **Service worker** is active (click “Service worker” / inspect; no crash on startup).
+- [ ] **Popup** opens from the toolbar icon and shows the basic Zeng UI (dark shell, title).
+- [ ] **Options** open (from “Extension options” or your UI entry) and render the settings shell.
+- [ ] **Permissions** listed on the card include **storage**, **alarms**, **offscreen**, and Radio Browser **host** access.
+
+Automated checks in `npm run verify:dist` do **not** replace this pass; they only validate `dist/` layout and manifest fields.
 
 ## Day-to-day development
 
@@ -86,6 +110,8 @@ For real extension behavior (storage, service worker, host permissions), use **`
 |-------------------|--------------------------------------------------------|
 | `npm run build`   | Production build to `dist/` + copy `manifest.json`     |
 | `npm run build:watch` | Same as `build`, rebuilds when sources change     |
+| `npm run verify:dist` | Assert `dist/` manifest, entries, and key files exist |
+| `npm run verify:extension` | `build` then `verify:dist` (local smoke)      |
 | `npm run typecheck`   | `tsc --noEmit` across `src/`                      |
 | `npm run dev`     | Vite dev server (see limitations above)                |
 
