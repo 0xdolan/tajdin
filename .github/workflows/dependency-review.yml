@@ -1,0 +1,35 @@
+name: Dependency review
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    name: Review dependency changes
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.fork == false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Skip without lockfile
+        id: lock
+        run: |
+          if [ -f package-lock.json ] || [ -f pnpm-lock.yaml ] || [ -f yarn.lock ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/dependency-review-action@v4
+        if: steps.lock.outputs.present == 'true'
+        with:
+          fail-on-severity: high
+
+      - name: No dependency lockfile
+        if: steps.lock.outputs.present == 'false'
+        run: echo "No lockfile in tree; dependency-review skipped until packages are added."
