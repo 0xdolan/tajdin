@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Zeng",
+  "version": "0.0.1",
+  "description": "Worldwide radio in your browser (Radio Browser).",
+  "minimum_chrome_version": "116",
+  "permissions": ["alarms", "offscreen", "storage"],
+  "host_permissions": [
+    "https://all.api.radio-browser.info/*",
+    "https://de1.api.radio-browser.info/*",
+    "https://*.radio-browser.info/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Zeng",
+    "default_popup": "popup.html"
+  },
+  "options_ui": {
+    "page": "settings.html",
+    "open_in_tab": true
+  }
+}
