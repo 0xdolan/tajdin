@@ -6,6 +6,9 @@ yarn-debug.log*
 yarn-error.log*
 dev-debug.log
 
+# Build output (load unpacked extension from dist/ after npm run build)
+dist/
+
 # Dependency directories
 node_modules/
 
