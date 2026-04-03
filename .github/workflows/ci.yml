@@ -64,6 +64,10 @@ jobs:
         if: steps.pkg.outputs.present == 'true'
         run: npm run build --if-present
 
+      - name: Verify extension dist
+        if: steps.pkg.outputs.present == 'true'
+        run: npm run verify:dist --if-present
+
       - name: Node project not yet initialized
         if: steps.pkg.outputs.present == 'false'
         run: echo "No package.json yet; skipping Node lint/test/build until the extension scaffold lands."
