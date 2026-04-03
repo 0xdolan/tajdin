@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "build:watch": "vite build --watch",
+    "verify:dist": "node scripts/verify-extension.mjs",
+    "verify:extension": "npm run build && npm run verify:dist",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
