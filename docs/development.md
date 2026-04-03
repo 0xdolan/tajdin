@@ -95,6 +95,14 @@ npm run typecheck
 
 Run this before commits and when refactoring shared types.
 
+### Tests
+
+```bash
+npm test
+```
+
+Runs **Vitest** in Node (`vitest run`). Watch mode: `npx vitest`.
+
 ### `npm run dev` (Vite dev server)
 
 `vite` starts a local dev server (default port **5173**). The **unpacked extension does not use that server**; it only serves files from `dist/`. You can still use `npm run dev` to:
@@ -112,6 +120,7 @@ For real extension behavior (storage, service worker, host permissions), use **`
 | `npm run build:watch` | Same as `build`, rebuilds when sources change     |
 | `npm run verify:dist` | Assert `dist/` manifest, entries, and key files exist |
 | `npm run verify:extension` | `build` then `verify:dist` (local smoke)      |
+| `npm run test`        | `vitest run` (unit tests)                          |
 | `npm run typecheck`   | `tsc --noEmit` across `src/`                      |
 | `npm run dev`     | Vite dev server (see limitations above)                |
 
