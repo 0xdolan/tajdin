@@ -1,0 +1,32 @@
+---
+description: Git Flow branching, merges, and release branches for Zeng
+alwaysApply: true
+---
+
+# Git Flow (Zeng)
+
+## Branches
+
+| Branch | Role |
+|--------|------|
+| `main` | Default branch; **production-ready** history only. **Do not merge here without explicit human approval.** |
+| `develop` | Integration branch; merge completed feature/chore/fix work here after checks pass. |
+| `release/x.y.z` | **Optional.** Create only when cutting a release (freeze, version bump, final QA). Delete after merge to `main` and tag, or keep only the branch that matches the **currently shipped** version if your team prefers that model—otherwise prefer **tags** (`v1.0.0`) as the source of truth for releases and avoid long-lived `release/*` clutter. |
+
+## Naming
+
+- `feat/<topic>`, `fix/<topic>`, `chore/<topic>`, `hotfix/<topic>` (kebab-case).
+
+## Workflow
+
+1. Branch **from `develop`** (or from `main` only for **hotfixes** that must ship immediately; then backport to `develop`).
+2. Keep commits **scoped**: one branch per coherent change (single concern or tightly related files).
+3. Before opening a PR or merging: **CI green**, **tests** (when the project has them), **lint/typecheck** (when present), and **no secrets** in commits.
+4. Merge the task branch **into `develop`** (merge commit or squash per team preference; use PRs on GitHub for review + CI).
+5. **Never** merge `develop` → `main` unless the **user explicitly approved** the release.
+
+## Gaps to avoid
+
+- Do not commit `.env`, API keys, or `.cursor/mcp.json` (credentials).
+- Do not merge broken CI to `develop`.
+- Prefer small PRs over mixing unrelated file types on one branch.
