@@ -1,0 +1,42 @@
+name: Security audit
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  npm-audit:
+    name: npm audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Skip when no lockfile
+        id: lock
+        run: |
+          if [ -f package-lock.json ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.lock.outputs.present == 'true'
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: npm audit (high or above)
+        if: steps.lock.outputs.present == 'true'
+        run: |
+          npm ci
+          npm audit --audit-level=high
+
+      - name: No lockfile
+        if: steps.lock.outputs.present == 'false'
+        run: echo "No package-lock.json; npm audit will run automatically once dependencies are committed."
