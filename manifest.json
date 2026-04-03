@@ -16,10 +16,10 @@
   },
   "action": {
     "default_title": "Zeng",
-    "default_popup": "popup.html"
+    "default_popup": "src/popup/index.html"
   },
   "options_ui": {
-    "page": "settings.html",
+    "page": "src/settings/index.html",
     "open_in_tab": true
   }
 }
