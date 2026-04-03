@@ -1,0 +1,29 @@
+---
+description: Security mindset and CI gates before merge (extension + repo)
+alwaysApply: true
+---
+
+# Security and CI Gates
+
+## Before every merge to `develop`
+
+- Run **CI locally** when possible: `npm run lint`, `npm run typecheck`, `npm test`, `npm run build` (use whatever scripts exist once `package.json` is present).
+- Run **`npm audit`** (or `pnpm audit` / `yarn npm audit`) and address **high/critical** issues or document a timed exception.
+- **No secrets** in git: use `.env` (gitignored) and secret stores only.
+- **Browser extension**: follow Manifest V3 least privilege; tight **CSP**; validate and sanitize user input (URLs, regex search, import JSON); treat imported JSON as untrusted until **Zod** (or equivalent) validation passes.
+
+## Automation (GitHub)
+
+- Required checks: **CI** workflow and **dependency review** on PRs (when applicable).
+- **Dependabot** alerts: review and merge or supersede promptly.
+- Scheduled **security audit** workflow supplements local audits.
+
+## Supply chain
+
+- Prefer **lockfiles** (`package-lock.json` / `pnpm-lock.yaml`) committed for reproducible installs and cleaner audits.
+- Pin **GitHub Actions** to full SHAs or trusted version tags; let Dependabot update them.
+
+## If checks are missing
+
+- Adding `package.json`: ensure workflows gain **lint, test, build, audit** stages.
+- For native or other stacks: extend `.github/workflows/ci.yml` with the appropriate toolchain rather than skipping verification.
