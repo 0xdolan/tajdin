@@ -1,0 +1,14 @@
+---
+description: When starting work on a Task Master task, handle subtasks one at a time
+alwaysApply: true
+---
+
+# Task execution (Task Master)
+
+When the user asks to **start** or **continue** a task:
+
+1. **Inspect** that task in `.taskmaster/tasks/tasks.json` (or `task-master show <id>`).
+2. If it has **subtasks**, work on **exactly one** subtask per request: the **next** pending subtask whose **dependencies** are satisfied (lowest `id` first unless the user names one).
+3. If there are **no subtasks**, run `task-master expand --id=<taskId>` first (unless the user forbids AI expansion), then start **only subtask `<id>.1`**.
+4. Set status with `task-master set-status <taskId>.<subId> in-progress` (and parent task `in-progress` if not already).
+5. Do **not** implement multiple subtasks in the same turn unless the user explicitly asks to batch them.
