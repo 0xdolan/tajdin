@@ -58,9 +58,10 @@
               3
             ],
             "details": "Create src/background/index.ts with a simple event listener. Implement minimal React roots in src/popup/index.tsx and src/settings/index.tsx. Create a skeletal HTML document in src/offscreen/index.html.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify that 'npm run build' completes successfully and that resulting JS files are referenced correctly in the generated HTML.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T21:23:48.082Z"
           },
           {
             "id": 5,
@@ -78,7 +79,7 @@
             "parentId": "undefined"
           }
         ],
-        "updatedAt": "2026-04-03T21:21:50.147Z"
+        "updatedAt": "2026-04-03T21:23:48.082Z"
       },
       {
         "id": "2",
@@ -352,7 +353,7 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-03T21:21:50.148Z",
+      "lastModified": "2026-04-03T21:23:48.083Z",
       "taskCount": 20,
       "completedCount": 0,
       "tags": [
