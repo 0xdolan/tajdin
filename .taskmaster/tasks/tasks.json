@@ -2,290 +2,360 @@
   "master": {
     "tasks": [
       {
-        "id": 1,
+        "id": "1",
         "title": "Initial Project Scaffolding and Manifest V3 Setup",
         "description": "Initialize the repository with the defined folder structure, Vite configuration, and Manifest V3 manifest.json.",
         "details": "Create the root structure: src/background, src/popup, src/settings, src/shared. Configure vite.config.ts to handle multiple entry points (popup, settings, background). Setup manifest.json with permissions: storage, alarms, offscreen, and host permissions for radio-browser.info.",
         "testStrategy": "Verify that 'npm run build' generates a valid dist folder that can be loaded into Chrome as an unpacked extension without errors.",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "in-progress",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Establish Project Root and Directory Structure",
+            "description": "Create the primary folder hierarchy required for the Chrome extension modules.",
+            "dependencies": [],
+            "details": "Create the following directory structure: src/background, src/popup, src/settings, src/shared, and src/offscreen. Initialize package.json, tsconfig.json, and tailwind.config.js to align with the React and Tailwind CSS stack.",
+            "status": "done",
+            "testStrategy": "Execute 'ls -R src' to verify all directories exist; run 'tsc --noEmit' to ensure TypeScript configuration is valid.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T21:14:53.986Z"
+          },
+          {
+            "id": 2,
+            "title": "Configure Manifest V3 Metadata and Permissions",
+            "description": "Create the manifest.json file defining the extension's capabilities and security requirements.",
+            "dependencies": [
+              1
+            ],
+            "details": "Set manifest_version to 3. Configure 'storage', 'alarms', and 'offscreen' permissions. Add 'host_permissions' for 'https://*.radio-browser.info/*'. Define the background service worker, action popup, and options page entries.",
+            "status": "pending",
+            "testStrategy": "Validate manifest.json against the official Chrome Extension MV3 schema; ensure no warnings appear when loading the manifest in a browser.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Setup Multi-Entry Vite Configuration",
+            "description": "Configure vite.config.ts to support multiple bundle outputs for the different extension components.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Configure rollupOptions.input to include src/popup/index.html, src/settings/index.html, src/offscreen/index.html, and src/background/index.ts. Use @crxjs/vite-plugin or manual rollup configuration to handle extension manifest integration.",
+            "status": "pending",
+            "testStrategy": "Run 'npm run build' and verify the 'dist' directory contains separate bundles for background, popup, and offscreen components.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Implement Component Entry Boilerplates",
+            "description": "Create placeholder files for each extension module to confirm script execution.",
+            "dependencies": [
+              1,
+              3
+            ],
+            "details": "Create src/background/index.ts with a simple event listener. Implement minimal React roots in src/popup/index.tsx and src/settings/index.tsx. Create a skeletal HTML document in src/offscreen/index.html.",
+            "status": "pending",
+            "testStrategy": "Verify that 'npm run build' completes successfully and that resulting JS files are referenced correctly in the generated HTML.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Final Integration and Extension Load Test",
+            "description": "Perform a final build and verify the extension loads correctly in the browser developer mode.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Generate the production build. Load the 'dist' folder into Chrome via 'Load unpacked'. Check for manifest errors, verify the background service worker starts, and ensure the popup renders a basic UI.",
+            "status": "pending",
+            "testStrategy": "Manual verification in chrome://extensions; confirm 'Background Page' (Service Worker) status is active and permissions are correctly displayed.",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-04-03T21:14:53.986Z"
       },
       {
-        "id": 2,
+        "id": "2",
         "title": "Shared Type Definitions and Zod Schemas",
         "description": "Define TypeScript interfaces and Zod schemas for the core data models: Station, Playlist, Group, and Settings.",
         "details": "Implement src/shared/types/*.ts based on Section 3.1 and 3.12. Use Zod for schema validation to ensure data integrity during API calls and import/export. Example: export const StationSchema = z.object({ stationuuid: z.string().uuid(), ... }).",
         "testStrategy": "Run TypeScript compiler (tsc) and unit tests for schema validation against mock Radio Browser API payloads.",
         "priority": "high",
         "dependencies": [
-          1
+          "1"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 3,
+        "id": "3",
         "title": "Chrome Storage Wrapper with Zod Validation",
         "description": "Create a unified utility for interacting with chrome.storage.local and chrome.storage.session.",
         "details": "Implement src/shared/storage/chrome-storage.ts. Create a wrapper that handles serialization, deserialization, and Zod validation. Use local storage for persistent data (playlists, custom stations) and session storage for transient state (current playing station, UI state).",
         "testStrategy": "Unit tests using a chrome-extension-mock to verify that set/get operations correctly validate data against schemas.",
         "priority": "high",
         "dependencies": [
-          2
+          "2"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 4,
+        "id": "4",
         "title": "Radio Browser API Client Implementation",
         "description": "Develop the API client with fallback endpoints, pagination, and rate limiting.",
         "details": "Implement src/shared/api/radio-browser.api.ts using fetch. Support the primary and fallback endpoints mentioned in FR-001. Implement a fetch queue or simple delay to respect rate limits. Map API fields to internal Station type.",
         "testStrategy": "Integration tests using Vitest and MSW (Mock Service Worker) to simulate API responses and fallback scenarios.",
         "priority": "high",
         "dependencies": [
-          2,
-          3
+          "2",
+          "3"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 5,
+        "id": "5",
         "title": "Offscreen Document for Audio Playback",
         "description": "Setup the offscreen document required by Manifest V3 to host the HTML5 Audio element.",
         "details": "Create src/offscreen/index.html and index.ts. This document will be managed by the Service Worker. It must include an <audio> element and a script that listens for messages from the background worker to play/pause/adjust volume.",
         "testStrategy": "Verify that chrome.offscreen.createDocument can be called from the SW and that the document is reachable via message passing.",
         "priority": "high",
         "dependencies": [
-          1
+          "1"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 6,
+        "id": "6",
         "title": "Background Audio Engine and Service Worker",
         "description": "Implement the core audio playback logic in the background worker using message passing to the offscreen document.",
         "details": "Implement src/background/audio-engine.ts. Handle chrome.runtime.onMessage for playback control. Manage the lifecycle of the offscreen document. Keep the SW alive using chrome.alarms as per FR-003. Pseudo-code: chrome.alarms.create('keepAlive', { periodInMinutes: 0.33 }).",
         "testStrategy": "Manual test: Initiate audio from a mock popup call and ensure audio persists after closing the popup.",
         "priority": "high",
         "dependencies": [
-          3,
-          5
+          "3",
+          "5"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 7,
+        "id": "7",
         "title": "Zustand Store and State Management",
         "description": "Set up stores for player state, stations, and UI state using Zustand with persistence.",
         "details": "Implement src/popup/store/*.ts. Create playerStore for current track and playback status. stationStore for search results and favorites. Synchronize stores across contexts using storage events or manual message sync.",
         "testStrategy": "Unit tests for store actions and selectors. Verify that store updates trigger re-renders in a test React component.",
         "priority": "medium",
         "dependencies": [
-          3,
-          6
+          "3",
+          "6"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 8,
+        "id": "8",
         "title": "Popup Layout and Navigation Component",
         "description": "Build the main shell of the popup including tabs and the container for the fixed player.",
         "details": "Use React + Tailwind CSS. Implement the 400x600px fixed container. Create the top navigation bar (Browse, Favourites, Playlists, Groups) and a content area that renders the active page.",
         "testStrategy": "Visual verification of layout against design specs (48px top bar, 72px bottom player). Verify tab switching logic.",
         "priority": "medium",
         "dependencies": [
-          1,
-          7
+          "1",
+          "7"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 9,
+        "id": "9",
         "title": "Virtualized Station List Component",
         "description": "Implement a high-performance station list using react-virtuoso for lazy loading.",
         "details": "Implement src/popup/components/StationList. Render 50 items at a time. Implement the 200px threshold for fetching the next page from the API client. Use a skeleton loader while fetching.",
         "testStrategy": "Performance profiling: ensure smooth scrolling (60fps) when navigating a list of 500+ items.",
         "priority": "high",
         "dependencies": [
-          4,
-          8
+          "4",
+          "8"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 10,
+        "id": "10",
         "title": "Station Card and Context Menu",
         "description": "Build the individual station card UI and its interaction menu.",
         "details": "Component should show favicon, name, country, language, and bitrate. Include an 'Add to Favourites' heart and a context menu (using a library like @radix-ui/react-context-menu) for adding to playlists/groups.",
         "testStrategy": "Snapshot tests for the UI and functional tests for the context menu triggers.",
         "priority": "medium",
         "dependencies": [
-          9
+          "9"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 11,
+        "id": "11",
         "title": "Fixed Bottom Player UI",
         "description": "Implement the persistent player bar with controls and volume slider.",
         "details": "Implement src/popup/components/Player/Player.tsx. Sync with playerStore. Include play/pause, mute, volume range (0-100), and station info tooltip. Add animated equalizer overlay to the favicon when playing.",
         "testStrategy": "Verify that volume state changes in the UI are reflected in the storage and that the mute toggle works correctly.",
         "priority": "high",
         "dependencies": [
-          6,
-          7,
-          8
+          "6",
+          "7",
+          "8"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 12,
+        "id": "12",
         "title": "Search Engine with Fuzzy and Regex Support",
         "description": "Implement the search bar with Fuse.js for fuzzy matching and regex validation.",
         "details": "Implement src/shared/utils/fuzzy-search.ts and src/popup/hooks/useSearch.ts. Use Fuse.js with threshold 0.4. For Regex mode, use a try-catch block for validation and update UI border if invalid. Debounce input for 300ms.",
         "testStrategy": "Unit tests for search utility: verify 'Name' matches, 'Regex' handles invalid patterns, and debounce prevents excessive API calls.",
         "priority": "medium",
         "dependencies": [
-          4,
-          7
+          "4",
+          "7"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 13,
+        "id": "13",
         "title": "Language Categorization and Filtering",
         "description": "Implement the language-based browsing system with ISO 639-1 normalization.",
         "details": "Implement src/shared/utils/language-mapper.ts. Map variations like 'es-MX' to 'Spanish'. Create a filter UI (sidebar or dropdown) that updates the API query parameters.",
         "testStrategy": "Test mapping function with various language string inputs from the API. Verify that selecting a language updates the station list results.",
         "priority": "medium",
         "dependencies": [
-          4,
-          9
+          "4",
+          "9"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 14,
+        "id": "14",
         "title": "Playlist Management (CRUD and DnD)",
         "description": "Develop the playlists feature including creation, ordering, and playback.",
         "details": "Implement PlaylistsPage.tsx. Use @dnd-kit for reordering. Implement logic to advance to the next station in the list if the current one fails to load. Store playlist data in chrome.storage.local.",
         "testStrategy": "End-to-end test with Playwright: Create a playlist, drag a station to a new position, and verify the order is saved in storage.",
         "priority": "medium",
         "dependencies": [
-          3,
-          7,
-          10
+          "3",
+          "7",
+          "10"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 15,
+        "id": "15",
         "title": "Groups Organizational System",
         "description": "Implement user-defined groups for station organization.",
         "details": "Similar to playlists but without playback ordering. Include functionality to assign Heroicons as group icons. Support collapsible/expandable views in the popup UI.",
         "testStrategy": "Verify that a station can be added to multiple groups and that group deletions do not delete the underlying station metadata.",
         "priority": "low",
         "dependencies": [
-          3,
-          7,
-          10
+          "3",
+          "7",
+          "10"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 16,
+        "id": "16",
         "title": "Custom Station Modal and Validation",
         "description": "Build the 'Add Station' modal for user-defined stream URLs.",
         "details": "Implement src/popup/components/AddStationModal. Validate stream URLs as HTTP/HTTPS. Assign a 'custom:' prefix to UUIDs as per FR-009. Ensure custom stations appear in search results.",
         "testStrategy": "Manual test: Add a custom stream URL, search for it by name, and verify it plays through the background engine.",
         "priority": "medium",
         "dependencies": [
-          3,
-          6,
-          12
+          "3",
+          "6",
+          "12"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 17,
+        "id": "17",
         "title": "Settings Page Development",
         "description": "Create the full-page options UI for extension configuration and management.",
         "details": "Implement src/settings/App.tsx with sidebar navigation. Sections: General, Stations (Table View), Playlists, Groups. Use the same shared components as the popup. Listen for chrome.storage.onChanged to sync with the popup.",
         "testStrategy": "Open the options page from the popup gear icon. Modify a setting (e.g., theme) and verify it reflects in the popup instantly.",
         "priority": "medium",
         "dependencies": [
-          8,
-          14,
-          15,
-          16
+          "8",
+          "14",
+          "15",
+          "16"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 18,
+        "id": "18",
         "title": "JSON Import and Export with Schema Validation",
         "description": "Implement the portability feature to export/import all user settings and data.",
         "details": "Implement ImportExportSection.tsx. Create a blob for export. For import, use Zod to validate the JSON file. Implement the 'Merge' vs 'Replace' logic with a diff summary UI as per FR-012.",
         "testStrategy": "Export data, clear storage, import the file, and verify all playlists/stations/favourites are restored correctly.",
         "priority": "medium",
         "dependencies": [
-          2,
-          3,
-          17
+          "2",
+          "3",
+          "17"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 19,
+        "id": "19",
         "title": "Security Hardening and Input Sanitization",
         "description": "Apply cybersecurity best practices including CSP and XSS prevention.",
         "details": "Implement src/shared/utils/sanitize.ts using a library like DOMPurify or custom logic for API-provided strings (tags, names). Ensure Content Security Policy in manifest.json prohibits unsafe-eval.",
         "testStrategy": "Penetration test: Attempt to inject <script> tags into custom station names and verify they are escaped or removed before rendering.",
         "priority": "high",
         "dependencies": [
-          1,
-          16
+          "1",
+          "16"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 20,
+        "id": "20",
         "title": "CI/CD Pipeline and Production Build",
         "description": "Configure GitHub Actions for automated testing, linting, and extension packaging.",
         "details": "Implement .github/workflows/ci.yml and release.yml. Ensure npm audit and CodeQL scans are integrated. Set up a script to zip the dist folder for Chrome Web Store submission.",
         "testStrategy": "Trigger the CI pipeline via a pull request and verify that all linting, type-checking, and tests pass successfully.",
         "priority": "low",
         "dependencies": [
-          1,
-          19
+          "1",
+          "19"
         ],
         "status": "pending",
         "subtasks": []
       }
     ],
     "metadata": {
-      "created": "2026-04-03T20:47:57.654Z",
-      "updated": "2026-04-03T20:47:57.654Z",
-      "description": "Tasks for master context"
+      "version": "1.0.0",
+      "lastModified": "2026-04-03T21:14:53.986Z",
+      "taskCount": 20,
+      "completedCount": 0,
+      "tags": [
+        "master"
+      ]
     }
   }
 }
