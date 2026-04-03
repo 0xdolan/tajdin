@@ -92,8 +92,70 @@
         "dependencies": [
           "1"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "in-progress",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define Station Schema and TypeScript Interface",
+            "description": "Create the core Zod schema and TypeScript interface for the Station model using the Radio Browser API specification.",
+            "dependencies": [],
+            "details": "Implement in src/shared/types/station.ts. The schema must include stationuuid, name, url, url_resolved, homepage, favicon, tags, country, language, votes, and bitrate. Use z.infer to export the TypeScript type.",
+            "status": "done",
+            "testStrategy": "Unit test using StationSchema.parse() with mock data fetched from the Radio Browser API documentation examples.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T21:34:33.114Z"
+          },
+          {
+            "id": 2,
+            "title": "Define Playlist Schema and TypeScript Interface",
+            "description": "Create the Zod schema and TypeScript interface for user-defined playlists to support persistence in chrome.storage.",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement in src/shared/types/playlist.ts. Playlists should contain an id (UUID), name, a list of stationUuids (referencing the Station model), a description, and a lastModified timestamp.",
+            "status": "pending",
+            "testStrategy": "Validation tests to ensure stationUuids is an array of strings and mandatory fields like name are present.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Define Group Schema and TypeScript Interface",
+            "description": "Create the Zod schema and TypeScript interface for station groups/tags for organizational purposes.",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement in src/shared/types/group.ts. Groups should include an id, name, and an array of stationUuids. This model is distinct from Playlists as it focuses on categorization rather than sequence.",
+            "status": "pending",
+            "testStrategy": "Test the schema with empty and populated station lists to verify optionality and array validation.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Define Settings Schema and TypeScript Interface",
+            "description": "Create the Zod schema and TypeScript interface for application configuration and user preferences.",
+            "dependencies": [],
+            "details": "Implement in src/shared/types/settings.ts. Include properties for theme (light/dark/system), default search filters, preferred bitrate, and playback auto-start preferences.",
+            "status": "pending",
+            "testStrategy": "Verify the schema against a default settings object and ensure it handles partial updates correctly via z.partial().",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Implement Central Type Exports and Validation Helpers",
+            "description": "Consolidate all schemas and types into a central entry point and provide shared validation utilities.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Create src/shared/types/index.ts to export all schemas and inferred types. Implement a generic helper function using Zod's safeParse to facilitate error handling when reading from storage or API.",
+            "status": "pending",
+            "testStrategy": "Check that all types are accessible via a single import and the helper function correctly identifies invalid data structures.",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-04-03T21:34:33.114Z"
       },
       {
         "id": "3",
@@ -354,7 +416,7 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-03T21:30:11.210Z",
+      "lastModified": "2026-04-03T21:34:33.115Z",
       "taskCount": 20,
       "completedCount": 1,
       "tags": [
