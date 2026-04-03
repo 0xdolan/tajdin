@@ -1,0 +1,30 @@
+---
+description: Keep docs/development.md in sync whenever run/build/dev workflow changes
+alwaysApply: true
+---
+
+# Documentation maintenance
+
+## Canonical developer doc
+
+- **`docs/development.md`** is the **source of truth** for: prerequisites, first-time setup (`npm ci` / `npm install`), **how to build**, **how to load the extension** (always `dist/`), **day-to-day dev workflows** (e.g. watch + reload), **npm scripts**, **project layout**, and **troubleshooting**.
+
+## When you MUST update `docs/development.md`
+
+In the **same change** (or an immediately following commit), update that file whenever you alter any of:
+
+- **`package.json` scripts** (add/remove/rename `build`, `dev`, `typecheck`, watch targets, etc.)
+- **Build or tooling**: `vite.config.ts`, `manifest.json` (paths, permissions, new entry points), Tailwind/PostCSS, TypeScript config that affects how people run or load the app
+- **Extension load procedure** (e.g. output directory no longer `dist/`, new browser steps, CRXJS / HMR workflow)
+- **Prerequisites** (Node major version, new global CLIs, environment variables required for dev)
+- **Source layout** that developers must know (`src/*` structure, new contexts like content scripts)
+
+## What to avoid
+
+- Do **not** duplicate long run instructions only in `README.md`; link to `docs/development.md` instead (short summary + link is fine).
+- Do **not** leave the doc describing an old command or path after a migration.
+
+## Quick checklist before merging dev workflow changes
+
+- [ ] `docs/development.md` reflects current scripts and Chrome load steps  
+- [ ] `README.md` still points at `docs/development.md` if the happy path changed  
