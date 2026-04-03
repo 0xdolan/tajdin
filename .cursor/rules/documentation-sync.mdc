@@ -18,6 +18,7 @@ In the **same change** (or an immediately following commit), update that file wh
 - **Extension load procedure** (e.g. output directory no longer `dist/`, new browser steps, CRXJS / HMR workflow)
 - **Prerequisites** (Node major version, new global CLIs, environment variables required for dev)
 - **Source layout** that developers must know (`src/*` structure, new contexts like content scripts)
+- **Extension packaging checks** (`scripts/verify-extension.mjs`, what `verify:dist` / `verify:extension` assert, or CI steps that gate `dist/`)
 
 ## What to avoid
 
