@@ -9,7 +9,7 @@
         "testStrategy": "Verify that 'npm run build' generates a valid dist folder that can be loaded into Chrome as an unpacked extension without errors.",
         "priority": "high",
         "dependencies": [],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -74,12 +74,13 @@
               4
             ],
             "details": "Generate the production build. Load the 'dist' folder into Chrome via 'Load unpacked'. Check for manifest errors, verify the background service worker starts, and ensure the popup renders a basic UI.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Manual verification in chrome://extensions; confirm 'Background Page' (Service Worker) status is active and permissions are correctly displayed.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T21:30:11.210Z"
           }
         ],
-        "updatedAt": "2026-04-03T21:23:48.082Z"
+        "updatedAt": "2026-04-03T21:30:11.210Z"
       },
       {
         "id": "2",
@@ -353,9 +354,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-03T21:23:48.083Z",
+      "lastModified": "2026-04-03T21:30:11.210Z",
       "taskCount": 20,
-      "completedCount": 0,
+      "completedCount": 1,
       "tags": [
         "master"
       ]
