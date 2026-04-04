@@ -778,11 +778,11 @@
             "dependencies": [
               2
             ],
-            "details": "settings/App.tsx aside header; chrome.runtime.getURL for icon.",
-            "status": "pending",
+            "details": "DONE: `ExtensionBranding` in `shared/components/` (icon via getURL, Tajdîn + tagline); `PopupHeader` and settings `App` aside use it; options page uses titleTag=h1.",
+            "status": "done",
             "testStrategy": "Open options tab: branding visible.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-05T12:00:00.000Z"
+            "updatedAt": "2026-04-04T00:15:00.000Z"
           },
           {
             "id": 9,
@@ -847,12 +847,12 @@
             "updatedAt": "2026-04-05T12:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-04T00:10:00.000Z"
+        "updatedAt": "2026-04-04T00:15:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T00:10:00.000Z",
+      "lastModified": "2026-04-04T00:15:00.000Z",
       "taskCount": 22,
       "completedCount": 21,
       "tags": [
