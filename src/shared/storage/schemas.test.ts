@@ -6,6 +6,7 @@ import {
   LocalGroupsSchema,
   LocalPlaylistsSchema,
   LocalSettingsSchema,
+  SessionAddStationDraftSchema,
   SessionPlayerSchema,
   SessionUiSchema,
 } from "./schemas";
@@ -81,5 +82,17 @@ describe("session storage schemas", () => {
 
   it("SessionUiSchema rejects unknown tab", () => {
     expect(() => SessionUiSchema.parse({ activeTab: "unknown" })).toThrow();
+  });
+
+  it("SessionAddStationDraftSchema accepts partial draft", () => {
+    expect(SessionAddStationDraftSchema.parse({})).toEqual({});
+    expect(
+      SessionAddStationDraftSchema.parse({
+        modalOpen: true,
+        name: "X",
+        streamUrl: "https://a.example/stream",
+        coverUrl: "https://b.example/cover.png",
+      }),
+    ).toMatchObject({ modalOpen: true, name: "X" });
   });
 });

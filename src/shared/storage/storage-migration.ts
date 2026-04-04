@@ -14,7 +14,7 @@ const LEGACY_STORAGE_KEYS = {
 } as const;
 
 function pairs(): { legacy: string; next: string }[] {
-  return (Object.keys(STORAGE_KEYS) as (keyof typeof STORAGE_KEYS)[]).map((k) => ({
+  return (Object.keys(LEGACY_STORAGE_KEYS) as (keyof typeof LEGACY_STORAGE_KEYS)[]).map((k) => ({
     legacy: LEGACY_STORAGE_KEYS[k],
     next: STORAGE_KEYS[k],
   }));

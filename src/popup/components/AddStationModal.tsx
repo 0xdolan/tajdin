@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { sanitizeDisplayText, stationArtworkHttpUrl } from "../../shared/utils/sanitize";
+import {
+  clearAddStationDraft,
+  mergeAddStationDraft,
+  readAddStationDraft,
+  type AddStationDraftScope,
+} from "../addStationDraftSession";
 import { isValidHttpOrHttpsStreamUrl } from "../../shared/utils/validate-stream-url";
 import { addCustomStation } from "../stationLibraryApi";
 import { StationFavicon } from "./StationArtwork";
@@ -8,9 +14,11 @@ type AddStationModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAdded?: () => void;
+  /** Separate session keys so popup and settings flows do not clobber each other. */
+  draftScope: AddStationDraftScope;
 };
 
-export function AddStationModal({ open, onOpenChange, onAdded }: AddStationModalProps) {
+export function AddStationModal({ open, onOpenChange, onAdded, draftScope }: AddStationModalProps) {
   const [name, setName] = useState("");
   const [streamUrl, setStreamUrl] = useState("");
   const [coverUrl, setCoverUrl] = useState("");
@@ -25,19 +33,63 @@ export function AddStationModal({ open, onOpenChange, onAdded }: AddStationModal
   }, []);
 
   useEffect(() => {
-    if (!open) {
-      resetForm();
-    }
-  }, [open, resetForm]);
+    if (!open) return;
+    void readAddStationDraft(draftScope).then((d) => {
+      setName(d.name ?? "");
+      setStreamUrl(d.streamUrl ?? "");
+      setCoverUrl(d.coverUrl ?? "");
+      setError(null);
+    });
+    void mergeAddStationDraft(draftScope, { modalOpen: true });
+  }, [open, draftScope]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const flushFields = () => {
+      void mergeAddStationDraft(draftScope, {
+        name,
+        streamUrl,
+        coverUrl,
+      });
+    };
+
+    const t = window.setTimeout(flushFields, 200);
+    const onVis = () => {
+      if (document.visibilityState === "hidden") flushFields();
+    };
+    document.addEventListener("visibilitychange", onVis);
+
+    return () => {
+      window.clearTimeout(t);
+      document.removeEventListener("visibilitychange", onVis);
+      flushFields();
+    };
+  }, [open, draftScope, name, streamUrl, coverUrl]);
 
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onOpenChange(false);
+      if (e.key === "Escape") {
+        e.preventDefault();
+        void mergeAddStationDraft(draftScope, { modalOpen: false });
+        onOpenChange(false);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onOpenChange]);
+  }, [open, draftScope, onOpenChange]);
+
+  const dismissRetainDraft = useCallback(() => {
+    void mergeAddStationDraft(draftScope, { modalOpen: false });
+    onOpenChange(false);
+  }, [draftScope, onOpenChange]);
+
+  const discardDraftAndClose = useCallback(() => {
+    void clearAddStationDraft(draftScope);
+    resetForm();
+    onOpenChange(false);
+  }, [draftScope, onOpenChange, resetForm]);
 
   const previewUrlLine = useMemo(() => {
     const t = streamUrl.trim();
@@ -74,6 +126,8 @@ export function AddStationModal({ open, onOpenChange, onAdded }: AddStationModal
     void addCustomStation(n, u, c || undefined).then((st) => {
       setBusy(false);
       if (st) {
+        void clearAddStationDraft(draftScope);
+        resetForm();
         onAdded?.();
         onOpenChange(false);
       } else {
@@ -88,7 +142,7 @@ export function AddStationModal({ open, onOpenChange, onAdded }: AddStationModal
         type="button"
         className="absolute inset-0 bg-black/60"
         aria-label="Close"
-        onClick={() => onOpenChange(false)}
+        onClick={dismissRetainDraft}
       />
       <div
         role="dialog"
@@ -162,7 +216,7 @@ export function AddStationModal({ open, onOpenChange, onAdded }: AddStationModal
             type="button"
             className="rounded-md px-3 py-2 text-sm text-neutral-300 hover:bg-neutral-800"
             disabled={busy}
-            onClick={() => onOpenChange(false)}
+            onClick={discardDraftAndClose}
           >
             Cancel
           </button>

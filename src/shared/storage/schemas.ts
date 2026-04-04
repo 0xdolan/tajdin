@@ -50,3 +50,13 @@ export const SessionUiSchema = z.object({
 });
 
 export type SessionUi = z.infer<typeof SessionUiSchema>;
+
+/** Transient add-station form draft in `chrome.storage.session` (popup vs settings use separate keys). */
+export const SessionAddStationDraftSchema = z.object({
+  modalOpen: z.boolean().optional(),
+  name: z.string().max(200).optional(),
+  streamUrl: z.string().max(2048).optional(),
+  coverUrl: z.string().max(2048).optional(),
+});
+
+export type SessionAddStationDraft = z.infer<typeof SessionAddStationDraftSchema>;
