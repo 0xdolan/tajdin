@@ -42,6 +42,26 @@ for (const p of ["storage", "alarms", "offscreen"]) {
 
 mustExist("background.js");
 
+function collectManifestIconPaths(m) {
+  const paths = [];
+  if (m.icons && typeof m.icons === "object") {
+    for (const p of Object.values(m.icons)) {
+      if (typeof p === "string") paths.push(p);
+    }
+  }
+  const di = m.action?.default_icon;
+  if (di && typeof di === "object") {
+    for (const p of Object.values(di)) {
+      if (typeof p === "string") paths.push(p);
+    }
+  }
+  return [...new Set(paths)];
+}
+
+for (const rel of collectManifestIconPaths(manifest)) {
+  mustExist(rel);
+}
+
 const popup = manifest.action?.default_popup;
 const optionsPage = manifest.options_ui?.page;
 if (typeof popup !== "string" || !popup) fail("manifest.action.default_popup must be a non-empty string.");
