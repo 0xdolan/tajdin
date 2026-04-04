@@ -52,12 +52,6 @@ function buildStationTooltip(station: Station | null): string | undefined {
   return pieces.join(" · ");
 }
 
-function packagedPlayerIconUrl(): string {
-  return typeof chrome !== "undefined" && chrome.runtime?.getURL
-    ? chrome.runtime.getURL("icons/tajdin-radio-50.png")
-    : "/icons/tajdin-radio-50.png";
-}
-
 function RadioGlyph() {
   return (
     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -82,30 +76,20 @@ function StationArt({
 }) {
   const surface = useSurface();
   const [imgFailed, setImgFailed] = useState(false);
-  const artworkUrl = !isPlaying && station ? stationArtworkHttpUrl(station) : undefined;
+  const artworkUrl = station ? stationArtworkHttpUrl(station) : undefined;
   useEffect(() => {
     setImgFailed(false);
-  }, [artworkUrl, isPlaying]);
+  }, [artworkUrl, station?.stationuuid]);
   const frame =
     surface === "light"
       ? "bg-neutral-200/90 text-neutral-500"
       : "bg-neutral-800 text-neutral-500";
 
-  const extensionIcon = packagedPlayerIconUrl();
-
   return (
     <div
       className={`relative shrink-0 overflow-hidden rounded-md ${frame} ${frameClassName ?? "h-12 w-12"}`}
     >
-      {isPlaying ? (
-        <img
-          src={extensionIcon}
-          alt=""
-          className="h-full w-full object-contain p-0.5"
-          width={48}
-          height={48}
-        />
-      ) : artworkUrl && !imgFailed ? (
+      {artworkUrl && !imgFailed ? (
         <img
           src={artworkUrl}
           alt=""
