@@ -6,8 +6,13 @@ import type { RadioBrowserClient } from "../../shared/api/radio-browser.api";
 import { useStationStore } from "../store/stationStore";
 import { BROWSE_PAGE_SIZE, StationList } from "./StationList";
 
+const { mockLoadCustom } = vi.hoisted(() => ({
+  mockLoadCustom: vi.fn().mockResolvedValue([]),
+}));
+
 vi.mock("../stationLibraryApi", () => ({
   loadPlaylistsAndGroups: vi.fn().mockResolvedValue({ playlists: [], groups: [] }),
+  loadCustomStations: mockLoadCustom,
 }));
 
 describe("StationList", () => {
@@ -15,6 +20,7 @@ describe("StationList", () => {
   let root: ReturnType<typeof createRoot>;
 
   beforeEach(() => {
+    mockLoadCustom.mockResolvedValue([]);
     useStationStore.setState({
       searchResults: [],
       isSearchLoading: false,
@@ -86,6 +92,29 @@ describe("StationList", () => {
         language: "german",
         offset: 0,
       }),
+    );
+  });
+
+  it("merges custom stations into the first page", async () => {
+    mockLoadCustom.mockResolvedValue([
+      {
+        stationuuid: "custom:test-1",
+        name: "Custom FM",
+        url: "https://c.example/s",
+        url_resolved: "https://c.example/s",
+      },
+    ]);
+    const searchStations = vi.fn().mockResolvedValue([]);
+    const client = { searchStations } as unknown as RadioBrowserClient;
+
+    await act(async () => {
+      root.render(<StationList client={client} />);
+    });
+
+    await vi.waitFor(() =>
+      expect(useStationStore.getState().searchResults.some((s) => s.stationuuid === "custom:test-1")).toBe(
+        true,
+      ),
     );
   });
 });
