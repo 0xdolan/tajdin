@@ -19,6 +19,7 @@ export type StationSearchParams = {
   /** Page size; Radio Browser defaults vary — Tajdîn uses 50 (PRD). */
   limit?: number;
   offset?: number;
+  /** e.g. `clickcount`, `random` (Radio Browser search). */
   order?: string;
   reverse?: boolean;
 };
