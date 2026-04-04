@@ -15,6 +15,55 @@ html.tajdin-popup-root #root {
 @tailwind components;
 @tailwind utilities;
 
+/* Station / playlist scroll areas — class names from `listScrollbarClass()` in `list-scrollbar.ts`. */
+@layer utilities {
+  .tajdin-scrollbar-dark {
+    scrollbar-width: thin;
+    scrollbar-color: #525252 #171717;
+  }
+
+  .tajdin-scrollbar-dark::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .tajdin-scrollbar-dark::-webkit-scrollbar-track {
+    background: rgb(23 23 23 / 0.55);
+    border-radius: 9999px;
+  }
+
+  .tajdin-scrollbar-dark::-webkit-scrollbar-thumb {
+    background: #525252;
+    border-radius: 9999px;
+  }
+
+  .tajdin-scrollbar-dark::-webkit-scrollbar-thumb:hover {
+    background: #737373;
+  }
+
+  .tajdin-scrollbar-light {
+    scrollbar-width: thin;
+    scrollbar-color: #a3a3a3 #e5e5e5;
+  }
+
+  .tajdin-scrollbar-light::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .tajdin-scrollbar-light::-webkit-scrollbar-track {
+    background: rgb(229 229 229 / 0.85);
+    border-radius: 9999px;
+  }
+
+  .tajdin-scrollbar-light::-webkit-scrollbar-thumb {
+    background: #a3a3a3;
+    border-radius: 9999px;
+  }
+
+  .tajdin-scrollbar-light::-webkit-scrollbar-thumb:hover {
+    background: #737373;
+  }
+}
+
 /* Arabic script: Vazirmatn (OFL). Latin UI stays on Tailwind/system stack. */
 .tajdin-font-arabic {
   font-family: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;

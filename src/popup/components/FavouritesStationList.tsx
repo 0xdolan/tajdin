@@ -7,6 +7,7 @@ import { useSurface } from "../SurfaceContext";
 import { loadPlaylistsForLibrary, resolveStationForLibrary } from "../stationLibraryApi";
 import { useStationStore } from "../store/stationStore";
 import { StationCard } from "./StationCard";
+import { TajdinVirtuosoScroller } from "./TajdinVirtuosoScroller";
 
 type FavListContext = {
   playlists: Playlist[];
@@ -87,6 +88,7 @@ export function FavouritesStationList() {
     <Virtuoso<Station, FavListContext>
       className="h-full min-h-0"
       style={{ height: "100%" }}
+      components={{ Scroller: TajdinVirtuosoScroller }}
       context={listContext}
       data={stations}
       defaultItemHeight={72}

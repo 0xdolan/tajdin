@@ -22,6 +22,7 @@ import {
 } from "../../shared/api/radio-browser.api";
 import type { Playlist } from "../../shared/types/playlist";
 import type { Station } from "../../shared/types/station";
+import { listScrollbarClass } from "../../shared/utils/list-scrollbar";
 import { sanitizeDisplayText } from "../../shared/utils/sanitize";
 import { startPlaybackWithPlaylistSkip } from "../playerPlayback";
 import {
@@ -36,6 +37,7 @@ import {
   reorderPlaylistStations,
   resolveStationForLibrary,
 } from "../stationLibraryApi";
+import { useSurface } from "../SurfaceContext";
 import { usePlayerStore } from "../store/playerStore";
 
 function GripIcon() {
@@ -476,6 +478,7 @@ function PlaylistSection({
 }
 
 export function PlaylistsPage({ client = defaultRadioBrowserClient }: { client?: RadioBrowserClient }) {
+  const surface = useSurface();
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [newName, setNewName] = useState("");
 
@@ -488,7 +491,9 @@ export function PlaylistsPage({ client = defaultRadioBrowserClient }: { client?:
   }, [refresh]);
 
   return (
-    <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-x-hidden overflow-y-auto">
+    <div
+      className={`flex min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-x-hidden overflow-y-auto ${listScrollbarClass(surface)}`}
+    >
       <form
         className="flex flex-col gap-2 sm:flex-row sm:items-end"
         onSubmit={(e) => {
