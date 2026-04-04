@@ -75,6 +75,22 @@ export function StationCard({ station, playlists, onLibraryMutated }: StationCar
     });
   };
 
+  /** Pointer focus on heart/copy keeps :focus-within; blur on leave when not keyboard :focus-visible so the column hides. */
+  const handleRowPointerLeave = (e: MouseEvent<HTMLDivElement>) => {
+    if (typeof window.matchMedia === "function" && window.matchMedia("(pointer: coarse)").matches) {
+      return;
+    }
+    const root = e.currentTarget;
+    const active = document.activeElement;
+    if (!(active instanceof HTMLElement) || !root.contains(active)) return;
+    try {
+      if (typeof active.matches === "function" && active.matches(":focus-visible")) return;
+    } catch {
+      /* JSDOM may not implement :focus-visible in matches() */
+    }
+    active.blur();
+  };
+
   const copyStreamLink = (e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -147,6 +163,7 @@ export function StationCard({ station, playlists, onLibraryMutated }: StationCar
             isCurrent ? `ring-1 ring-inset ${currentRing}` : "",
           ].join(" ")}
           onClick={() => void playStationFromList(station)}
+          onMouseLeave={handleRowPointerLeave}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();

@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Station } from "../../shared/types/station";
 import { useStationStore } from "../store/stationStore";
 import { StationCard } from "./StationCard";
@@ -36,6 +36,20 @@ describe("StationCard", () => {
       isSearchLoading: false,
       favouriteIds: [],
     });
+    vi.stubGlobal("matchMedia", (query: string) => ({
+      matches: false,
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+    }));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it("matches snapshot for core layout", () => {
@@ -58,6 +72,18 @@ describe("StationCard", () => {
     expect(playStationFromList).toHaveBeenCalledWith(
       expect.objectContaining({ stationuuid: "abc-1", name: "Test Radio" }),
     );
+  });
+
+  it("blurs a pointer-focused control when the pointer leaves the row (fine pointer)", async () => {
+    const user = userEvent.setup();
+    render(<StationCard station={sampleStation} playlists={[]} />);
+    const card = screen.getByTestId("station-card");
+    const heart = screen.getByTestId("station-favourite-heart");
+    await user.click(heart);
+    const blurSpy = vi.spyOn(heart, "blur");
+    fireEvent.mouseLeave(card);
+    expect(blurSpy).toHaveBeenCalledTimes(1);
+    blurSpy.mockRestore();
   });
 
   it("copy stream does not start playback", async () => {
