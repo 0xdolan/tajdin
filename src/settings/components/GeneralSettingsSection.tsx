@@ -71,7 +71,7 @@ export function GeneralSettingsSection({ reloadToken }: GeneralSettingsSectionPr
       <fieldset className="space-y-4 rounded-lg border border-neutral-800 bg-neutral-900/40 p-4">
         <legend className="sr-only">Popup & playback</legend>
         <label className="block text-sm text-neutral-300">
-          Default search mode
+          Default browse search
           <select
             className="mt-1 w-full rounded-md border border-neutral-700 bg-neutral-900 px-2 py-2 text-neutral-100"
             value={settings.searchMode}
@@ -81,10 +81,12 @@ export function GeneralSettingsSection({ reloadToken }: GeneralSettingsSectionPr
               })
             }
           >
-            <option value="fuzzy">Fuzzy</option>
-            <option value="exact">Exact</option>
-            <option value="regex">Regex</option>
+            <option value="exact">Exact (station name via API)</option>
+            <option value="regex">Regex (filter loaded stations)</option>
           </select>
+          <span className="mt-1 block text-xs text-neutral-500">
+            Matches the popup: off = exact name search; on = regex on the current result set.
+          </span>
         </label>
 
         <label className="flex items-center gap-2 text-sm text-neutral-300">

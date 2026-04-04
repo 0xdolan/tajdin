@@ -30,6 +30,11 @@ describe("SettingsSchema", () => {
     expect(s.popupHeightPx).toBe(DEFAULT_SETTINGS.popupHeightPx);
   });
 
+  it("parseSettingsWithDefaults maps legacy fuzzy searchMode to exact", () => {
+    const s = parseSettingsWithDefaults({ searchMode: "fuzzy" } as unknown);
+    expect(s.searchMode).toBe("exact");
+  });
+
   it("rejects invalid theme", () => {
     expect(() =>
       SettingsSchema.parse({

@@ -7,7 +7,7 @@ const defaultSettingsSnapshot = (): Settings => ({
   theme: "system",
   popupWidthPx: 400,
   popupHeightPx: 600,
-  searchMode: "fuzzy",
+  searchMode: "exact",
   preferredBitrateKbps: "auto",
   playbackAutostart: false,
 });
@@ -17,7 +17,7 @@ const store = vi.hoisted(() => ({
     theme: "system",
     popupWidthPx: 400,
     popupHeightPx: 600,
-    searchMode: "fuzzy",
+    searchMode: "exact",
     preferredBitrateKbps: "auto" as const,
     playbackAutostart: false,
   } as Settings,

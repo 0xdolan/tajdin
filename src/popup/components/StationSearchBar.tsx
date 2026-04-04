@@ -6,19 +6,7 @@ type StationSearchBarProps = Pick<
   "rawQuery" | "setRawQuery" | "mode" | "setMode" | "regexInvalid"
 >;
 
-function FuzzyModeIcon({ active: _active }: { active: boolean }) {
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.847a4.5 4.5 0 003.09 3.09L15.75 12l-2.847.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"
-      />
-    </svg>
-  );
-}
-
-function RegexModeIcon({ active: _active }: { active: boolean }) {
+function RegexModeIcon() {
   return (
     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
       <path
@@ -39,6 +27,7 @@ export function StationSearchBar({
 }: StationSearchBarProps) {
   const surface = useSurface();
   const invalid = mode === "regex" && regexInvalid;
+  const regexOn = mode === "regex";
 
   const shell =
     surface === "light"
@@ -54,9 +43,9 @@ export function StationSearchBar({
           invalid ? "text-red-300" : ""
         }`;
 
-  const toggleWrap = surface === "light" ? "flex shrink-0 items-center gap-0.5 pr-1" : "flex shrink-0 items-center gap-0.5 pr-1";
+  const toggleWrap = surface === "light" ? "flex shrink-0 items-center pr-1" : "flex shrink-0 items-center pr-1";
   const btnBase =
-    "flex h-8 w-8 items-center justify-center rounded-md transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1";
+    "flex h-8 min-w-[2.25rem] items-center justify-center rounded-md px-1.5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1";
   const btnIdle =
     surface === "light"
       ? `${btnBase} text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800`
@@ -77,9 +66,9 @@ export function StationSearchBar({
           type="search"
           autoComplete="off"
           placeholder={
-            mode === "fuzzy"
-              ? "Search by name, tags, country… (fuzzy)"
-              : "Regular expression on results…"
+            regexOn
+              ? "Regular expression on loaded stations…"
+              : "Station name (Radio Browser search)…"
           }
           className={inputCls}
           value={rawQuery}
@@ -87,26 +76,21 @@ export function StationSearchBar({
           aria-invalid={invalid}
           aria-describedby={invalid ? "tajdin-search-regex-error" : undefined}
         />
-        <div className={toggleWrap} role="group" aria-label="Search mode">
+        <div className={toggleWrap}>
           <button
             type="button"
-            className={mode === "fuzzy" ? btnOn : btnIdle}
-            aria-pressed={mode === "fuzzy"}
-            aria-label="Fuzzy search — typo-tolerant, matches name, tags, country"
-            title="Fuzzy: typos & multi-field"
-            onClick={() => setMode("fuzzy")}
+            className={regexOn ? btnOn : btnIdle}
+            aria-pressed={regexOn}
+            aria-label={
+              regexOn
+                ? "Regex mode on — click to use exact station name search"
+                : "Regex mode off — click to filter loaded stations by pattern"
+            }
+            title={regexOn ? "Regex: pattern on loaded results (click for exact name search)" : "Exact: API name search (click for regex)"}
+            onClick={() => setMode(regexOn ? "exact" : "regex")}
           >
-            <FuzzyModeIcon active={mode === "fuzzy"} />
-          </button>
-          <button
-            type="button"
-            className={mode === "regex" ? btnOn : btnIdle}
-            aria-pressed={mode === "regex"}
-            aria-label="Regular expression search on loaded stations"
-            title="Regex: pattern match"
-            onClick={() => setMode("regex")}
-          >
-            <RegexModeIcon active={mode === "regex"} />
+            <RegexModeIcon />
+            <span className="sr-only">Regex</span>
           </button>
         </div>
       </div>

@@ -8,7 +8,7 @@ import {
 import { DEFAULT_SETTINGS } from "../../shared/types/settings";
 import { usePlayerStore } from "./playerStore";
 import { useStationStore } from "./stationStore";
-import { useUiStore } from "./uiStore";
+import { useUiStore, type BrowseSearchMode } from "./uiStore";
 
 const defaultSessionPlayer = {
   stationuuid: null as string | null,
@@ -37,11 +37,9 @@ function pickPersistedUi(state: ReturnType<typeof useUiStore.getState>) {
   };
 }
 
-function mapSettingsSearchToPopup(
-  m: (typeof DEFAULT_SETTINGS)["searchMode"],
-): "fuzzy" | "regex" {
+function mapSettingsSearchToPopup(m: (typeof DEFAULT_SETTINGS)["searchMode"]): BrowseSearchMode {
   if (m === "regex") return "regex";
-  return "fuzzy";
+  return "exact";
 }
 
 export async function hydratePopupStoresFromChrome(): Promise<void> {
