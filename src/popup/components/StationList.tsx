@@ -5,7 +5,7 @@ import {
   type RadioBrowserClient,
   type StationSearchParams,
 } from "../../shared/api/radio-browser.api";
-import { fuzzySearchStations, regexSearchStations } from "../../shared/utils/fuzzy-search";
+import { regexSearchStations } from "../../shared/utils/fuzzy-search";
 import { mergeStationsDedupe } from "../../shared/utils/station-merge";
 import type { Playlist } from "../../shared/types/playlist";
 import type { Station } from "../../shared/types/station";
@@ -59,7 +59,7 @@ function StationListSkeleton() {
 export function StationList({
   client = defaultRadioBrowserClient,
   searchQuery = "",
-  searchMode = "fuzzy",
+  searchMode = "exact",
   regexInvalid = false,
   languageFilter = "",
   customStationsTick = 0,
@@ -98,8 +98,8 @@ export function StationList({
   const lang = languageFilter.trim();
   const regexCorpusMode =
     searchMode === "regex" && q !== "" && !regexInvalid;
-  /** Server-side name filter is only used in fuzzy mode with a query; regex uses browse pages + client filter. */
-  const fetchUsesNameFilter = searchMode === "fuzzy" && q !== "";
+  /** Server-side name filter in exact mode with a query; regex uses browse pages + client filter. */
+  const fetchUsesNameFilter = searchMode === "exact" && q !== "";
 
   const listParams = useCallback(
     (offset: number): StationSearchParams => ({
@@ -112,7 +112,7 @@ export function StationList({
   );
 
   // Deps use `listParams` + `fetchUsesNameFilter` (via listParams) instead of `searchMode` so toggling
-  // fuzzy ↔ regex with an empty query does not clear the list or refetch (same Radio Browser request).
+  // exact ↔ regex with an empty query does not clear the list or refetch (same Radio Browser request).
   useEffect(() => {
     if (searchMode === "regex" && q !== "" && regexInvalid) {
       return;
@@ -140,11 +140,7 @@ export function StationList({
           const r = regexSearchStations(corpusRef.current, searchQuery);
           replaceSearchResults(r.ok ? r.stations : []);
         } else {
-          let out = mergedBase;
-          if (searchMode === "fuzzy" && q) {
-            out = fuzzySearchStations(out, q);
-          }
-          replaceSearchResults(out);
+          replaceSearchResults(mergedBase);
         }
         offsetRef.current = batch.length;
         hasMoreRef.current = batch.length >= BROWSE_PAGE_SIZE;
@@ -196,11 +192,7 @@ export function StationList({
           replaceSearchResults(r.stations);
         }
       } else {
-        let out = batch;
-        if (searchMode === "fuzzy" && q) {
-          out = fuzzySearchStations(batch, q);
-        }
-        appendSearchResults(out);
+        appendSearchResults(batch);
       }
       offsetRef.current += batch.length;
       hasMoreRef.current = batch.length >= BROWSE_PAGE_SIZE;

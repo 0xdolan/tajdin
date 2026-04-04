@@ -2,7 +2,7 @@ import { create } from "zustand";
 import type { SessionUi } from "../../shared/storage/schemas";
 
 export type ActiveTab = NonNullable<SessionUi["activeTab"]>;
-export type BrowseSearchMode = "fuzzy" | "regex";
+export type BrowseSearchMode = "exact" | "regex";
 
 export const useUiStore = create<{
   activeTab: ActiveTab;
@@ -17,7 +17,7 @@ export const useUiStore = create<{
 }>((set) => ({
   activeTab: "browse",
   browseRawQuery: "",
-  browseSearchMode: "fuzzy",
+  browseSearchMode: "exact",
   browseLanguageApiValue: "",
   setActiveTab: (activeTab) => set({ activeTab }),
   setBrowseRawQuery: (browseRawQuery) => set({ browseRawQuery }),

@@ -3,7 +3,11 @@ import { z } from "zod";
 export const ThemeSchema = z.enum(["light", "dark", "system"]);
 export type Theme = z.infer<typeof ThemeSchema>;
 
-export const SearchModeSchema = z.enum(["fuzzy", "exact", "regex"]);
+/** Legacy `"fuzzy"` is coerced to `"exact"` (API name search, no client Fuse pass). */
+export const SearchModeSchema = z.preprocess(
+  (v) => (v === "fuzzy" ? "exact" : v),
+  z.enum(["exact", "regex"]),
+);
 export type SearchMode = z.infer<typeof SearchModeSchema>;
 
 const preferredBitrate = z.union([z.literal("auto"), z.number().int().positive()]);
@@ -36,7 +40,7 @@ export const DEFAULT_SETTINGS: Settings = {
   theme: "system",
   popupWidthPx: 400,
   popupHeightPx: 600,
-  searchMode: "fuzzy",
+  searchMode: "exact",
   preferredBitrateKbps: "auto",
   playbackAutostart: false,
 };
