@@ -100,7 +100,7 @@ describe("Player", () => {
     );
   });
 
-  it("shows packaged extension icon while playing", () => {
+  it("shows station favicon while playing when available", () => {
     usePlayerStore.getState().setStation({
       stationuuid: "s1",
       name: "Demo FM",
@@ -110,8 +110,11 @@ describe("Player", () => {
     });
     usePlayerStore.getState().setPlaying(true);
     render(<Player />);
-    const img = document.querySelector(`img[src="chrome-extension://test-id/icons/tajdin-radio-50.png"]`);
+    const img = document.querySelector('img[src="https://example.com/station-icon.png"]');
     expect(img).toBeInTheDocument();
+    expect(
+      document.querySelector(`img[src="chrome-extension://test-id/icons/tajdin-radio-50.png"]`),
+    ).not.toBeInTheDocument();
   });
 
   it("shows station favicon when stopped", () => {
