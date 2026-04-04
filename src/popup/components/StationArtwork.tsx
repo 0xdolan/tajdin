@@ -18,19 +18,27 @@ type StationFaviconProps = {
   favicon?: string;
   coverUrl?: string;
   sizeClass?: string;
+  /** Browse/favourites list rows: pass popup `SurfaceContext` value; modals/settings omit (defaults to dark). */
+  surface?: "dark" | "light";
 };
 
 /** Square artwork for list rows (10 = 2.5rem). `coverUrl` (custom station) overrides `favicon`. */
-export function StationFavicon({ favicon, coverUrl, sizeClass = "h-10 w-10" }: StationFaviconProps) {
+export function StationFavicon({
+  favicon,
+  coverUrl,
+  sizeClass = "h-10 w-10",
+  surface = "dark",
+}: StationFaviconProps) {
   const [failed, setFailed] = useState(false);
   const safeSrc = stationArtworkHttpUrl({ coverUrl, favicon });
+  const frameBg = surface === "light" ? "bg-neutral-200/90" : "bg-neutral-800";
   useEffect(() => {
     setFailed(false);
   }, [safeSrc]);
   if (!safeSrc || failed) {
     return (
       <div
-        className={`flex shrink-0 items-center justify-center rounded-md bg-neutral-800 text-neutral-500 ${sizeClass}`}
+        className={`flex shrink-0 items-center justify-center rounded-md ${frameBg} text-neutral-500 ${sizeClass}`}
         aria-hidden
       >
         <RadioFallbackIcon />
@@ -41,7 +49,7 @@ export function StationFavicon({ favicon, coverUrl, sizeClass = "h-10 w-10" }: S
     <img
       src={safeSrc}
       alt=""
-      className={`shrink-0 rounded-md bg-neutral-800 object-cover ${sizeClass}`}
+      className={`shrink-0 rounded-md object-cover ${frameBg} ${sizeClass}`}
       loading="lazy"
       onError={() => setFailed(true)}
     />

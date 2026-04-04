@@ -1105,11 +1105,11 @@
             "title": "Station row: copy button background matches favicon frame",
             "description": "Use the same background treatment as the station favicon area for the copy-stream button.",
             "dependencies": [],
-            "details": "`StationCard.tsx`: align `StationFavicon` frame and copy button surface classes for light/dark (`useSurface`).",
-            "status": "pending",
+            "details": "DONE: `StationFavicon` optional `surface` (light `bg-neutral-200/90`, dark `bg-neutral-800`); `StationCard` passes `useSurface`. Copy control uses same bg/border tokens, dropped `shadow-sm`. Snapshot updated.",
+            "status": "done",
             "testStrategy": "Visual check browse + favourites rows.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-03T20:00:00.000Z"
+            "updatedAt": "2026-04-06T00:00:00.000Z"
           },
           {
             "id": 10,
@@ -1156,12 +1156,12 @@
             "updatedAt": "2026-04-03T22:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-04T10:36:09.180Z"
+        "updatedAt": "2026-04-04T18:05:04.661Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T10:36:09.182Z",
+      "lastModified": "2026-04-04T18:05:04.662Z",
       "taskCount": 24,
       "completedCount": 23,
       "tags": [
