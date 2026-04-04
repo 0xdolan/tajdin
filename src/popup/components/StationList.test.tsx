@@ -11,7 +11,7 @@ const { mockLoadCustom } = vi.hoisted(() => ({
 }));
 
 vi.mock("../stationLibraryApi", () => ({
-  loadPlaylistsAndGroups: vi.fn().mockResolvedValue({ playlists: [], groups: [] }),
+  loadPlaylistsForLibrary: vi.fn().mockResolvedValue({ playlists: [] }),
   loadCustomStations: mockLoadCustom,
 }));
 
@@ -25,7 +25,6 @@ describe("StationList", () => {
       searchResults: [],
       isSearchLoading: false,
       favouriteIds: [],
-      browseLanguageApiValue: "",
     });
     host = document.createElement("div");
     host.style.height = "400px";

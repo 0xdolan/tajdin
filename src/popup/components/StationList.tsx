@@ -7,11 +7,11 @@ import {
 } from "../../shared/api/radio-browser.api";
 import { fuzzySearchStations, regexSearchStations } from "../../shared/utils/fuzzy-search";
 import { mergeStationsDedupe } from "../../shared/utils/station-merge";
-import type { Group } from "../../shared/types/group";
 import type { Playlist } from "../../shared/types/playlist";
 import type { Station } from "../../shared/types/station";
 import type { SearchMode } from "../hooks/useSearch";
-import { loadCustomStations, loadPlaylistsAndGroups } from "../stationLibraryApi";
+import { useSurface } from "../SurfaceContext";
+import { loadCustomStations, loadPlaylistsForLibrary } from "../stationLibraryApi";
 import { useStationStore } from "../store/stationStore";
 import { StationCard } from "./StationCard";
 
@@ -40,19 +40,17 @@ export type StationListProps = {
 
 export type StationListContext = {
   playlists: Playlist[];
-  groups: Group[];
   refreshLibrary: () => void;
 };
 
 function StationListSkeleton() {
+  const surface = useSurface();
+  const bar =
+    surface === "light" ? "h-[72px] shrink-0 animate-pulse rounded-md bg-neutral-200/90" : "h-[72px] shrink-0 animate-pulse rounded-md bg-neutral-800/80";
   return (
-    <div
-      className="flex min-h-0 flex-1 flex-col gap-2 py-1"
-      aria-busy="true"
-      aria-label="Loading stations"
-    >
+    <div className="flex min-h-0 flex-1 flex-col gap-2 py-1" aria-busy="true" aria-label="Loading stations">
       {Array.from({ length: 8 }, (_, i) => (
-        <div key={i} className="h-[72px] shrink-0 animate-pulse rounded-md bg-neutral-800/80" />
+        <div key={i} className={bar} />
       ))}
     </div>
   );
@@ -66,18 +64,16 @@ export function StationList({
   languageFilter = "",
   customStationsTick = 0,
 }: StationListProps) {
+  const surface = useSurface();
   const searchResults = useStationStore((s) => s.searchResults);
   const isSearchLoading = useStationStore((s) => s.isSearchLoading);
   const replaceSearchResults = useStationStore((s) => s.replaceSearchResults);
   const appendSearchResults = useStationStore((s) => s.appendSearchResults);
   const setSearchLoading = useStationStore((s) => s.setSearchLoading);
 
-  const [library, setLibrary] = useState<{ playlists: Playlist[]; groups: Group[] }>({
-    playlists: [],
-    groups: [],
-  });
+  const [library, setLibrary] = useState<{ playlists: Playlist[] }>({ playlists: [] });
   const refreshLibrary = useCallback(() => {
-    void loadPlaylistsAndGroups().then(setLibrary);
+    void loadPlaylistsForLibrary().then(setLibrary);
   }, []);
 
   useEffect(() => {
@@ -87,10 +83,9 @@ export function StationList({
   const listContext = useMemo<StationListContext>(
     () => ({
       playlists: library.playlists,
-      groups: library.groups,
       refreshLibrary,
     }),
-    [library.playlists, library.groups, refreshLibrary],
+    [library.playlists, refreshLibrary],
   );
 
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -236,8 +231,9 @@ export function StationList({
   }
 
   if (!isSearchLoading && searchResults.length === 0) {
+    const emptyC = surface === "light" ? "text-neutral-600" : "text-neutral-500";
     return (
-      <p className="text-sm text-neutral-500" role="status">
+      <p className={`text-sm ${emptyC}`} role="status">
         No stations loaded. Check your connection and try reopening the popup.
       </p>
     );
@@ -254,18 +250,19 @@ export function StationList({
       endReached={handleEndReached}
       computeItemKey={(_index, station) => station.stationuuid}
       itemContent={(_index, station, ctx) => (
-        <StationCard
-          station={station}
-          playlists={ctx.playlists}
-          groups={ctx.groups}
-          onLibraryMutated={ctx.refreshLibrary}
-        />
+        <StationCard station={station} playlists={ctx.playlists} onLibraryMutated={ctx.refreshLibrary} />
       )}
       components={{
         Footer: () =>
           isLoadingMore ? (
             <div className="py-2" aria-hidden>
-              <div className="h-[72px] animate-pulse rounded-md bg-neutral-800/60" />
+              <div
+                className={
+                  surface === "light"
+                    ? "h-[72px] animate-pulse rounded-md bg-neutral-200/80"
+                    : "h-[72px] animate-pulse rounded-md bg-neutral-800/60"
+                }
+              />
             </div>
           ) : null,
       }}

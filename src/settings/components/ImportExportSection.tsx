@@ -118,8 +118,8 @@ export function ImportExportSection({ reloadToken }: ImportExportSectionProps) {
       <div>
         <h2 className="text-base font-semibold text-neutral-100">Backup &amp; restore</h2>
         <p className="mt-1 text-sm text-neutral-500">
-          Export all local Zeng data (settings, playlists, groups, custom stations, favourites) as JSON. Import
-          validates with the same schemas used for storage.
+          Export all local Zeng data (settings, playlists, custom stations, favourites) as JSON. Import validates
+          with the same schemas used for storage. Older backups may list groups; those entries are ignored.
         </p>
       </div>
 
@@ -203,7 +203,7 @@ export function ImportExportSection({ reloadToken }: ImportExportSectionProps) {
                 <span className="text-neutral-300">Playlists:</span> {preview.sections.playlists.detail}
               </li>
               <li>
-                <span className="text-neutral-300">Groups:</span> {preview.sections.groups.detail}
+                <span className="text-neutral-300">Legacy groups:</span> {preview.sections.groups.detail}
               </li>
               <li>
                 <span className="text-neutral-300">Custom stations:</span> {preview.sections.customStations.detail}

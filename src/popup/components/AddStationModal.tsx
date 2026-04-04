@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { sanitizeDisplayText } from "../../shared/utils/sanitize";
 import { isValidHttpOrHttpsStreamUrl } from "../../shared/utils/validate-stream-url";
 import { addCustomStation } from "../stationLibraryApi";
+import { StationFavicon } from "./StationArtwork";
 
 type AddStationModalProps = {
   open: boolean;
@@ -35,7 +37,19 @@ export function AddStationModal({ open, onOpenChange, onAdded }: AddStationModal
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onOpenChange]);
 
+  const previewUrlLine = useMemo(() => {
+    const t = streamUrl.trim();
+    if (!t) return "Enter a stream URL…";
+    try {
+      return new URL(t).host || t.slice(0, 48);
+    } catch {
+      return t.length > 48 ? `${t.slice(0, 48)}…` : t;
+    }
+  }, [streamUrl]);
+
   if (!open) return null;
+
+  const previewTitle = sanitizeDisplayText(name.trim() || "Station name", { maxLength: 200 });
 
   const submit = () => {
     setError(null);
@@ -82,6 +96,19 @@ export function AddStationModal({ open, onOpenChange, onAdded }: AddStationModal
           Stream URL must use HTTP or HTTPS. The station is stored on this device and appears in Browse
           search with a <code className="text-neutral-400">custom:</code> id.
         </p>
+        <div
+          className="mb-4 flex h-[72px] items-center gap-2 rounded-lg border border-neutral-700 bg-neutral-900/80 px-2 py-1.5"
+          aria-hidden
+        >
+          <StationFavicon favicon={undefined} />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium text-neutral-100" dir="auto">
+              {previewTitle}
+            </p>
+            <p className="truncate text-xs text-neutral-500">Custom stream</p>
+            <p className="truncate text-xs text-neutral-600">{previewUrlLine}</p>
+          </div>
+        </div>
         <div className="flex flex-col gap-3">
           <label className="text-xs text-neutral-400">
             Name

@@ -58,6 +58,10 @@ describe("session storage schemas", () => {
     expect(SessionUiSchema.parse({ activeTab: "browse" }).activeTab).toBe("browse");
   });
 
+  it("SessionUiSchema maps legacy groups tab to browse", () => {
+    expect(SessionUiSchema.parse({ activeTab: "groups" }).activeTab).toBe("browse");
+  });
+
   it("SessionUiSchema rejects unknown tab", () => {
     expect(() => SessionUiSchema.parse({ activeTab: "unknown" })).toThrow();
   });

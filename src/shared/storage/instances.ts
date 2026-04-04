@@ -2,7 +2,6 @@ import { ChromeStorageWrapper, chromeStorageAreaAdapter } from "./chrome-storage
 import {
   LocalCustomStationsSchema,
   LocalFavouriteIdsSchema,
-  LocalGroupsSchema,
   LocalPlaylistsSchema,
   LocalSettingsSchema,
   SessionPlayerSchema,
@@ -12,7 +11,6 @@ import {
 /** Stable keys for Zeng blobs in `chrome.storage`. */
 export const STORAGE_KEYS = {
   playlists: "zeng.playlists.v1",
-  groups: "zeng.groups.v1",
   customStations: "zeng.customStations.v1",
   favouriteIds: "zeng.favouriteIds.v1",
   settings: "zeng.settings.v1",
@@ -33,7 +31,6 @@ export const storageLocal = chromeStorageAreaAdapter(chrome.storage.local, "loca
 export const storageSession = chromeStorageAreaAdapter(chrome.storage.session, "session");
 
 export const localPlaylistsStorage = new ChromeStorageWrapper(storageLocal, LocalPlaylistsSchema);
-export const localGroupsStorage = new ChromeStorageWrapper(storageLocal, LocalGroupsSchema);
 export const localCustomStationsStorage = new ChromeStorageWrapper(
   storageLocal,
   LocalCustomStationsSchema,

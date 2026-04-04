@@ -1,6 +1,13 @@
+@import "@fontsource/vazirmatn/arabic-400.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Arabic script: Vazirmatn (OFL). Latin UI stays on Tailwind/system stack. */
+.zeng-font-arabic {
+  font-family: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
+}
 
 @keyframes zeng-eq-bar {
   0%,

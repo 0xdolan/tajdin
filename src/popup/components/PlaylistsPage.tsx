@@ -27,7 +27,7 @@ import { startPlaybackWithPlaylistSkip } from "../playerPlayback";
 import {
   createPlaylist,
   deletePlaylist,
-  loadPlaylistsAndGroups,
+  loadPlaylistsForLibrary,
   removeStationFromPlaylist,
   renamePlaylist,
   reorderPlaylistStations,
@@ -251,7 +251,7 @@ export function PlaylistsPage({ client = defaultRadioBrowserClient }: { client?:
   const [newName, setNewName] = useState("");
 
   const refresh = useCallback(() => {
-    void loadPlaylistsAndGroups().then((r) => setPlaylists(r.playlists));
+    void loadPlaylistsForLibrary().then((r) => setPlaylists(r.playlists));
   }, []);
 
   useEffect(() => {

@@ -6,9 +6,13 @@ import type { Station } from "../../shared/types/station";
 import { useStationStore } from "../store/stationStore";
 import { StationCard } from "./StationCard";
 
+const playStationFromList = vi.fn().mockResolvedValue(true);
+vi.mock("../browseNavigation", () => ({
+  playStationFromList: (...a: unknown[]) => playStationFromList(...a),
+}));
+
 vi.mock("../stationLibraryApi", () => ({
   appendStationToPlaylist: vi.fn().mockResolvedValue(true),
-  appendStationToGroup: vi.fn().mockResolvedValue(true),
 }));
 
 const sampleStation: Station = {
@@ -26,30 +30,39 @@ const sampleStation: Station = {
 
 describe("StationCard", () => {
   beforeEach(() => {
+    playStationFromList.mockClear();
     useStationStore.setState({
       searchResults: [],
       isSearchLoading: false,
       favouriteIds: [],
-      browseLanguageApiValue: "",
     });
   });
 
   it("matches snapshot for core layout", () => {
     const { container } = render(
-      <StationCard station={sampleStation} playlists={[]} groups={[]} />,
+      <StationCard station={sampleStation} playlists={[]} />,
     );
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it("strips simple HTML from displayed station name", () => {
     const st = { ...sampleStation, name: "A<script>x</script>B" };
-    render(<StationCard station={st} playlists={[]} groups={[]} />);
+    render(<StationCard station={st} playlists={[]} />);
     expect(screen.getByText("AB")).toBeInTheDocument();
+  });
+
+  it("starts playback when the row is clicked", async () => {
+    const user = userEvent.setup();
+    render(<StationCard station={sampleStation} playlists={[]} />);
+    await user.click(screen.getByTestId("station-card"));
+    expect(playStationFromList).toHaveBeenCalledWith(
+      expect.objectContaining({ stationuuid: "abc-1", name: "Test Radio" }),
+    );
   });
 
   it("toggles favourite when heart is clicked", async () => {
     const user = userEvent.setup();
-    render(<StationCard station={sampleStation} playlists={[]} groups={[]} />);
+    render(<StationCard station={sampleStation} playlists={[]} />);
     const heart = screen.getByTestId("station-favourite-heart");
     await user.click(heart);
     expect(useStationStore.getState().favouriteIds).toContain("abc-1");
@@ -59,12 +72,11 @@ describe("StationCard", () => {
 
   it("opens context menu on right-click", async () => {
     const user = userEvent.setup();
-    render(<StationCard station={sampleStation} playlists={[]} groups={[]} />);
+    render(<StationCard station={sampleStation} playlists={[]} />);
     const card = screen.getByTestId("station-card");
     fireEvent.contextMenu(card);
     expect(await screen.findByRole("menu")).toBeInTheDocument();
     expect(screen.getByText("Add to playlist")).toBeInTheDocument();
-    expect(screen.getByText("Add to group")).toBeInTheDocument();
     await user.keyboard("{Escape}");
   });
 });

@@ -7,7 +7,6 @@ describe("useStationStore", () => {
       searchResults: [],
       isSearchLoading: false,
       favouriteIds: [],
-      browseLanguageApiValue: "",
     });
   });
 
@@ -27,7 +26,6 @@ describe("useStationStore", () => {
       searchResults: [a],
       isSearchLoading: false,
       favouriteIds: [],
-      browseLanguageApiValue: "",
     });
     useStationStore.getState().appendSearchResults([a, b]);
     expect(useStationStore.getState().searchResults).toEqual([a, b]);
@@ -38,7 +36,6 @@ describe("useStationStore", () => {
       searchResults: [{ stationuuid: "x", name: "N", url: "u" }],
       isSearchLoading: true,
       favouriteIds: [],
-      browseLanguageApiValue: "",
     });
     useStationStore.getState().clearSearch();
     expect(useStationStore.getState().searchResults).toEqual([]);

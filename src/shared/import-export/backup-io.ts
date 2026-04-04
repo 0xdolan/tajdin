@@ -1,4 +1,3 @@
-import type { Group } from "../types/group";
 import type { Playlist } from "../types/playlist";
 import { DEFAULT_SETTINGS, type Settings, parseSettingsWithDefaults } from "../types/settings";
 import type { Station } from "../types/station";
@@ -6,7 +5,6 @@ import {
   STORAGE_KEYS,
   localCustomStationsStorage,
   localFavouriteIdsStorage,
-  localGroupsStorage,
   localPlaylistsStorage,
   localSettingsStorage,
 } from "../storage/instances";
@@ -23,7 +21,6 @@ export type { ZengBackupData, ZengBackupFile } from "./backup-schema";
 export type LocalDataSnapshot = {
   settings: Settings;
   playlists: Playlist[];
-  groups: Group[];
   customStations: Station[];
   favouriteIds: string[];
 };
@@ -56,17 +53,6 @@ function playlistEqual(a: Playlist, b: Playlist): boolean {
     a.name === b.name &&
     (a.description ?? "") === (b.description ?? "") &&
     (a.colour ?? "") === (b.colour ?? "") &&
-    a.lastModified === b.lastModified &&
-    a.stationUuids.length === b.stationUuids.length &&
-    a.stationUuids.every((u, i) => u === b.stationUuids[i])
-  );
-}
-
-function groupEqual(a: Group, b: Group): boolean {
-  return (
-    a.id === b.id &&
-    a.name === b.name &&
-    (a.iconKey ?? "") === (b.iconKey ?? "") &&
     a.lastModified === b.lastModified &&
     a.stationUuids.length === b.stationUuids.length &&
     a.stationUuids.every((u, i) => u === b.stationUuids[i])
@@ -151,21 +137,6 @@ function countPlaylistMerge(local: Playlist[], imported: Playlist[] | undefined)
   return { added, updated, localOnly };
 }
 
-function countGroupMerge(local: Group[], imported: Group[] | undefined): { added: number; updated: number; localOnly: number } {
-  if (!imported?.length) return { added: 0, updated: 0, localOnly: local.length };
-  const localById = new Map(local.map((g) => [g.id, g] as const));
-  const importIds = new Set(imported.map((g) => g.id));
-  let added = 0;
-  let updated = 0;
-  for (const g of imported) {
-    const prev = localById.get(g.id);
-    if (!prev) added += 1;
-    else if (!groupEqual(prev, g)) updated += 1;
-  }
-  const localOnly = local.filter((g) => !importIds.has(g.id)).length;
-  return { added, updated, localOnly };
-}
-
 function countStationMerge(local: Station[], imported: Station[] | undefined): { added: number; updated: number; localOnly: number } {
   if (!imported?.length) return { added: 0, updated: 0, localOnly: local.length };
   const localByU = new Map(local.map((s) => [s.stationuuid, s] as const));
@@ -211,14 +182,13 @@ function settingsKeysChanged(cur: Settings, imp: Settings | undefined): string[]
 }
 
 export async function readLocalDataSnapshot(): Promise<LocalDataSnapshot> {
-  const [playlists, groups, customStations, favouriteIds, settings] = await Promise.all([
+  const [playlists, customStations, favouriteIds, settings] = await Promise.all([
     localPlaylistsStorage.getWithDefault(STORAGE_KEYS.playlists, []),
-    localGroupsStorage.getWithDefault(STORAGE_KEYS.groups, []),
     localCustomStationsStorage.getWithDefault(STORAGE_KEYS.customStations, []),
     localFavouriteIdsStorage.getWithDefault(STORAGE_KEYS.favouriteIds, []),
     localSettingsStorage.getWithDefault(STORAGE_KEYS.settings, DEFAULT_SETTINGS, { onInvalidStored: "default" }),
   ]);
-  return { playlists, groups, customStations, favouriteIds, settings };
+  return { playlists, customStations, favouriteIds, settings };
 }
 
 export function buildBackupFile(snapshot: LocalDataSnapshot): ZengBackupFile {
@@ -229,7 +199,6 @@ export function buildBackupFile(snapshot: LocalDataSnapshot): ZengBackupFile {
     data: {
       settings: snapshot.settings,
       playlists: snapshot.playlists,
-      groups: snapshot.groups,
       customStations: snapshot.customStations,
       favouriteIds: snapshot.favouriteIds,
     },
@@ -259,7 +228,7 @@ export function buildImportPreview(local: LocalDataSnapshot, data: ZengBackupDat
   const sections = {
     settings: buildSettingsLine(local.settings, data.settings, mode),
     playlists: buildPlaylistsLine(local.playlists, data.playlists, mode),
-    groups: buildGroupsLine(local.groups, data.groups, mode),
+    groups: buildGroupsLegacyLine(data),
     customStations: buildStationsLine(local.customStations, data.customStations, mode),
     favourites: buildFavouritesLine(local.favouriteIds, data.favouriteIds, mode),
   };
@@ -324,25 +293,14 @@ function buildPlaylistsLine(
   };
 }
 
-function buildGroupsLine(cur: Group[], imp: Group[] | undefined, mode: "merge" | "replace"): SectionLine {
-  if (imp === undefined) {
-    return { state: "absent", detail: "Not in backup — existing groups are left unchanged." };
+function buildGroupsLegacyLine(data: ZengBackupData): SectionLine {
+  const n = data.groups?.length ?? 0;
+  if (n === 0) {
+    return { state: "absent", detail: "No legacy groups section in backup." };
   }
-  if (mode === "replace") {
-    return {
-      state: "replace",
-      before: cur.length,
-      after: imp.length,
-      detail: `Groups: ${cur.length} now → ${imp.length} after import.`,
-    };
-  }
-  const { added, updated, localOnly } = countGroupMerge(cur, imp);
   return {
-    state: "merge",
-    detail: `+${added} new, ${updated} updated, ${localOnly} local-only kept.`,
-    added,
-    updated,
-    localOnly,
+    state: "absent",
+    detail: `Backup lists ${n} group(s); groups are no longer supported and will not be imported.`,
   };
 }
 
@@ -401,13 +359,11 @@ function buildFavouritesLine(
 export async function applyBackupReplace(data: ZengBackupData): Promise<boolean> {
   const settings = parseSettingsWithDefaults(data.settings ?? DEFAULT_SETTINGS);
   const playlists = data.playlists ?? [];
-  const groups = data.groups ?? [];
   const customStations = data.customStations ?? [];
   const favouriteIds = data.favouriteIds ?? [];
   const results = await Promise.all([
     localSettingsStorage.set(STORAGE_KEYS.settings, settings),
     localPlaylistsStorage.set(STORAGE_KEYS.playlists, playlists),
-    localGroupsStorage.set(STORAGE_KEYS.groups, groups),
     localCustomStationsStorage.set(STORAGE_KEYS.customStations, customStations),
     localFavouriteIdsStorage.set(STORAGE_KEYS.favouriteIds, favouriteIds),
   ]);
@@ -420,7 +376,6 @@ export async function applyBackupMerge(data: ZengBackupData): Promise<boolean> {
     ? parseSettingsWithDefaults({ ...cur.settings, ...data.settings })
     : cur.settings;
   const playlists = data.playlists ? mergeById(cur.playlists, data.playlists) : cur.playlists;
-  const groups = data.groups ? mergeById(cur.groups, data.groups) : cur.groups;
   const customStations = data.customStations
     ? mergeStationsByUuid(cur.customStations, data.customStations)
     : cur.customStations;
@@ -428,7 +383,6 @@ export async function applyBackupMerge(data: ZengBackupData): Promise<boolean> {
   const results = await Promise.all([
     localSettingsStorage.set(STORAGE_KEYS.settings, settings),
     localPlaylistsStorage.set(STORAGE_KEYS.playlists, playlists),
-    localGroupsStorage.set(STORAGE_KEYS.groups, groups),
     localCustomStationsStorage.set(STORAGE_KEYS.customStations, customStations),
     localFavouriteIdsStorage.set(STORAGE_KEYS.favouriteIds, favouriteIds),
   ]);

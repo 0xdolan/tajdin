@@ -1,4 +1,3 @@
-import type { Group } from "../types/group";
 import type { Playlist } from "../types/playlist";
 import { DEFAULT_SETTINGS, type Settings } from "../types/settings";
 import type { Station } from "../types/station";
@@ -23,7 +22,6 @@ const store = vi.hoisted(() => ({
     playbackAutostart: false,
   } as Settings,
   playlists: [] as Playlist[],
-  groups: [] as Group[],
   customStations: [] as Station[],
   favouriteIds: [] as string[],
 }));
@@ -31,7 +29,6 @@ const store = vi.hoisted(() => ({
 vi.mock("../storage/instances", () => ({
   STORAGE_KEYS: {
     playlists: "zeng.playlists.v1",
-    groups: "zeng.groups.v1",
     customStations: "zeng.customStations.v1",
     favouriteIds: "zeng.favouriteIds.v1",
     settings: "zeng.settings.v1",
@@ -42,13 +39,6 @@ vi.mock("../storage/instances", () => ({
     getWithDefault: vi.fn(async () => [...store.playlists]),
     set: vi.fn(async (_k: string, v: Playlist[]) => {
       store.playlists = [...v];
-      return { success: true, data: v };
-    }),
-  },
-  localGroupsStorage: {
-    getWithDefault: vi.fn(async () => [...store.groups]),
-    set: vi.fn(async (_k: string, v: Group[]) => {
-      store.groups = [...v];
       return { success: true, data: v };
     }),
   },
@@ -126,7 +116,6 @@ describe("buildImportPreview", () => {
   const local = {
     settings: DEFAULT_SETTINGS,
     playlists: [] as Playlist[],
-    groups: [] as Group[],
     customStations: [] as Station[],
     favouriteIds: ["s1"] as string[],
   };
@@ -152,13 +141,31 @@ describe("buildImportPreview", () => {
       expect(p.sections.playlists.after).toBe(0);
     }
   });
+
+  it("notes legacy groups in backup as ignored", () => {
+    const p = buildImportPreview(
+      local,
+      {
+        groups: [
+          {
+            id: "bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb",
+            name: "G",
+            stationUuids: [],
+            iconKey: "musical-note",
+            lastModified: "2026-01-01T00:00:00.000Z",
+          },
+        ],
+      },
+      "merge",
+    );
+    expect(p.sections.groups.detail).toMatch(/no longer supported/i);
+  });
 });
 
 describe("applyBackupReplace and applyBackupMerge", () => {
   beforeEach(() => {
     store.settings = defaultSettingsSnapshot();
     store.playlists = [];
-    store.groups = [];
     store.customStations = [];
     store.favouriteIds = [];
   });
@@ -206,7 +213,6 @@ describe("readLocalDataSnapshot + buildBackupFile", () => {
   beforeEach(() => {
     store.settings = defaultSettingsSnapshot();
     store.playlists = [];
-    store.groups = [];
     store.customStations = [];
     store.favouriteIds = ["z"];
   });
@@ -218,5 +224,11 @@ describe("readLocalDataSnapshot + buildBackupFile", () => {
     const r = parseBackupJsonText(text);
     expect(r.ok).toBe(true);
     if (r.ok) expect(r.file.data.favouriteIds).toEqual(["z"]);
+  });
+
+  it("export omits groups key", async () => {
+    const snap = await readLocalDataSnapshot();
+    const file = buildBackupFile(snap);
+    expect(file.data).not.toHaveProperty("groups");
   });
 });

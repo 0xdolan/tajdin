@@ -1,10 +1,17 @@
 /** @vitest-environment jsdom */
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { useUiStore } from "../store/uiStore";
 import { useSearch } from "./useSearch";
 
 describe("useSearch", () => {
   beforeEach(() => {
+    useUiStore.setState({
+      activeTab: "browse",
+      browseRawQuery: "",
+      browseSearchMode: "fuzzy",
+      browseLanguageApiValue: "",
+    });
     vi.useFakeTimers();
   });
 

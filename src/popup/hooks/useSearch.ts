@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-
-export type SearchMode = "fuzzy" | "regex";
+import type { BrowseSearchMode } from "../store/uiStore";
+import { useUiStore } from "../store/uiStore";
 
 const DEFAULT_DEBOUNCE_MS = 300;
+
+export type SearchMode = BrowseSearchMode;
 
 export type UseSearchResult = {
   rawQuery: string;
@@ -14,18 +16,22 @@ export type UseSearchResult = {
 };
 
 /**
- * Debounced search query (300ms) plus fuzzy/regex mode and regex syntax validity for the UI.
+ * Debounced search query plus fuzzy/regex mode; state lives in {@link useUiStore} for session persistence.
  */
 export function useSearch(debounceMs: number = DEFAULT_DEBOUNCE_MS): UseSearchResult {
-  const [rawQuery, setRawQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [mode, setMode] = useState<SearchMode>("fuzzy");
-  const [regexInvalid, setRegexInvalid] = useState(false);
+  const rawQuery = useUiStore((s) => s.browseRawQuery);
+  const setBrowseRawQuery = useUiStore((s) => s.setBrowseRawQuery);
+  const mode = useUiStore((s) => s.browseSearchMode);
+  const setBrowseSearchMode = useUiStore((s) => s.setBrowseSearchMode);
+
+  const [debouncedQuery, setDebouncedQuery] = useState(rawQuery);
 
   useEffect(() => {
     const t = window.setTimeout(() => setDebouncedQuery(rawQuery), debounceMs);
     return () => window.clearTimeout(t);
   }, [rawQuery, debounceMs]);
+
+  const [regexInvalid, setRegexInvalid] = useState(false);
 
   useEffect(() => {
     if (mode !== "regex") {
@@ -47,10 +53,10 @@ export function useSearch(debounceMs: number = DEFAULT_DEBOUNCE_MS): UseSearchRe
 
   return {
     rawQuery,
-    setRawQuery,
+    setRawQuery: setBrowseRawQuery,
     debouncedQuery,
     mode,
-    setMode,
+    setMode: setBrowseSearchMode,
     regexInvalid,
   };
 }

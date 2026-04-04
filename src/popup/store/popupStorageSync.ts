@@ -1,9 +1,11 @@
 import {
   STORAGE_KEYS,
   localFavouriteIdsStorage,
+  localSettingsStorage,
   sessionPlayerStorage,
   sessionUiStorage,
 } from "../../shared/storage/instances";
+import { DEFAULT_SETTINGS } from "../../shared/types/settings";
 import { usePlayerStore } from "./playerStore";
 import { useStationStore } from "./stationStore";
 import { useUiStore } from "./uiStore";
@@ -26,6 +28,22 @@ function pickPersistedPlayer(state: ReturnType<typeof usePlayerStore.getState>) 
   };
 }
 
+function pickPersistedUi(state: ReturnType<typeof useUiStore.getState>) {
+  return {
+    activeTab: state.activeTab,
+    browseQuery: state.browseRawQuery,
+    browseSearchMode: state.browseSearchMode,
+    browseLanguageApiValue: state.browseLanguageApiValue,
+  };
+}
+
+function mapSettingsSearchToPopup(
+  m: (typeof DEFAULT_SETTINGS)["searchMode"],
+): "fuzzy" | "regex" {
+  if (m === "regex") return "regex";
+  return "fuzzy";
+}
+
 export async function hydratePopupStoresFromChrome(): Promise<void> {
   const playerBlob = await sessionPlayerStorage.getWithDefault(
     STORAGE_KEYS.sessionPlayer,
@@ -39,6 +57,13 @@ export async function hydratePopupStoresFromChrome(): Promise<void> {
 
   const ui = await sessionUiStorage.getWithDefault(STORAGE_KEYS.sessionUi, {});
   useUiStore.getState().applySessionUi(ui);
+
+  const settings = await localSettingsStorage.getWithDefault(STORAGE_KEYS.settings, DEFAULT_SETTINGS, {
+    onInvalidStored: "default",
+  });
+  if (ui.browseSearchMode === undefined) {
+    useUiStore.getState().setBrowseSearchMode(mapSettingsSearchToPopup(settings.searchMode));
+  }
 }
 
 /**
@@ -50,7 +75,7 @@ export function attachPopupStorageSyncListeners(): () => void {
 
   let lastPlayerJson = JSON.stringify(pickPersistedPlayer(usePlayerStore.getState()));
   let lastFavJson = JSON.stringify(useStationStore.getState().favouriteIds);
-  let lastUiJson = JSON.stringify({ activeTab: useUiStore.getState().activeTab });
+  let lastUiJson = JSON.stringify(pickPersistedUi(useUiStore.getState()));
 
   unsubs.push(
     sessionPlayerStorage.watch(STORAGE_KEYS.sessionPlayer, (ev) => {
@@ -114,7 +139,7 @@ export function attachPopupStorageSyncListeners(): () => void {
 
   unsubs.push(
     useUiStore.subscribe((state) => {
-      const payload = { activeTab: state.activeTab };
+      const payload = pickPersistedUi(state);
       const json = JSON.stringify(payload);
       if (json === lastUiJson) {
         return;
