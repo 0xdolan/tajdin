@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import {
+  EXTENSION_AUTHOR_GITHUB_URL,
+  TAJDIN_EXTENSION_REPO_URL,
+} from "../../shared/constants/links";
 import { useSurface } from "../SurfaceContext";
-
-const REPO = "https://github.com/0xdolan/tajdin";
-const AUTHOR = "https://github.com/0xdolan";
 
 export function AttributionFooter() {
   const surface = useSurface();
@@ -30,14 +31,24 @@ export function AttributionFooter() {
           ♥
         </span>{" "}
         by{" "}
-        <a href={AUTHOR} target="_blank" rel="noopener noreferrer" className="text-sky-600 hover:underline">
+        <a
+          href={EXTENSION_AUTHOR_GITHUB_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sky-600 hover:underline"
+        >
           0xdolan
         </a>
       </span>
       <span className="text-neutral-400" aria-hidden>
         ·
       </span>
-      <a href={REPO} target="_blank" rel="noopener noreferrer" className="text-sky-600 hover:underline">
+      <a
+        href={TAJDIN_EXTENSION_REPO_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-sky-600 hover:underline"
+      >
         Source
       </a>
       {version ? (
