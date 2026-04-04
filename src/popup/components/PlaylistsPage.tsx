@@ -22,6 +22,7 @@ import {
 } from "../../shared/api/radio-browser.api";
 import type { Playlist } from "../../shared/types/playlist";
 import type { Station } from "../../shared/types/station";
+import { sanitizeDisplayText } from "../../shared/utils/sanitize";
 import { startPlaybackWithPlaylistSkip } from "../playerPlayback";
 import {
   createPlaylist,
@@ -79,7 +80,7 @@ function SortableStationRow({
     };
   }, [client, uuid]);
 
-  const title = station?.name ?? uuid;
+  const title = station ? sanitizeDisplayText(station.name, { maxLength: 200 }) : uuid;
   const canPlay = Boolean(station && (station.url_resolved || station.url));
 
   return (
@@ -179,7 +180,7 @@ function PlaylistSection({
     <details className="rounded-lg border border-neutral-800 bg-neutral-950/40">
       <summary className="cursor-pointer list-none px-3 py-2 text-sm font-medium text-neutral-200 [&::-webkit-details-marker]:hidden">
         <span className="mr-2 inline-block align-middle text-neutral-500">▸</span>
-        {playlist.name}
+        {sanitizeDisplayText(playlist.name, { maxLength: 200 })}
         <span className="ml-2 text-xs font-normal text-neutral-500">
           ({playlist.stationUuids.length} stations)
         </span>
@@ -219,7 +220,10 @@ function PlaylistSection({
         ) : (
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={playlist.stationUuids} strategy={verticalListSortingStrategy}>
-              <ul className="flex flex-col gap-2" aria-label={`Stations in ${playlist.name}`}>
+              <ul
+                className="flex flex-col gap-2"
+                aria-label={`Stations in ${sanitizeDisplayText(playlist.name, { maxLength: 200 })}`}
+              >
                 {playlist.stationUuids.map((uuid, index) => (
                   <li key={uuid}>
                     <SortableStationRow

@@ -4,6 +4,9 @@
   "version": "0.0.1",
   "description": "Worldwide radio in your browser (Radio Browser).",
   "minimum_chrome_version": "116",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; base-uri 'self'; frame-ancestors 'none';"
+  },
   "permissions": ["alarms", "offscreen", "storage"],
   "host_permissions": [
     "https://all.api.radio-browser.info/*",

@@ -41,6 +41,12 @@ describe("StationCard", () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
+  it("strips simple HTML from displayed station name", () => {
+    const st = { ...sampleStation, name: "A<script>x</script>B" };
+    render(<StationCard station={st} playlists={[]} groups={[]} />);
+    expect(screen.getByText("AB")).toBeInTheDocument();
+  });
+
   it("toggles favourite when heart is clicked", async () => {
     const user = userEvent.setup();
     render(<StationCard station={sampleStation} playlists={[]} groups={[]} />);

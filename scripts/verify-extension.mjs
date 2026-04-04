@@ -35,6 +35,17 @@ try {
 
 if (manifest.manifest_version !== 3) fail("manifest_version must be 3.");
 
+const csp = manifest.content_security_policy;
+if (!csp || typeof csp.extension_pages !== "string" || !csp.extension_pages.trim()) {
+  fail("manifest.content_security_policy.extension_pages must be a non-empty string.");
+}
+if (/\bunsafe-eval\b/i.test(csp.extension_pages)) {
+  fail("extension_pages CSP must not include 'unsafe-eval'.");
+}
+if (!/script-src\s+[^;]*'self'/i.test(csp.extension_pages)) {
+  fail("extension_pages CSP should include script-src with 'self'.");
+}
+
 const perms = new Set(manifest.permissions ?? []);
 for (const p of ["storage", "alarms", "offscreen"]) {
   if (!perms.has(p)) fail(`manifest.permissions must include "${p}".`);
