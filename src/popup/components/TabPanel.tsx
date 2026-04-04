@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { SessionUi } from "../../shared/storage/schemas";
+import { useSurface } from "../SurfaceContext";
 import { useSearch } from "../hooks/useSearch";
 import { useStationStore } from "../store/stationStore";
 import { useUiStore } from "../store/uiStore";
@@ -32,6 +33,7 @@ const COPY: Record<ActiveTab, { title: string; body: string }> = {
 };
 
 export function TabPanel() {
+  const surface = useSurface();
   const activeTab = useUiStore((s) => s.activeTab);
   const search = useSearch();
   const browseLanguage = useStationStore((s) => s.browseLanguageApiValue);
@@ -40,14 +42,24 @@ export function TabPanel() {
   const [addStationOpen, setAddStationOpen] = useState(false);
   const [customStationsTick, setCustomStationsTick] = useState(0);
 
+  const panelClass =
+    surface === "light"
+      ? "box-border flex min-h-0 flex-1 flex-col bg-neutral-100 px-3 py-3"
+      : "box-border flex min-h-0 flex-1 flex-col px-3 py-3";
+  const titleClass =
+    surface === "light"
+      ? "mb-2 shrink-0 text-sm font-semibold text-neutral-800"
+      : "mb-2 shrink-0 text-sm font-semibold text-neutral-200";
+  const mutedClass = surface === "light" ? "text-sm leading-relaxed text-neutral-600" : "text-sm leading-relaxed text-neutral-500";
+
   return (
     <div
       role="tabpanel"
       id={`panel-${activeTab}`}
       aria-labelledby={`tab-${activeTab}`}
-      className="box-border flex min-h-0 flex-1 flex-col px-3 py-3"
+      className={panelClass}
     >
-      <h2 className="mb-2 shrink-0 text-sm font-semibold text-neutral-200">{title}</h2>
+      <h2 className={titleClass}>{title}</h2>
       {activeTab === "browse" ? (
         <div className="flex min-h-0 flex-1 flex-col gap-2">
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start">
@@ -91,7 +103,7 @@ export function TabPanel() {
       ) : activeTab === "groups" ? (
         <GroupsPage />
       ) : (
-        <p className="text-sm leading-relaxed text-neutral-500">{body}</p>
+        <p className={mutedClass}>{body}</p>
       )}
     </div>
   );
