@@ -1010,7 +1010,7 @@
         "dependencies": [
           "23"
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -1149,21 +1149,21 @@
             "title": "Playlists tab: redesign + exact/regex search; simple playlist CRUD; add stations from search",
             "description": "Popup Lists/Playlists tab UX is weak; redesign with clear create/rename/delete/edit flows and the same exact vs regex station search as Browse, so users can find stations and add them to playlists without leaving the tab.",
             "dependencies": [],
-            "details": "Audit `PlaylistsPage.tsx` (popup + settings reuse if sensible—extract shared components to avoid drift). Visual hierarchy: playlist picker or master-detail, consistent `useSurface` light/dark. **Search:** reuse `useSearch` + `StationSearchBar` behaviour (exact API name vs regex toggle, debounce, validation) and `StationList` or a thin variant wired to “add to selected playlist” actions on rows (or bulk add). **Playlists:** obvious create, inline rename, delete with confirm, reorder (keep @dnd-kit if appropriate). **Stations in playlist:** remove/edit already partially exist—polish. Coordinate with 24.12 (row add from browse) so patterns stay consistent. Vitest for any extracted helpers; manual narrow popup height.",
-            "status": "pending",
+            "details": "DONE: `useLocalSearch` + `StationSearchBar` + Browse language filter; `StationList` `isolated` + `appendToPlaylist` → `StationCard` `appendToPlaylistOnActivate`. Active playlist `<select>`, create/rename/delete (`confirm`), DnD + “More ways to add”; `useSurface` tokens. Vitest: `useLocalSearch`, `StationCard` append. `docs/development.md`.",
+            "status": "done",
             "testStrategy": "Manual: create playlist, search exact + regex, add from results, rename/delete playlist, remove station; settings playlists still work if shared code; `npm test -- --run` + verify:extension.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-03T22:00:00.000Z"
+            "updatedAt": "2026-04-04T21:26:26.141Z"
           }
         ],
-        "updatedAt": "2026-04-04T21:04:01.719Z"
+        "updatedAt": "2026-04-04T21:26:26.141Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T21:04:01.719Z",
+      "lastModified": "2026-04-04T21:26:26.142Z",
       "taskCount": 24,
-      "completedCount": 23,
+      "completedCount": 24,
       "tags": [
         "master"
       ]

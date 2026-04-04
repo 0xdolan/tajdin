@@ -24,6 +24,7 @@ import type { Playlist } from "../../shared/types/playlist";
 import type { Station } from "../../shared/types/station";
 import { listScrollbarClass } from "../../shared/utils/list-scrollbar";
 import { sanitizeDisplayText } from "../../shared/utils/sanitize";
+import { useLocalSearch } from "../hooks/useSearch";
 import { startPlaybackWithPlaylistSkip } from "../playerPlayback";
 import {
   appendStationToPlaylist,
@@ -39,6 +40,10 @@ import {
 } from "../stationLibraryApi";
 import { useSurface } from "../SurfaceContext";
 import { usePlayerStore } from "../store/playerStore";
+import { useUiStore } from "../store/uiStore";
+import { StationLanguageFilter } from "./StationLanguageFilter";
+import { StationList } from "./StationList";
+import { StationSearchBar } from "./StationSearchBar";
 
 function GripIcon() {
   return (
@@ -75,8 +80,15 @@ function FavouritePickerRows({
   client: RadioBrowserClient;
   onAdded: () => void;
 }) {
+  const surface = useSurface();
   const [ids, setIds] = useState<string[]>([]);
   const [names, setNames] = useState<Record<string, string>>({});
+  const muted = surface === "light" ? "text-xs text-neutral-500" : "text-xs text-neutral-500";
+  const rowText = surface === "light" ? "truncate text-sm text-neutral-800" : "truncate text-sm text-neutral-200";
+  const addBtn =
+    surface === "light"
+      ? "shrink-0 rounded px-2 py-1 text-xs text-sky-700 hover:bg-neutral-200"
+      : "shrink-0 rounded px-2 py-1 text-xs text-sky-400 hover:bg-neutral-800";
 
   useEffect(() => {
     void loadFavouriteIds().then(setIds);
@@ -101,19 +113,17 @@ function FavouritePickerRows({
   const missing = ids.filter((id) => !playlist.stationUuids.includes(id));
   if (missing.length === 0) {
     return (
-      <p className="text-xs text-neutral-500">
-        No favourites to add (or all are already in this playlist).
-      </p>
+      <p className={muted}>No favourites to add (or all are already in this playlist).</p>
     );
   }
   return (
     <ul className="flex flex-col gap-1">
       {missing.map((id) => (
         <li key={id} className="flex items-center gap-2">
-          <span className="min-w-0 flex-1 truncate text-sm text-neutral-200">{names[id] ?? "…"}</span>
+          <span className={`min-w-0 flex-1 ${rowText}`}>{names[id] ?? "…"}</span>
           <button
             type="button"
-            className="shrink-0 rounded px-2 py-1 text-xs text-sky-400 hover:bg-neutral-800"
+            className={addBtn}
             onClick={() =>
               void appendStationToPlaylist(id, playlist.id).then((ok) => {
                 if (ok) onAdded();
@@ -129,7 +139,14 @@ function FavouritePickerRows({
 }
 
 function CustomPickerRows({ playlist, onAdded }: { playlist: Playlist; onAdded: () => void }) {
+  const surface = useSurface();
   const [stations, setStations] = useState<Station[]>([]);
+  const muted = surface === "light" ? "text-xs text-neutral-500" : "text-xs text-neutral-500";
+  const rowText = surface === "light" ? "truncate text-sm text-neutral-800" : "truncate text-sm text-neutral-200";
+  const addBtn =
+    surface === "light"
+      ? "shrink-0 rounded px-2 py-1 text-xs text-sky-700 hover:bg-neutral-200"
+      : "shrink-0 rounded px-2 py-1 text-xs text-sky-400 hover:bg-neutral-800";
 
   useEffect(() => {
     void loadCustomStations().then(setStations);
@@ -138,21 +155,19 @@ function CustomPickerRows({ playlist, onAdded }: { playlist: Playlist; onAdded: 
   const missing = stations.filter((s) => !playlist.stationUuids.includes(s.stationuuid));
   if (missing.length === 0) {
     return (
-      <p className="text-xs text-neutral-500">
-        No custom stations to add (or all are already in this playlist).
-      </p>
+      <p className={muted}>No custom stations to add (or all are already in this playlist).</p>
     );
   }
   return (
     <ul className="flex flex-col gap-1">
       {missing.map((s) => (
         <li key={s.stationuuid} className="flex items-center gap-2">
-          <span className="min-w-0 flex-1 truncate text-sm text-neutral-200">
+          <span className={`min-w-0 flex-1 ${rowText}`}>
             {sanitizeDisplayText(s.name, { maxLength: 120 })}
           </span>
           <button
             type="button"
-            className="shrink-0 rounded px-2 py-1 text-xs text-sky-400 hover:bg-neutral-800"
+            className={addBtn}
             onClick={() =>
               void appendStationToPlaylist(s.stationuuid, playlist.id).then((ok) => {
                 if (ok) onAdded();
@@ -176,9 +191,21 @@ function StationUuidImportForm({
   client: RadioBrowserClient;
   onAdded: () => void;
 }) {
+  const surface = useSurface();
   const [draft, setDraft] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+
+  const labelC = surface === "light" ? "text-xs text-neutral-600" : "text-xs text-neutral-400";
+  const inputC =
+    surface === "light"
+      ? "mt-0.5 w-full rounded-md border border-neutral-300 bg-white px-2 py-1.5 font-mono text-sm text-neutral-900"
+      : "mt-0.5 w-full rounded-md border border-neutral-700 bg-neutral-900 px-2 py-1.5 font-mono text-sm text-neutral-100";
+  const codeC = surface === "light" ? "text-neutral-600" : "text-neutral-500";
+  const submitC =
+    surface === "light"
+      ? "shrink-0 rounded-md bg-sky-700 px-3 py-2 text-sm font-medium text-white hover:bg-sky-600 disabled:opacity-40"
+      : "shrink-0 rounded-md bg-sky-800 px-3 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:opacity-40";
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -207,11 +234,10 @@ function StationUuidImportForm({
   return (
     <div className="space-y-2">
       <form className="flex flex-col gap-2 sm:flex-row sm:items-end" onSubmit={onSubmit}>
-        <label className="min-w-0 flex-1 text-xs text-neutral-400">
-          Radio Browser <code className="text-neutral-500">stationuuid</code> or{" "}
-          <code className="text-neutral-500">custom:…</code>
+        <label className={`min-w-0 flex-1 ${labelC}`}>
+          Radio Browser <code className={codeC}>stationuuid</code> or <code className={codeC}>custom:…</code>
           <input
-            className="mt-0.5 w-full rounded-md border border-neutral-700 bg-neutral-900 px-2 py-1.5 font-mono text-sm text-neutral-100"
+            className={inputC}
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             placeholder="e.g. uuid or custom:…"
@@ -220,16 +246,15 @@ function StationUuidImportForm({
             disabled={busy}
           />
         </label>
-        <button
-          type="submit"
-          disabled={busy}
-          className="shrink-0 rounded-md bg-sky-800 px-3 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:opacity-40"
-        >
+        <button type="submit" disabled={busy} className={submitC}>
           Add by id
         </button>
       </form>
       {message ? (
-        <p className="text-xs text-amber-400" role="status">
+        <p
+          className={surface === "light" ? "text-xs text-amber-700" : "text-xs text-amber-400"}
+          role="status"
+        >
           {message}
         </p>
       ) : null}
@@ -246,23 +271,36 @@ function PlaylistAddStationsBlock({
   client: RadioBrowserClient;
   onLibraryChange: () => void;
 }) {
+  const surface = useSurface();
+  const detailsBorder =
+    surface === "light"
+      ? "rounded-md border border-neutral-200 bg-white/80"
+      : "rounded-md border border-neutral-800/80 bg-neutral-950/30";
+  const summaryC =
+    surface === "light"
+      ? "cursor-pointer list-none px-2 py-2 text-sm text-neutral-700 [&::-webkit-details-marker]:hidden"
+      : "cursor-pointer list-none px-2 py-2 text-sm text-neutral-300 [&::-webkit-details-marker]:hidden";
+  const chev = surface === "light" ? "text-neutral-400" : "text-neutral-500";
+  const h4 = surface === "light" ? "mb-1 text-xs font-medium text-neutral-600" : "mb-1 text-xs font-medium text-neutral-400";
+  const sep = surface === "light" ? "border-neutral-200" : "border-neutral-800";
+
   return (
-    <details className="mt-3 rounded-md border border-neutral-800/80 bg-neutral-950/30">
-      <summary className="cursor-pointer list-none px-2 py-2 text-sm text-neutral-300 [&::-webkit-details-marker]:hidden">
-        <span className="mr-2 inline-block align-middle text-neutral-500">▸</span>
-        Add stations (favourites, custom, or by id)
+    <details className={detailsBorder}>
+      <summary className={summaryC}>
+        <span className={`mr-2 inline-block align-middle ${chev}`}>▸</span>
+        More ways to add (favourites, custom, by id)
       </summary>
-      <div className="space-y-4 border-t border-neutral-800 px-2 py-3">
+      <div className={`space-y-4 border-t px-2 py-3 ${sep}`}>
         <div>
-          <h4 className="mb-1 text-xs font-medium text-neutral-400">From favourites</h4>
+          <h4 className={h4}>From favourites</h4>
           <FavouritePickerRows playlist={playlist} client={client} onAdded={onLibraryChange} />
         </div>
         <div>
-          <h4 className="mb-1 text-xs font-medium text-neutral-400">From custom stations</h4>
+          <h4 className={h4}>From custom stations</h4>
           <CustomPickerRows playlist={playlist} onAdded={onLibraryChange} />
         </div>
         <div>
-          <h4 className="mb-1 text-xs font-medium text-neutral-400">By station id</h4>
+          <h4 className={h4}>By station id</h4>
           <StationUuidImportForm playlist={playlist} client={client} onAdded={onLibraryChange} />
         </div>
       </div>
@@ -287,6 +325,7 @@ function SortableStationRow({
   onRemoved: () => void;
   onPlay: (station: Station, stationIndex: number) => void;
 }) {
+  const surface = useSurface();
   const [station, setStation] = useState<Station | null>(null);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: uuid,
@@ -310,15 +349,30 @@ function SortableStationRow({
   const title = station ? sanitizeDisplayText(station.name, { maxLength: 200 }) : uuid;
   const canPlay = Boolean(station && (station.url_resolved || station.url));
 
+  const rowBox =
+    surface === "light"
+      ? "flex items-center gap-2 rounded-md border border-neutral-200 bg-white px-2 py-1.5 shadow-sm"
+      : "flex items-center gap-2 rounded-md border border-neutral-800 bg-neutral-900/60 px-2 py-1.5";
+  const titleC = surface === "light" ? "truncate text-sm text-neutral-900" : "truncate text-sm text-neutral-100";
+  const subC = surface === "light" ? "truncate text-xs text-neutral-500" : "truncate text-xs text-neutral-500";
+  const gripC =
+    surface === "light"
+      ? "shrink-0 cursor-grab touch-none rounded p-1 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 active:cursor-grabbing disabled:opacity-30"
+      : "shrink-0 cursor-grab touch-none rounded p-1 text-neutral-500 hover:bg-neutral-800 hover:text-neutral-300 active:cursor-grabbing disabled:opacity-30";
+  const playC =
+    surface === "light"
+      ? "shrink-0 rounded px-2 py-1 text-xs font-medium text-sky-700 hover:bg-neutral-100 disabled:opacity-40"
+      : "shrink-0 rounded px-2 py-1 text-xs font-medium text-sky-400 hover:bg-neutral-800 disabled:opacity-40";
+  const removeC =
+    surface === "light"
+      ? "shrink-0 rounded px-2 py-1 text-xs text-red-600 hover:bg-red-50 disabled:opacity-40"
+      : "shrink-0 rounded px-2 py-1 text-xs text-red-400 hover:bg-neutral-800 disabled:opacity-40";
+
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className="flex items-center gap-2 rounded-md border border-neutral-800 bg-neutral-900/60 px-2 py-1.5"
-    >
+    <div ref={setNodeRef} style={style} className={rowBox}>
       <button
         type="button"
-        className="shrink-0 cursor-grab touch-none rounded p-1 text-neutral-500 hover:bg-neutral-800 hover:text-neutral-300 active:cursor-grabbing disabled:opacity-30"
+        className={gripC}
         aria-label="Drag to reorder"
         disabled={disabled}
         {...attributes}
@@ -327,15 +381,13 @@ function SortableStationRow({
         <GripIcon />
       </button>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm text-neutral-100">{title}</p>
-        {!station ? (
-          <p className="truncate text-xs text-neutral-500">Loading…</p>
-        ) : null}
+        <p className={titleC}>{title}</p>
+        {!station ? <p className={subC}>Loading…</p> : null}
       </div>
       <button
         type="button"
         disabled={disabled || !canPlay || !station}
-        className="shrink-0 rounded px-2 py-1 text-xs font-medium text-sky-400 hover:bg-neutral-800 disabled:opacity-40"
+        className={playC}
         onClick={() => station && canPlay && onPlay(station, stationIndex)}
       >
         Play
@@ -343,7 +395,7 @@ function SortableStationRow({
       <button
         type="button"
         disabled={disabled}
-        className="shrink-0 rounded px-2 py-1 text-xs text-red-400 hover:bg-neutral-800 disabled:opacity-40"
+        className={removeC}
         onClick={() =>
           void removeStationFromPlaylist(playlistId, uuid).then((ok) => {
             if (ok) onRemoved();
@@ -356,7 +408,7 @@ function SortableStationRow({
   );
 }
 
-function PlaylistSection({
+function PlaylistDetailPanel({
   playlist,
   client,
   onLibraryChange,
@@ -365,6 +417,7 @@ function PlaylistSection({
   client: RadioBrowserClient;
   onLibraryChange: () => void;
 }) {
+  const surface = useSurface();
   const [nameDraft, setNameDraft] = useState(playlist.name);
   const [dndDisabled, setDndDisabled] = useState(false);
 
@@ -403,56 +456,77 @@ function PlaylistSection({
     await startPlaybackWithPlaylistSkip();
   };
 
+  const panelBorder =
+    surface === "light"
+      ? "rounded-lg border border-neutral-200 bg-white p-3 shadow-sm"
+      : "rounded-lg border border-neutral-800 bg-neutral-950/40 p-3";
+  const labelC = surface === "light" ? "block text-xs text-neutral-600" : "block text-xs text-neutral-400";
+  const inputC =
+    surface === "light"
+      ? "mt-0.5 w-full rounded-md border border-neutral-300 bg-white px-2 py-1.5 text-sm text-neutral-900"
+      : "mt-0.5 w-full rounded-md border border-neutral-700 bg-neutral-900 px-2 py-1.5 text-sm text-neutral-100";
+  const deleteBtn =
+    surface === "light"
+      ? "rounded-md border border-red-200 px-2 py-1.5 text-xs text-red-700 hover:bg-red-50"
+      : "rounded-md border border-red-900/60 px-2 py-1.5 text-xs text-red-400 hover:bg-red-950/40";
+  const sectionTitle =
+    surface === "light" ? "text-xs font-semibold uppercase tracking-wide text-neutral-600" : "text-xs font-semibold uppercase tracking-wide text-neutral-400";
+  const hintC = surface === "light" ? "text-sm text-neutral-600" : "text-sm text-neutral-500";
+
+  const confirmDelete = () => {
+    const name = sanitizeDisplayText(playlist.name, { maxLength: 80 });
+    if (
+      typeof globalThis.confirm === "function" &&
+      !globalThis.confirm(`Delete playlist “${name}”? This cannot be undone.`)
+    ) {
+      return;
+    }
+    void deletePlaylist(playlist.id).then((ok) => {
+      if (ok) onLibraryChange();
+    });
+  };
+
   return (
-    <details className="rounded-lg border border-neutral-800 bg-neutral-950/40">
-      <summary className="cursor-pointer list-none px-3 py-2 text-sm font-medium text-neutral-200 [&::-webkit-details-marker]:hidden">
-        <span className="mr-2 inline-block align-middle text-neutral-500">▸</span>
-        {sanitizeDisplayText(playlist.name, { maxLength: 200 })}
-        <span className="ml-2 text-xs font-normal text-neutral-500">
-          ({playlist.stationUuids.length} stations)
-        </span>
-      </summary>
-      <div className="border-t border-neutral-800 px-3 py-3">
-        <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-end">
-          <label className="block min-w-0 flex-1 text-xs text-neutral-400">
-            Name
-            <input
-              className="mt-0.5 w-full rounded-md border border-neutral-700 bg-neutral-900 px-2 py-1.5 text-sm text-neutral-100"
-              value={nameDraft}
-              onChange={(e) => setNameDraft(e.target.value)}
-              onBlur={() => {
-                if (nameDraft.trim() !== playlist.name) applyRename();
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  (e.target as HTMLInputElement).blur();
-                }
-              }}
-            />
-          </label>
-          <button
-            type="button"
-            className="rounded-md border border-red-900/60 px-2 py-1.5 text-xs text-red-400 hover:bg-red-950/40"
-            onClick={() =>
-              void deletePlaylist(playlist.id).then((ok) => {
-                if (ok) onLibraryChange();
-              })
-            }
-          >
-            Delete playlist
-          </button>
-        </div>
-        <PlaylistAddStationsBlock playlist={playlist} client={client} onLibraryChange={onLibraryChange} />
+    <div className={panelBorder}>
+      <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-end">
+        <label className={`min-w-0 flex-1 ${labelC}`}>
+          Playlist name
+          <input
+            className={inputC}
+            value={nameDraft}
+            onChange={(e) => setNameDraft(e.target.value)}
+            onBlur={() => {
+              if (nameDraft.trim() !== playlist.name) applyRename();
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                (e.target as HTMLInputElement).blur();
+              }
+            }}
+          />
+        </label>
+        <button type="button" className={deleteBtn} onClick={confirmDelete}>
+          Delete playlist
+        </button>
+      </div>
+
+      <p className={`mb-2 ${hintC}`}>
+        Tap a station in the list below to add it to this playlist. Search uses the same exact name and regex modes as
+        Browse.
+      </p>
+
+      <div className="mb-3">
+        <p className={`mb-2 ${sectionTitle}`}>Stations in this playlist</p>
         {playlist.stationUuids.length === 0 ? (
-          <p className="mt-3 text-sm text-neutral-500">
-            No stations in this list yet. Use <strong className="font-medium text-neutral-400">Add stations</strong> above,
-            the popup player &quot;add to playlist&quot; control, or right-click a station in Browse / Favourites.
+          <p className={hintC}>
+            No stations yet. Use the search list, <strong className="font-medium">More ways to add</strong>, the player
+            bar, or Browse / Favourites row actions.
           </p>
         ) : (
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={playlist.stationUuids} strategy={verticalListSortingStrategy}>
               <ul
-                className="flex flex-col gap-2"
+                className="flex max-h-48 flex-col gap-2 overflow-y-auto pr-0.5"
                 aria-label={`Stations in ${sanitizeDisplayText(playlist.name, { maxLength: 200 })}`}
               >
                 {playlist.stationUuids.map((uuid, index) => (
@@ -473,13 +547,19 @@ function PlaylistSection({
           </DndContext>
         )}
       </div>
-    </details>
+
+      <PlaylistAddStationsBlock playlist={playlist} client={client} onLibraryChange={onLibraryChange} />
+    </div>
   );
 }
 
 export function PlaylistsPage({ client = defaultRadioBrowserClient }: { client?: RadioBrowserClient }) {
   const surface = useSurface();
+  const listsSearch = useLocalSearch();
+  const browseLanguage = useUiStore((s) => s.browseLanguageApiValue);
+  const setBrowseLanguage = useUiStore((s) => s.setBrowseLanguageApiValue);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [newName, setNewName] = useState("");
 
   const refresh = useCallback(() => {
@@ -490,12 +570,40 @@ export function PlaylistsPage({ client = defaultRadioBrowserClient }: { client?:
     refresh();
   }, [refresh]);
 
+  useEffect(() => {
+    if (playlists.length === 0) {
+      setSelectedId(null);
+      return;
+    }
+    if (!selectedId || !playlists.some((p) => p.id === selectedId)) {
+      setSelectedId(playlists[0].id);
+    }
+  }, [playlists, selectedId]);
+
+  const selected = selectedId ? playlists.find((p) => p.id === selectedId) : undefined;
+
+  const rootScroll = listScrollbarClass(surface);
+  const muted = surface === "light" ? "text-sm text-neutral-600" : "text-sm text-neutral-500";
+  const labelSm = surface === "light" ? "text-xs text-neutral-600" : "text-xs text-neutral-400";
+  const selectC =
+    surface === "light"
+      ? "mt-0.5 w-full rounded-md border border-neutral-300 bg-white px-2 py-2 text-sm text-neutral-900"
+      : "mt-0.5 w-full rounded-md border border-neutral-700 bg-neutral-900 px-2 py-2 text-sm text-neutral-100";
+  const createInput =
+    surface === "light"
+      ? "mt-0.5 w-full rounded-md border border-neutral-300 bg-white px-2 py-1.5 text-sm text-neutral-900"
+      : "mt-0.5 w-full rounded-md border border-neutral-700 bg-neutral-900 px-2 py-1.5 text-sm text-neutral-100";
+  const createBtn =
+    surface === "light"
+      ? "shrink-0 rounded-md bg-sky-700 px-3 py-2 text-sm font-medium text-white hover:bg-sky-600"
+      : "shrink-0 rounded-md bg-sky-800 px-3 py-2 text-sm font-medium text-white hover:bg-sky-700";
+  const sectionHeading =
+    surface === "light" ? "text-xs font-semibold text-neutral-700" : "text-xs font-semibold text-neutral-300";
+
   return (
-    <div
-      className={`flex min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-x-hidden overflow-y-auto ${listScrollbarClass(surface)}`}
-    >
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-hidden">
       <form
-        className="flex flex-col gap-2 sm:flex-row sm:items-end"
+        className="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-end"
         onSubmit={(e) => {
           e.preventDefault();
           const name = newName.trim();
@@ -503,35 +611,87 @@ export function PlaylistsPage({ client = defaultRadioBrowserClient }: { client?:
           void createPlaylist(name).then((pl) => {
             if (pl) {
               setNewName("");
+              setSelectedId(pl.id);
               refresh();
             }
           });
         }}
       >
-        <label className="min-w-0 flex-1 text-xs text-neutral-400">
+        <label className={`min-w-0 flex-1 ${labelSm}`}>
           New playlist
           <input
-            className="mt-0.5 w-full rounded-md border border-neutral-700 bg-neutral-900 px-2 py-1.5 text-sm text-neutral-100"
+            className={createInput}
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             placeholder="Name"
             maxLength={200}
           />
         </label>
-        <button
-          type="submit"
-          className="shrink-0 rounded-md bg-sky-700 px-3 py-2 text-sm font-medium text-white hover:bg-sky-600"
-        >
+        <button type="submit" className={createBtn}>
           Create
         </button>
       </form>
+
       {playlists.length === 0 ? (
-        <p className="text-sm text-neutral-500">No playlists yet. Create one above.</p>
+        <p className={muted}>No playlists yet. Create one above, then search and tap stations to fill it.</p>
       ) : (
-        <div className="flex flex-col gap-2">
-          {playlists.map((pl) => (
-            <PlaylistSection key={pl.id} playlist={pl} client={client} onLibraryChange={refresh} />
-          ))}
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-hidden">
+          <div className="shrink-0">
+            <label className={labelSm}>
+              Active playlist
+              <select
+                className={selectC}
+                value={selectedId ?? ""}
+                onChange={(e) => setSelectedId(e.target.value)}
+                aria-label="Select playlist to edit"
+              >
+                {playlists.map((pl) => (
+                  <option key={pl.id} value={pl.id}>
+                    {sanitizeDisplayText(pl.name, { maxLength: 120 })} ({pl.stationUuids.length})
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          {selected ? (
+            <>
+              <div
+                className={`flex min-h-0 min-w-0 flex-1 flex-col gap-2 overflow-hidden border-b pb-3 ${
+                  surface === "light" ? "border-neutral-200" : "border-neutral-800"
+                }`}
+              >
+                <p className={sectionHeading}>Find stations to add</p>
+                <StationSearchBar
+                  rawQuery={listsSearch.rawQuery}
+                  setRawQuery={listsSearch.setRawQuery}
+                  mode={listsSearch.mode}
+                  setMode={listsSearch.setMode}
+                  regexInvalid={listsSearch.regexInvalid}
+                />
+                <div className="shrink-0">
+                  <StationLanguageFilter value={browseLanguage} onChange={setBrowseLanguage} />
+                </div>
+                <div className="min-h-0 flex-1 overflow-hidden" aria-label="Station search results">
+                  <StationList
+                    client={client}
+                    searchQuery={listsSearch.debouncedQuery}
+                    searchMode={listsSearch.mode}
+                    regexInvalid={listsSearch.regexInvalid}
+                    languageFilter={browseLanguage}
+                    isolated
+                    appendToPlaylist={{ playlistId: selected.id }}
+                  />
+                </div>
+              </div>
+
+              <div
+                className={`max-h-[min(320px,45vh)] min-h-0 shrink-0 overflow-y-auto overflow-x-hidden pr-0.5 ${rootScroll}`}
+              >
+                <PlaylistDetailPanel playlist={selected} client={client} onLibraryChange={refresh} />
+              </div>
+            </>
+          ) : null}
         </div>
       )}
     </div>
