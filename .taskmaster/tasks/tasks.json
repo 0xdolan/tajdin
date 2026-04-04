@@ -705,11 +705,11 @@
             "title": "Package + manifest + internal identifiers (Tajdin ASCII, Tajdîn display)",
             "description": "package.json name, manifest name/description/default_title, HTML titles, build output names if any.",
             "dependencies": [],
-            "details": "manifest.json: use Tajdîn where user-visible. Keep technical paths ASCII. Replace package description strings as needed.",
-            "status": "pending",
+            "details": "DONE: package.json name `tajdin` + description; manifest name/description/default_title Tajdîn; popup/settings/offscreen HTML titles. Icon filenames unchanged (ASCII paths) until asset rename in later pass.",
+            "status": "done",
             "testStrategy": "Build loads in Chrome; store listing fields read correctly.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-05T12:00:00.000Z"
+            "updatedAt": "2026-04-03T22:00:00.000Z"
           },
           {
             "id": 3,
