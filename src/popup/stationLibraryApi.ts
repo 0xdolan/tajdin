@@ -12,6 +12,7 @@ import {
   DEFAULT_GROUP_ICON_KEY,
   isValidGroupIconKey,
 } from "../shared/utils/group-icon-keys";
+import { sanitizeDisplayText } from "../shared/utils/sanitize";
 import { isValidHttpOrHttpsStreamUrl } from "../shared/utils/validate-stream-url";
 
 export async function loadPlaylistsAndGroups(): Promise<{
@@ -34,7 +35,7 @@ export async function addCustomStation(
   displayName: string,
   streamUrl: string,
 ): Promise<Station | null> {
-  const name = displayName.trim();
+  const name = sanitizeDisplayText(displayName.trim(), { maxLength: 200 });
   const url = streamUrl.trim();
   if (!name || !isValidHttpOrHttpsStreamUrl(url)) return null;
   const station: Station = {
