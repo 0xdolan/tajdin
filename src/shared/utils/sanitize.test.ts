@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { sanitizeDisplayText, sanitizeHttpOrHttpsUrl } from "./sanitize";
+import { sanitizeDisplayText, sanitizeHttpOrHttpsUrl, stationArtworkHttpUrl } from "./sanitize";
 
 describe("sanitizeDisplayText", () => {
   it("strips script tags and leaves plain text", () => {
@@ -36,5 +36,23 @@ describe("sanitizeHttpOrHttpsUrl", () => {
     expect(sanitizeHttpOrHttpsUrl("   ")).toBeUndefined();
     expect(sanitizeHttpOrHttpsUrl("not a url")).toBeUndefined();
     expect(sanitizeHttpOrHttpsUrl(null)).toBeUndefined();
+  });
+});
+
+describe("stationArtworkHttpUrl", () => {
+  it("prefers coverUrl over favicon when both are valid", () => {
+    expect(
+      stationArtworkHttpUrl({
+        coverUrl: "https://covers.example/a.png",
+        favicon: "https://icons.example/f.ico",
+      }),
+    ).toBe("https://covers.example/a.png");
+  });
+
+  it("falls back to favicon when cover is missing or invalid", () => {
+    expect(stationArtworkHttpUrl({ coverUrl: "javascript:evil", favicon: "https://x.test/i.png" })).toBe(
+      "https://x.test/i.png",
+    );
+    expect(stationArtworkHttpUrl({ favicon: "https://x.test/i.png" })).toBe("https://x.test/i.png");
   });
 });

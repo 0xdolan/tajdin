@@ -1,6 +1,6 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { textContainsArabicScript } from "../../../shared/utils/arabic-text";
-import { sanitizeDisplayText, sanitizeHttpOrHttpsUrl } from "../../../shared/utils/sanitize";
+import { sanitizeDisplayText, stationArtworkHttpUrl } from "../../../shared/utils/sanitize";
 import {
   goToAdjacentInSearchResults,
   goToRandomInSearchResults,
@@ -79,7 +79,10 @@ function StationArt({
 }) {
   const surface = useSurface();
   const [imgFailed, setImgFailed] = useState(false);
-  const favicon = sanitizeHttpOrHttpsUrl(station?.favicon);
+  const artworkUrl = !isPlaying && station ? stationArtworkHttpUrl(station) : undefined;
+  useEffect(() => {
+    setImgFailed(false);
+  }, [artworkUrl, isPlaying]);
   const frame =
     surface === "light"
       ? "bg-neutral-200/90 text-neutral-500"
@@ -99,9 +102,9 @@ function StationArt({
           width={48}
           height={48}
         />
-      ) : favicon && !imgFailed ? (
+      ) : artworkUrl && !imgFailed ? (
         <img
-          src={favicon}
+          src={artworkUrl}
           alt=""
           className="h-full w-full object-cover"
           loading="lazy"

@@ -172,7 +172,7 @@ export function StationCard({ station, playlists, onLibraryMutated }: StationCar
           }}
         >
           <div className="shrink-0">
-            <StationFavicon favicon={station.favicon} />
+            <StationFavicon coverUrl={station.coverUrl} favicon={station.favicon} />
           </div>
           <div className="min-w-0 flex-1">
             <p className={`truncate text-sm font-medium ${titleC} ${nameAr ? "tajdin-font-arabic" : ""}`} dir="auto">

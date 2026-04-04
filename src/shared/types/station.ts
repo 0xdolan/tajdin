@@ -13,6 +13,8 @@ export const StationSchema = z
     url: z.string(),
     url_resolved: z.string().optional(),
     homepage: z.string().optional(),
+    /** Optional http(s) image URL for custom stations (shown in lists / player instead of favicon). */
+    coverUrl: z.string().optional(),
     favicon: z.string().optional(),
     tags: z.string().optional(),
     country: z.string().optional(),

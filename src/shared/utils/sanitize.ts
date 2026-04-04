@@ -39,3 +39,11 @@ export function sanitizeHttpOrHttpsUrl(raw: string | undefined | null): string |
   if (u.protocol !== "http:" && u.protocol !== "https:") return undefined;
   return u.href;
 }
+
+/** List / player artwork: optional custom cover URL wins over Radio Browser `favicon`. */
+export function stationArtworkHttpUrl(station: {
+  coverUrl?: string | null;
+  favicon?: string | null;
+}): string | undefined {
+  return sanitizeHttpOrHttpsUrl(station.coverUrl ?? undefined) ?? sanitizeHttpOrHttpsUrl(station.favicon ?? undefined);
+}
