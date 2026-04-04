@@ -49,4 +49,23 @@ describe("StationList", () => {
       }),
     );
   });
+
+  it("passes name to the API when fuzzy mode has a debounced query", async () => {
+    const searchStations = vi.fn().mockResolvedValue([]);
+    const client = { searchStations } as unknown as RadioBrowserClient;
+
+    await act(async () => {
+      root.render(
+        <StationList client={client} searchQuery="bbc" searchMode="fuzzy" />,
+      );
+    });
+
+    await vi.waitFor(() => expect(searchStations).toHaveBeenCalled());
+    expect(searchStations).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "bbc",
+        offset: 0,
+      }),
+    );
+  });
 });
