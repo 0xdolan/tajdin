@@ -1,4 +1,5 @@
 /**
- * Shared types, schemas, and validation helpers.
+ * Shared types, schemas, validation helpers, and storage contracts.
  */
 export * from "./types";
+export * from "./storage";
