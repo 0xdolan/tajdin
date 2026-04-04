@@ -6,6 +6,8 @@ export const useStationStore = create<{
   isSearchLoading: boolean;
   favouriteIds: string[];
   setSearchResults: (stations: Station[]) => void;
+  replaceSearchResults: (stations: Station[]) => void;
+  appendSearchResults: (stations: Station[]) => void;
   setSearchLoading: (loading: boolean) => void;
   setFavouriteIds: (ids: string[]) => void;
   toggleFavourite: (stationuuid: string) => void;
@@ -15,6 +17,19 @@ export const useStationStore = create<{
   isSearchLoading: false,
   favouriteIds: [],
   setSearchResults: (searchResults) => set({ searchResults }),
+  replaceSearchResults: (searchResults) => set({ searchResults }),
+  appendSearchResults: (more) =>
+    set((s) => {
+      const seen = new Set(s.searchResults.map((x) => x.stationuuid));
+      const merged = [...s.searchResults];
+      for (const st of more) {
+        if (!seen.has(st.stationuuid)) {
+          seen.add(st.stationuuid);
+          merged.push(st);
+        }
+      }
+      return { searchResults: merged };
+    }),
   setSearchLoading: (isSearchLoading) => set({ isSearchLoading }),
   setFavouriteIds: (favouriteIds) => set({ favouriteIds }),
   toggleFavourite: (stationuuid) => {
