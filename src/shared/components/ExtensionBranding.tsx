@@ -1,5 +1,5 @@
 /**
- * Packaged icon + Tajdîn wordmark + tagline (Radio Browser). Used in popup header and options sidebar.
+ * Packaged icon + Tajdîn wordmark + tagline. Used in popup header and options sidebar.
  */
 export function ExtensionBranding({
   titleClassName,
@@ -29,7 +29,7 @@ export function ExtensionBranding({
       />
       <div className="min-w-0">
         <TitleTag className={titleClassName}>Tajdîn</TitleTag>
-        <p className={subtitleClassName}>Worldwide radio · Radio Browser</p>
+        <p className={subtitleClassName}>Always by your side · Radio Browser</p>
       </div>
     </div>
   );
