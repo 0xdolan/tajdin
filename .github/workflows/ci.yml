@@ -48,6 +48,10 @@ jobs:
         if: steps.pkg.outputs.present == 'true' && hashFiles('package-lock.json') != ''
         run: npm ci
 
+      - name: npm audit (high or above)
+        if: steps.pkg.outputs.present == 'true' && hashFiles('package-lock.json') != ''
+        run: npm audit --audit-level=high
+
       - name: Lint
         if: steps.pkg.outputs.present == 'true'
         run: npm run lint --if-present
