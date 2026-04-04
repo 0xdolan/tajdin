@@ -11,8 +11,11 @@ vi.mock("../browseNavigation", () => ({
   playStationFromList: (...a: unknown[]) => playStationFromList(...a),
 }));
 
+const loadPlaylistsForLibrary = vi.fn().mockResolvedValue({ playlists: [] });
+
 vi.mock("../stationLibraryApi", () => ({
   appendStationToPlaylist: vi.fn().mockResolvedValue(true),
+  loadPlaylistsForLibrary: (...a: unknown[]) => loadPlaylistsForLibrary(...a),
 }));
 
 const sampleStation: Station = {
@@ -31,6 +34,8 @@ const sampleStation: Station = {
 describe("StationCard", () => {
   beforeEach(() => {
     playStationFromList.mockClear();
+    loadPlaylistsForLibrary.mockClear();
+    loadPlaylistsForLibrary.mockResolvedValue({ playlists: [] });
     useStationStore.setState({
       searchResults: [],
       isSearchLoading: false,
@@ -84,6 +89,13 @@ describe("StationCard", () => {
     fireEvent.mouseLeave(card);
     expect(blurSpy).toHaveBeenCalledTimes(1);
     blurSpy.mockRestore();
+  });
+
+  it("add-to-playlist control does not start playback", async () => {
+    const user = userEvent.setup();
+    render(<StationCard station={sampleStation} playlists={[]} />);
+    await user.click(screen.getByTestId("station-add-to-playlist"));
+    expect(playStationFromList).not.toHaveBeenCalled();
   });
 
   it("copy stream does not start playback", async () => {
