@@ -694,7 +694,7 @@
             "title": "Workspace + Git: folder `tajdin`, remote `git@github.com:0xdolan/tajdin.git`",
             "description": "Rename local project directory to tajdin; point origin at the new GitHub repo.",
             "dependencies": [],
-            "details": "DONE: git remote set-url origin git@github.com:0xdolan/tajdin.git (verified git remote -v). REMAINING (manual): close IDE/workspace, run `mv …/zeng …/tajdin`, reopen project from `tajdin` folder so paths match repo name. Push to new remote after GitHub repo exists (create empty tajdin repo if needed).",
+            "details": "DONE: git remote set-url origin git@github.com:0xdolan/tajdin.git; local folder renamed Documents/zeng → Documents/tajdin; Cursor reopened with `cursor -r …/tajdin`. Push to new remote when GitHub repo is ready.",
             "status": "done",
             "testStrategy": "git remote -v; clone fresh from new URL builds.",
             "parentId": "undefined",
