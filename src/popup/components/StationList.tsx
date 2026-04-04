@@ -31,6 +31,8 @@ export type StationListProps = {
   searchQuery?: string;
   searchMode?: SearchMode;
   regexInvalid?: boolean;
+  /** Radio Browser `language` search token (e.g. `spanish`); empty = any. */
+  languageFilter?: string;
 };
 
 export type StationListContext = {
@@ -58,6 +60,7 @@ export function StationList({
   searchQuery = "",
   searchMode = "fuzzy",
   regexInvalid = false,
+  languageFilter = "",
 }: StationListProps) {
   const searchResults = useStationStore((s) => s.searchResults);
   const isSearchLoading = useStationStore((s) => s.isSearchLoading);
@@ -93,8 +96,19 @@ export function StationList({
   const corpusRef = useRef<Station[]>([]);
 
   const q = searchQuery.trim();
+  const lang = languageFilter.trim();
   const regexCorpusMode =
     searchMode === "regex" && q !== "" && !regexInvalid;
+
+  const listParams = useCallback(
+    (offset: number): StationSearchParams => ({
+      ...BROWSE_QUERY,
+      offset,
+      ...(searchMode === "fuzzy" && q ? { name: q } : {}),
+      ...(lang ? { language: lang } : {}),
+    }),
+    [lang, q, searchMode],
+  );
 
   useEffect(() => {
     if (searchMode === "regex" && q !== "" && regexInvalid) {
@@ -112,12 +126,7 @@ export function StationList({
 
     void (async () => {
       try {
-        const params: StationSearchParams = {
-          ...BROWSE_QUERY,
-          offset: 0,
-          ...(searchMode === "fuzzy" && q ? { name: q } : {}),
-        };
-        const batch = await client.searchStations(params);
+        const batch = await client.searchStations(listParams(0));
         if (cancelled) return;
 
         if (regexCorpusMode) {
@@ -149,6 +158,7 @@ export function StationList({
     };
   }, [
     client,
+    listParams,
     q,
     regexCorpusMode,
     regexInvalid,
@@ -169,12 +179,7 @@ export function StationList({
     fetchingRef.current = true;
     setIsLoadingMore(true);
     try {
-      const params: StationSearchParams = {
-        ...BROWSE_QUERY,
-        offset: offsetRef.current,
-        ...(searchMode === "fuzzy" && q ? { name: q } : {}),
-      };
-      const batch = await client.searchStations(params);
+      const batch = await client.searchStations(listParams(offsetRef.current));
       if (batch.length === 0) {
         hasMoreRef.current = false;
         return;
@@ -205,6 +210,7 @@ export function StationList({
     appendSearchResults,
     client,
     isSearchLoading,
+    listParams,
     q,
     regexCorpusMode,
     regexInvalid,

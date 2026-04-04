@@ -1,6 +1,8 @@
 import type { SessionUi } from "../../shared/storage/schemas";
 import { useSearch } from "../hooks/useSearch";
+import { useStationStore } from "../store/stationStore";
 import { useUiStore } from "../store/uiStore";
+import { StationLanguageFilter } from "./StationLanguageFilter";
 import { StationList } from "./StationList";
 import { StationSearchBar } from "./StationSearchBar";
 
@@ -28,6 +30,8 @@ const COPY: Record<ActiveTab, { title: string; body: string }> = {
 export function TabPanel() {
   const activeTab = useUiStore((s) => s.activeTab);
   const search = useSearch();
+  const browseLanguage = useStationStore((s) => s.browseLanguageApiValue);
+  const setBrowseLanguage = useStationStore((s) => s.setBrowseLanguageApiValue);
   const { title, body } = COPY[activeTab];
 
   return (
@@ -40,18 +44,24 @@ export function TabPanel() {
       <h2 className="mb-2 shrink-0 text-sm font-semibold text-neutral-200">{title}</h2>
       {activeTab === "browse" ? (
         <div className="flex min-h-0 flex-1 flex-col gap-2">
-          <StationSearchBar
-            rawQuery={search.rawQuery}
-            setRawQuery={search.setRawQuery}
-            mode={search.mode}
-            setMode={search.setMode}
-            regexInvalid={search.regexInvalid}
-          />
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start">
+            <div className="min-w-0 flex-1">
+              <StationSearchBar
+                rawQuery={search.rawQuery}
+                setRawQuery={search.setRawQuery}
+                mode={search.mode}
+                setMode={search.setMode}
+                regexInvalid={search.regexInvalid}
+              />
+            </div>
+            <StationLanguageFilter value={browseLanguage} onChange={setBrowseLanguage} />
+          </div>
           <div className="min-h-0 flex-1" aria-label="Stations">
             <StationList
               searchQuery={search.debouncedQuery}
               searchMode={search.mode}
               regexInvalid={search.regexInvalid}
+              languageFilter={browseLanguage}
             />
           </div>
         </div>
