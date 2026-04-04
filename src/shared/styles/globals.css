@@ -1,10 +1,11 @@
 @import "@fontsource/vazirmatn/arabic-400.css";
 
-/* Popup only (`tajdin-popup-root` on `src/popup/index.html`): clip document scroll; flex panes own scrolling. */
+/* Popup only (`tajdin-popup-root` on `src/popup/index.html`): clip document scroll; flex panes own scrolling.
+   Avoid `height: 100%` on html/body/#root — in MV3 popups the percentage can resolve shorter than the real
+   window, so `overflow: hidden` clips the app from the bottom and the visible slice shows only part of the header. */
 html.tajdin-popup-root,
 html.tajdin-popup-root body,
 html.tajdin-popup-root #root {
-  height: 100%;
   margin: 0;
   overflow: hidden;
   box-sizing: border-box;
