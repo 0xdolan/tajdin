@@ -135,7 +135,7 @@ For real extension behavior (storage, service worker, host permissions), use **`
 | `src/popup/`         | Extension popup (React + Tailwind)                     |
 | `src/settings/`      | Full-tab options UI (React + Tailwind)                 |
 | `src/offscreen/`     | Offscreen document for audio (loaded via `chrome.offscreen` later) |
-| `src/shared/`        | `types/` + `storage/` (`ChromeStorageWrapper`, `watch`, `chromeStorageAreaAdapter(area, areaName)`, `instances.ts`: `storageLocal` / `storageSession`, `STORAGE_KEYS`, pre-wired `local*Storage` / `session*Storage`) |
+| `src/shared/`        | `types/`, `storage/`, `api/radio-browser.api.ts` (`RadioBrowserClient`, primary + fallback hosts, rate-spaced queue) |
 | `vite.config.ts`     | Multi-entry build, `base: './'` for extension-relative assets |
 | `dist/`              | **Output only** — gitignored; load this folder in Chrome |
 
