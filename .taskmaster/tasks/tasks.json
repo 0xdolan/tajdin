@@ -877,11 +877,11 @@
             "title": "Move “Developed with ♥ …” footer below the player dock",
             "description": "Relocate `AttributionFooter` so it sits under `PlayerDock` in the popup layout.",
             "dependencies": [],
-            "details": "Adjust `src/popup/App.tsx` (or layout wrapper): order header → main content → player → footer. Preserve surface-aware styling and version line; ensure scroll region still behaves (footer not trapped inside wrong flex child).",
-            "status": "pending",
+            "details": "DONE: `App.tsx` — render order `PlayerDock` then `AttributionFooter` after scrollable `main`. `docs/development.md` popup row updated for layout order.",
+            "status": "done",
             "testStrategy": "Visual check light/dark; footer visible without overlapping player controls.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-05T02:00:00.000Z"
+            "updatedAt": "2026-04-05T02:45:00.000Z"
           },
           {
             "id": 3,
@@ -998,12 +998,12 @@
             "updatedAt": "2026-04-05T02:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-05T02:30:00.000Z"
+        "updatedAt": "2026-04-05T02:45:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-05T02:30:00.000Z",
+      "lastModified": "2026-04-05T02:45:00.000Z",
       "taskCount": 23,
       "completedCount": 22,
       "tags": [
