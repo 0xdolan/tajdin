@@ -1,13 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { Playlist } from "../../../shared/types/playlist";
 import { textContainsArabicScript } from "../../../shared/utils/arabic-text";
 import { sanitizeDisplayText, stationArtworkHttpUrl } from "../../../shared/utils/sanitize";
 import {
   goToAdjacentInSearchResults,
   goToRandomInSearchResults,
 } from "../../browseNavigation";
-import { useSurface } from "../../SurfaceContext";
+import { useSurface, type Surface } from "../../SurfaceContext";
 import { startPlaybackWithPlaylistSkip } from "../../playerPlayback";
 import { sendPlayerCommand } from "../../playerBridge";
+import { appendStationToPlaylist, loadPlaylistsForLibrary } from "../../stationLibraryApi";
 import { usePlayerStore } from "../../store/playerStore";
 import { useStationStore } from "../../store/stationStore";
 import type { Station } from "../../../shared/types/station";
@@ -189,6 +191,108 @@ function ShuffleIcon() {
   );
 }
 
+/** Queue-with-plus: add current station to a playlist. */
+function AddToPlaylistIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8 6h12M8 12h8M8 18h5M5 6v.01M5 12v.01M5 18v.01" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M18 15v6M15 18h6" />
+    </svg>
+  );
+}
+
+function AddCurrentToPlaylistMenu({
+  stationuuid,
+  surface,
+  navBtnClass,
+}: {
+  stationuuid: string | null;
+  surface: Surface;
+  navBtnClass: string;
+}) {
+  const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  const refreshPlaylists = useCallback(() => {
+    void loadPlaylistsForLibrary().then((r) => setPlaylists(r.playlists));
+  }, []);
+
+  useEffect(() => {
+    refreshPlaylists();
+  }, [refreshPlaylists]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDocDown = (e: MouseEvent) => {
+      if (wrapRef.current?.contains(e.target as Node)) return;
+      setOpen(false);
+    };
+    document.addEventListener("mousedown", onDocDown);
+    return () => document.removeEventListener("mousedown", onDocDown);
+  }, [open]);
+
+  const menuSurface =
+    surface === "light"
+      ? "absolute bottom-[calc(100%+6px)] left-0 z-[80] max-h-52 min-w-[12rem] overflow-y-auto rounded-md border border-neutral-200 bg-white py-1 text-sm text-neutral-900 shadow-xl"
+      : "absolute bottom-[calc(100%+6px)] left-0 z-[80] max-h-52 min-w-[12rem] overflow-y-auto rounded-md border border-neutral-700 bg-neutral-900 py-1 text-sm text-neutral-100 shadow-xl";
+  const menuItem =
+    surface === "light"
+      ? "flex w-full cursor-pointer items-center px-3 py-2 text-left hover:bg-neutral-100"
+      : "flex w-full cursor-pointer items-center px-3 py-2 text-left hover:bg-neutral-800";
+
+  const pick = (playlistId: string) => {
+    if (!stationuuid) return;
+    void appendStationToPlaylist(stationuuid, playlistId).then((ok) => {
+      if (ok) setOpen(false);
+    });
+  };
+
+  const disabled = !stationuuid;
+
+  return (
+    <div ref={wrapRef} className="relative shrink-0">
+      <button
+        type="button"
+        className={navBtnClass}
+        disabled={disabled}
+        aria-label="Add current station to playlist"
+        aria-expanded={open}
+        aria-haspopup="menu"
+        title={disabled ? "Select a station first" : "Add to playlist"}
+        onClick={() => {
+          if (disabled) return;
+          refreshPlaylists();
+          setOpen((v) => !v);
+        }}
+      >
+        <AddToPlaylistIcon />
+      </button>
+      {open ? (
+        <div className={menuSurface} role="menu">
+          {playlists.length === 0 ? (
+            <p className="px-3 py-2 text-xs text-neutral-500">
+              No playlists yet. Create one under Lists or in Settings → Playlists.
+            </p>
+          ) : (
+            playlists.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                role="menuitem"
+                className={menuItem}
+                onClick={() => pick(p.id)}
+              >
+                {sanitizeDisplayText(p.name, { maxLength: 200 })}
+              </button>
+            ))
+          )}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function SpeakerOffIcon() {
   return (
     <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
@@ -205,6 +309,7 @@ export function Player() {
   const surface = useSurface();
   const searchResultsLen = useStationStore((s) => s.searchResults.length);
   const station = usePlayerStore((s) => s.station);
+  const stationuuid = usePlayerStore((s) => s.stationuuid);
   const streamUrl = usePlayerStore((s) => s.streamUrl);
   const isPlaying = usePlayerStore((s) => s.isPlaying);
   const volumePercent = usePlayerStore((s) => s.volumePercent);
@@ -344,6 +449,7 @@ export function Player() {
           >
             <ShuffleIcon />
           </button>
+          <AddCurrentToPlaylistMenu stationuuid={stationuuid} surface={surface} navBtnClass={navBtn} />
         </div>
 
         <div className="min-w-0 flex-1" />
