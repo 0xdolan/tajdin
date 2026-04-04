@@ -32,6 +32,8 @@ const defaults: PlayerStoreState = {
 export type PlayerStoreActions = {
   resetPlayer: () => void;
   applySessionPlayer: (patch: SessionPlayer) => void;
+  /** Fill `station` + stream URL from API/custom lookup without clearing {@link playlistContext} (session rehydrate). */
+  restoreResolvedStation: (station: Station) => void;
   setStation: (station: Station | null) => void;
   beginPlaylistPlayback: (station: Station, playlistId: string, stationIndex: number) => void;
   setPlaylistContext: (ctx: PlaylistPlaybackContext | null) => void;
@@ -73,6 +75,13 @@ export const usePlayerStore = create<PlayerStoreState & PlayerStoreActions>((set
       }
       return { ...s, stationuuid, isPlaying, volumePercent, playlistContext };
     }),
+  restoreResolvedStation: (station) =>
+    set((s) => ({
+      ...s,
+      station,
+      stationuuid: station.stationuuid,
+      streamUrl: station.url_resolved || station.url || null,
+    })),
   setStation: (station) =>
     set({
       station,
