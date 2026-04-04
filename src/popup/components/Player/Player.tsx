@@ -7,6 +7,7 @@ import {
   goToRandomInSearchResults,
 } from "../../browseNavigation";
 import { useSurface, type Surface } from "../../SurfaceContext";
+import { ensurePlayerStationResolved } from "../../ensurePlayerStationResolved";
 import { startPlaybackWithPlaylistSkip } from "../../playerPlayback";
 import { sendPlayerCommand } from "../../playerBridge";
 import { appendStationToPlaylist, loadPlaylistsForLibrary } from "../../stationLibraryApi";
@@ -321,7 +322,9 @@ export function Player() {
   const [busy, setBusy] = useState(false);
 
   const effectiveUrl = streamUrl || station?.url_resolved || station?.url || null;
-  const canStart = Boolean(effectiveUrl);
+  const hasPlayableUrl = Boolean((effectiveUrl || "").trim());
+  /** Session may restore `stationuuid` before metadata; Play can resolve on demand. */
+  const canStart = hasPlayableUrl || Boolean(stationuuid);
   const tooltip = buildStationTooltip(station);
 
   const togglePlay = useCallback(async () => {
@@ -329,7 +332,10 @@ export function Player() {
     setBusy(true);
     try {
       if (!isPlaying) {
-        if (!effectiveUrl) return;
+        if (!hasPlayableUrl) {
+          const resolved = await ensurePlayerStationResolved();
+          if (!resolved) return;
+        }
         const ok = await startPlaybackWithPlaylistSkip();
         if (!ok) {
           setPlaying(false);
@@ -344,7 +350,7 @@ export function Player() {
     } finally {
       setBusy(false);
     }
-  }, [busy, effectiveUrl, isPlaying, setPlaying]);
+  }, [busy, hasPlayableUrl, isPlaying, setPlaying]);
 
   const toggleMute = useCallback(async () => {
     const { muted: m, volumePercent: vol } = usePlayerStore.getState();
