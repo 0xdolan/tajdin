@@ -40,4 +40,32 @@ describe("usePlayerStore", () => {
     expect(s.streamUrl).toBe("http://b");
     expect(s.station?.name).toBe("X");
   });
+
+  it("beginPlaylistPlayback sets context and setStation clears it", () => {
+    const st = {
+      stationuuid: "u1",
+      name: "X",
+      url: "http://a",
+      url_resolved: "http://b",
+    };
+    usePlayerStore.getState().beginPlaylistPlayback(st, "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee", 2);
+    expect(usePlayerStore.getState().playlistContext).toEqual({
+      playlistId: "aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee",
+      stationIndex: 2,
+    });
+    usePlayerStore.getState().setStation(st);
+    expect(usePlayerStore.getState().playlistContext).toBeNull();
+  });
+
+  it("applySessionPlayer restores playlist context", () => {
+    usePlayerStore.getState().applySessionPlayer({
+      stationuuid: "zzzzzzzz-zzzz-4zzz-zzzz-zzzzzzzzzzzz",
+      playlistId: "bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb",
+      playlistStationIndex: 1,
+    });
+    expect(usePlayerStore.getState().playlistContext).toEqual({
+      playlistId: "bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb",
+      stationIndex: 1,
+    });
+  });
 });

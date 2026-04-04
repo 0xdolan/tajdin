@@ -133,7 +133,7 @@ For real extension behavior (storage, service worker, host permissions), use **`
 | `manifest.json`      | Source manifest; copied into `dist/` on build          |
 | `public/icons/`      | Toolbar / store icons (`zeng-radio-50.png`, `zeng-radio-100.png`); copied to `dist/icons/` by Vite |
 | `src/background/`    | Service worker: `index.ts`, `audio-engine.ts` (`zeng/player/*` → offscreen + ~20s `chrome.alarms` keep-alive), `offscreen-document.ts` |
-| `src/popup/`         | `components/`: `Player`, `StationSearchBar`, `StationLanguageFilter` (browse `language` API param), `StationCard`, `StationList`; `hooks/useSearch.ts`; `playerBridge.ts`; `stationLibraryApi.ts`; `store/` + sync |
+| `src/popup/`         | `components/`: `Player`, `PlaylistsPage` (@dnd-kit reorder, CRUD via `stationLibraryApi`), `StationSearchBar`, `StationLanguageFilter`, `StationCard`, `StationList`; `playerPlayback.ts` (playlist skip on failed load); `playerBridge.ts`; `stationLibraryApi.ts`; `store/` + sync |
 | `src/settings/`      | Full-tab options UI (React + Tailwind)                 |
 | `src/offscreen/`     | Offscreen doc: `<audio id="player">`, `index.ts` handles `zeng/offscreen/*` (load, play, pause, volume, state). SW: `offscreen-document.ts` + `zeng/sw/ensure-offscreen` / `zeng/sw/ping-offscreen` |
 | `src/shared/`        | `types/`, `storage/`, `utils/fuzzy-search.ts`, `utils/language-mapper.ts` (ISO 639-1 / BCP 47 → Radio Browser `language` tokens), `api/radio-browser.api.ts` (`RadioBrowserClient`, primary + fallback hosts, rate-spaced queue) |

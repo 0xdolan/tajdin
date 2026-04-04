@@ -26,6 +26,9 @@ export const SessionPlayerSchema = z.object({
   stationuuid: z.string().min(1).nullable().optional(),
   isPlaying: z.boolean().optional(),
   volumePercent: z.number().int().min(0).max(100).optional(),
+  /** When set with {@link playlistStationIndex}, playlist skip-after-failed-load is active. */
+  playlistId: z.union([z.string().uuid(), z.null()]).optional(),
+  playlistStationIndex: z.union([z.number().int().min(0), z.null()]).optional(),
 });
 
 export type SessionPlayer = z.infer<typeof SessionPlayerSchema>;
