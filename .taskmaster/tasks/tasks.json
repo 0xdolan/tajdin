@@ -1094,11 +1094,11 @@
             "title": "Add custom station: keep modal + draft when leaving popup (e.g. copy from another tab)",
             "description": "Switching away closes the add-station UI and loses drafts; preserve until save or explicit cancel.",
             "dependencies": [],
-            "details": "`AddStationModal` / Radix dialog: on `popup` hide, avoid unmounting without save; persist draft to `chrome.storage.session` or keep dialog state across visibility if API allows. On reopen, restore fields. Handle success/clear on save.",
-            "status": "pending",
+            "details": "DONE: `SessionAddStationDraftSchema` + session keys (popup/settings); `read/merge/clearAddStationDraft`; `AddStationModal` debounced field writes, `visibilitychange` + effect cleanup flush, backdrop/Escape sets `modalOpen: false` (keeps fields), **Cancel** clears storage; save clears. `TabPanel` restores `modalOpen` on mount. `storage-migration` pairs only `LEGACY_STORAGE_KEYS` keys.",
+            "status": "done",
             "testStrategy": "Manual: open add flow, blur popup, return, draft intact; save clears.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-03T20:00:00.000Z"
+            "updatedAt": "2026-04-06T00:00:00.000Z"
           },
           {
             "id": 9,
@@ -1156,12 +1156,12 @@
             "updatedAt": "2026-04-03T22:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-04T10:24:55.928Z"
+        "updatedAt": "2026-04-04T10:36:09.180Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T10:24:55.928Z",
+      "lastModified": "2026-04-04T10:36:09.182Z",
       "taskCount": 24,
       "completedCount": 23,
       "tags": [
