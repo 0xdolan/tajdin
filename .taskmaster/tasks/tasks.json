@@ -443,7 +443,7 @@
           "15",
           "16"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -458,7 +458,7 @@
           "3",
           "17"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {

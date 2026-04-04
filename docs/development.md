@@ -66,7 +66,8 @@ After `npm run build` (or `build:watch`), load **`dist/`** as unpacked and confi
 - [ ] **No manifest errors** on the extension card on `chrome://extensions`.
 - [ ] **Service worker** is active (click “Service worker” / inspect; no crash on startup).
 - [ ] **Popup** opens from the toolbar icon and shows the basic Zeng UI (dark shell, title, bottom **Player** bar with play/pause, mute, volume, station tooltip).
-- [ ] **Options** open (from “Extension options” or your UI entry) and render the settings shell.
+- [ ] **Options** open from the toolbar **gear** in the popup (`chrome.runtime.openOptionsPage()`), from “Extension options” on the extension card, or the manifest options URL, and render the settings shell (General, Stations, Playlists, Groups).
+- [ ] **Storage sync** — change a setting on the options page (for example theme) and confirm the popup updates without a full reload (`chrome.storage.onChanged` on `zeng.*` keys).
 - [ ] **Permissions** listed on the card include **storage**, **alarms**, **offscreen**, and Radio Browser **host** access.
 
 Automated checks in `npm run verify:dist` do **not** replace this pass; they only validate `dist/` layout and manifest fields.
@@ -133,10 +134,10 @@ For real extension behavior (storage, service worker, host permissions), use **`
 | `manifest.json`      | Source manifest; copied into `dist/` on build          |
 | `public/icons/`      | Toolbar / store icons (`zeng-radio-50.png`, `zeng-radio-100.png`); copied to `dist/icons/` by Vite |
 | `src/background/`    | Service worker: `index.ts`, `audio-engine.ts` (`zeng/player/*` → offscreen + ~20s `chrome.alarms` keep-alive), `offscreen-document.ts` |
-| `src/popup/`         | `components/`: `Player`, `PlaylistsPage`, `GroupsPage`, `AddStationModal` (`custom:` stations), `StationSearchBar`, `StationLanguageFilter`, `StationCard`, `StationList`; `playerPlayback.ts`; `playerBridge.ts`; `stationLibraryApi.ts` (`loadCustomStations`, `addCustomStation`, `resolveStationForLibrary`); `store/` + sync |
-| `src/settings/`      | Full-tab options UI (React + Tailwind)                 |
+| `src/popup/`         | `SurfaceContext.tsx` (`SurfaceProvider` / `useSurface`) resolves **light** vs **dark** chrome (tabs, panels, player dock, `Player` labels/buttons) from settings + system preference. `components/`: `TabNav` (gear → options), `Player`, `PlaylistsPage`, `GroupsPage`, `AddStationModal` (`custom:` stations), `StationSearchBar`, `StationLanguageFilter`, `StationCard`, `StationList`; `playerPlayback.ts`; `playerBridge.ts`; `stationLibraryApi.ts` (`loadCustomStations`, `addCustomStation`, `removeCustomStation`, `resolveStationForLibrary`); `store/` + sync |
+| `src/settings/`      | Full-tab options UI: sidebar + `GeneralSettingsSection`, `CustomStationsTable`, reused `PlaylistsPage` / `GroupsPage`; listens to `chrome.storage.local` changes for `zeng.*` to stay in sync with the popup |
 | `src/offscreen/`     | Offscreen doc: `<audio id="player">`, `index.ts` handles `zeng/offscreen/*` (load, play, pause, volume, state). SW: `offscreen-document.ts` + `zeng/sw/ensure-offscreen` / `zeng/sw/ping-offscreen` |
-| `src/shared/`        | `types/`, `storage/`, `utils/fuzzy-search.ts`, `utils/language-mapper.ts`, `utils/group-icon-keys.ts`, `utils/validate-stream-url.ts`, `utils/station-merge.ts`, `api/radio-browser.api.ts` (`RadioBrowserClient`, primary + fallback hosts, rate-spaced queue) |
+| `src/shared/`        | `types/`, `storage/`, `import-export/` (`backup-schema.ts`, `backup-io.ts` — Zod `zeng-backup` v1 JSON, merge vs replace), `utils/fuzzy-search.ts`, `utils/language-mapper.ts`, `utils/group-icon-keys.ts`, `utils/validate-stream-url.ts`, `utils/station-merge.ts`, `api/radio-browser.api.ts` (`RadioBrowserClient`, primary + fallback hosts, rate-spaced queue) |
 | `vite.config.ts`     | Multi-entry build, `base: './'` for extension-relative assets |
 | `dist/`              | **Output only** — gitignored; load this folder in Chrome |
 
