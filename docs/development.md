@@ -9,6 +9,8 @@ How to run the project from scratch, produce a loadable Chrome extension, and it
 - **Google Chrome** (or another Chromium browser) with developer mode for extensions
 - **Git** (to clone the repository)
 
+In **VS Code / Cursor**, use the workspace TypeScript version when prompted (`.vscode/settings.json` points at `node_modules/typescript/lib`) so the editor matches `npm run typecheck`.
+
 Optional:
 
 - **Task Master CLI** (`task-master`) if you use `.taskmaster/tasks/tasks.json` for task tracking
@@ -142,7 +144,7 @@ For real extension behavior (storage, service worker, host permissions), use **`
 - **Blank popup or broken styles** — Confirm you loaded **`dist/`**, not the repo root. Asset URLs in HTML are **relative** (`../../assets/...`); loading the wrong root breaks them.
 - **Changes not visible** — Run a build (or watch), then **Reload** the extension on `chrome://extensions`.
 - **`npm ci` fails** — Ensure `package-lock.json` is present and committed; otherwise run `npm install` once and commit the lockfile.
-- **Type errors after moving files** — Run `npm run typecheck` and update `tsconfig.json` `paths` / Vite `resolve.alias` together if `@/` imports break.
+- **Type errors after moving files** — Run `npm run typecheck`. Prefer **relative** imports in `src/` so `tsc` stays simple; use Vite’s `@` alias in `vite.config.ts` only if you add matching `paths` in `tsconfig.json` (with `./` prefixes, never `baseUrl`).
 
 ## Security note for local work
 
