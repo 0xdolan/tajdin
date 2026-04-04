@@ -1039,11 +1039,11 @@
             "title": "About: replace em dashes (—) with parentheses in two places",
             "description": "User wants ( ) instead of — in About narrative (two occurrences).",
             "dependencies": [],
-            "details": "`src/settings/components/AboutSection.tsx` (and grep `src/` for the same sentences). Replace the two long-dash clauses with parenthetical phrasing; keep tone and line breaks readable.",
-            "status": "pending",
+            "details": "DONE: `AboutSection.tsx` — `companionship (the friend who…)` and `toolbar (powered by the open Radio Browser…)`; closing tagline still uses an em dash. Version fallback strings unchanged.",
+            "status": "done",
             "testStrategy": "Grep no stray — in that copy; visual read in settings About.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-03T20:00:00.000Z"
+            "updatedAt": "2026-04-06T00:00:00.000Z"
           },
           {
             "id": 4,
@@ -1156,12 +1156,12 @@
             "updatedAt": "2026-04-03T22:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-04T09:51:11.253Z"
+        "updatedAt": "2026-04-04T09:59:54.053Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T09:51:11.253Z",
+      "lastModified": "2026-04-04T09:59:54.054Z",
       "taskCount": 24,
       "completedCount": 23,
       "tags": [
