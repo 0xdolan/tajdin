@@ -92,7 +92,7 @@
         "dependencies": [
           "1"
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -137,10 +137,10 @@
             "description": "Create the Zod schema and TypeScript interface for application configuration and user preferences.",
             "dependencies": [],
             "details": "Implement in src/shared/types/settings.ts. Include properties for theme (light/dark/system), default search filters, preferred bitrate, and playback auto-start preferences.",
-            "status": "in-progress",
+            "status": "done",
             "testStrategy": "Verify the schema against a default settings object and ensure it handles partial updates correctly via z.partial().",
             "parentId": "undefined",
-            "updatedAt": "2026-04-04T01:43:35.463Z"
+            "updatedAt": "2026-04-04T01:46:16.790Z"
           },
           {
             "id": 5,
@@ -153,12 +153,13 @@
               4
             ],
             "details": "Create src/shared/types/index.ts to export all schemas and inferred types. Implement a generic helper function using Zod's safeParse to facilitate error handling when reading from storage or API.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Check that all types are accessible via a single import and the helper function correctly identifies invalid data structures.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-04-04T01:53:28.431Z"
           }
         ],
-        "updatedAt": "2026-04-04T01:43:35.463Z"
+        "updatedAt": "2026-04-04T01:53:28.431Z"
       },
       {
         "id": "3",
@@ -419,9 +420,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T01:43:35.463Z",
+      "lastModified": "2026-04-04T01:53:28.432Z",
       "taskCount": 20,
-      "completedCount": 1,
+      "completedCount": 2,
       "tags": [
         "master"
       ]
