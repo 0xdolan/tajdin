@@ -62,8 +62,8 @@ export function TabNav() {
   const setActiveTab = useUiStore((s) => s.setActiveTab);
   const navBar =
     surface === "light"
-      ? "flex h-[52px] shrink-0 items-stretch border-b border-neutral-200 bg-white px-1"
-      : "flex h-[52px] shrink-0 items-stretch border-b border-neutral-800 bg-neutral-950 px-1";
+      ? "flex h-11 shrink-0 items-stretch border-b border-neutral-200 bg-white px-0.5"
+      : "flex h-11 shrink-0 items-stretch border-b border-neutral-800 bg-neutral-950 px-0.5";
   const tabIdle =
     surface === "light"
       ? "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
@@ -74,17 +74,17 @@ export function TabNav() {
       : "bg-neutral-800 text-neutral-50 shadow-sm";
   const gear =
     surface === "light"
-      ? "ml-0.5 flex w-10 shrink-0 items-center justify-center rounded-md text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
-      : "ml-0.5 flex w-10 shrink-0 items-center justify-center rounded-md text-neutral-400 hover:bg-neutral-900 hover:text-neutral-100";
+      ? "ml-0.5 flex h-full w-9 shrink-0 items-center justify-center rounded-md text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
+      : "ml-0.5 flex h-full w-9 shrink-0 items-center justify-center rounded-md text-neutral-400 hover:bg-neutral-900 hover:text-neutral-100";
 
   return (
     <nav className={navBar} aria-label="Main">
-      <ul className="flex min-w-0 flex-1 items-stretch gap-0.5" role="tablist">
+      <ul className="flex min-w-0 flex-1 items-stretch justify-start gap-px" role="tablist">
         {TABS.map((tab) => {
           const selected = activeTab === tab.id;
           const Icon = tab.Icon;
           return (
-            <li key={tab.id} className="min-w-0 flex-1" role="presentation">
+            <li key={tab.id} className="flex flex-none items-stretch" role="presentation">
               <button
                 type="button"
                 role="tab"
@@ -95,12 +95,12 @@ export function TabNav() {
                 data-tab={tab.id}
                 title={tab.id === "favourites" ? "Favourites" : tab.id === "playlists" ? "Playlists" : "Browse"}
                 className={[
-                  "flex h-full w-full flex-col items-center justify-center gap-0.5 rounded-md px-1 py-1 text-[10px] font-medium leading-tight transition-colors sm:text-xs",
+                  "flex h-full min-h-[44px] min-w-[2.75rem] flex-col items-center justify-center gap-px rounded-md px-1.5 py-0.5 text-[10px] font-medium leading-tight transition-colors sm:min-w-[3rem] sm:px-2 sm:text-[11px] pointer:coarse:min-w-[3rem] pointer:coarse:px-2",
                   selected ? tabSel : tabIdle,
                 ].join(" ")}
                 onClick={() => setActiveTab(tab.id)}
               >
-                <Icon className="h-4 w-4 shrink-0" />
+                <Icon className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
                 <span className="max-w-full truncate">{tab.label}</span>
               </button>
             </li>
