@@ -393,80 +393,82 @@ export function Player() {
         <p className={`mt-0.5 truncate text-xs leading-snug ${titleSub}`}>{subtitleLine}</p>
       </div>
 
-      <div className="flex w-full min-w-0 items-center gap-2">
-        <StationArt station={station} isPlaying={isPlaying} />
-        <div
-          className="flex shrink-0 items-center gap-0.5"
-          role="group"
-          aria-label="Playback and list navigation"
-        >
-          <button
-            type="button"
-            className={navBtn}
-            aria-label="Previous station in list"
-            title="Previous in list (wraps)"
-            disabled={listNavDisabled}
-            onClick={() => void goToAdjacentInSearchResults(-1)}
+      <div className="flex w-full min-w-0 flex-wrap items-center gap-x-2 gap-y-2">
+        <div className="flex min-h-0 min-w-0 max-w-full flex-[1_1_0] flex-wrap items-center gap-x-2 gap-y-1">
+          <StationArt station={station} isPlaying={isPlaying} />
+          <div
+            className="flex min-w-0 flex-[1_1_auto] flex-wrap content-center items-center gap-0.5"
+            role="group"
+            aria-label="Playback and list navigation"
           >
-            <SkipBackIcon />
-          </button>
-          <button
-            type="button"
-            disabled={busy || (!canStart && !isPlaying)}
-            aria-label={isPlaying ? "Pause" : "Play"}
-            className={playBtn}
-            onClick={() => void togglePlay()}
-          >
-            {isPlaying ? <PauseIcon /> : <PlayIcon />}
-          </button>
-          <button
-            type="button"
-            className={navBtn}
-            aria-label="Next station in list"
-            title="Next in list (wraps)"
-            disabled={listNavDisabled}
-            onClick={() => void goToAdjacentInSearchResults(1)}
-          >
-            <SkipForwardIcon />
-          </button>
-          <button
-            type="button"
-            className={navBtn}
-            aria-label="Random station from list"
-            title="Random from current list"
-            disabled={listNavDisabled}
-            onClick={() => void goToRandomInSearchResults()}
-          >
-            <ShuffleIcon />
-          </button>
-          <AddCurrentToPlaylistMenu stationuuid={stationuuid} surface={surface} navBtnClass={navBtn} />
+            <button
+              type="button"
+              className={navBtn}
+              aria-label="Previous station in list"
+              title="Previous in list (wraps)"
+              disabled={listNavDisabled}
+              onClick={() => void goToAdjacentInSearchResults(-1)}
+            >
+              <SkipBackIcon />
+            </button>
+            <button
+              type="button"
+              disabled={busy || (!canStart && !isPlaying)}
+              aria-label={isPlaying ? "Pause" : "Play"}
+              className={playBtn}
+              onClick={() => void togglePlay()}
+            >
+              {isPlaying ? <PauseIcon /> : <PlayIcon />}
+            </button>
+            <button
+              type="button"
+              className={navBtn}
+              aria-label="Next station in list"
+              title="Next in list (wraps)"
+              disabled={listNavDisabled}
+              onClick={() => void goToAdjacentInSearchResults(1)}
+            >
+              <SkipForwardIcon />
+            </button>
+            <button
+              type="button"
+              className={navBtn}
+              aria-label="Random station from list"
+              title="Random from current list"
+              disabled={listNavDisabled}
+              onClick={() => void goToRandomInSearchResults()}
+            >
+              <ShuffleIcon />
+            </button>
+            <AddCurrentToPlaylistMenu stationuuid={stationuuid} surface={surface} navBtnClass={navBtn} />
+          </div>
         </div>
 
-        <div className="min-w-0 flex-1" />
-
-        <button
-          type="button"
-          aria-label={muted ? "Unmute" : "Mute"}
-          aria-pressed={muted}
-          className={muteBtn}
-          onClick={() => void toggleMute()}
-        >
-          {muted ? <SpeakerOffIcon /> : <SpeakerOnIcon />}
-        </button>
-        <label className="flex w-[min(100px,28vw)] min-w-[72px] shrink-0 items-center gap-1.5">
-          <span className="sr-only">Volume</span>
-          <input
-            type="range"
-            min={0}
-            max={100}
-            value={volumePercent}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={volumePercent}
-            className="h-1 w-full cursor-pointer accent-amber-500"
-            onChange={(e) => onVolumeChange(Number(e.target.value))}
-          />
-        </label>
+        <div className="ms-auto flex min-w-0 shrink-0 items-center gap-1.5">
+          <button
+            type="button"
+            aria-label={muted ? "Unmute" : "Mute"}
+            aria-pressed={muted}
+            className={muteBtn}
+            onClick={() => void toggleMute()}
+          >
+            {muted ? <SpeakerOffIcon /> : <SpeakerOnIcon />}
+          </button>
+          <label className="flex h-9 min-w-[72px] max-w-[100px] shrink-0 items-center gap-1.5">
+            <span className="sr-only">Volume</span>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={volumePercent}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={volumePercent}
+              className="h-1 w-full min-w-0 cursor-pointer accent-amber-500"
+              onChange={(e) => onVolumeChange(Number(e.target.value))}
+            />
+          </label>
+        </div>
       </div>
     </div>
   );
