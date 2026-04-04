@@ -53,6 +53,7 @@ describe("Player", () => {
       runtime: {
         sendMessage,
         lastError: undefined,
+        getURL: (path: string) => `chrome-extension://test-id/${path}`,
       },
     });
   });
@@ -66,6 +67,34 @@ describe("Player", () => {
       { type: "tajdin/player/set-volume", volumePercent: 50 },
       expect.any(Function),
     );
+  });
+
+  it("shows packaged extension icon while playing", () => {
+    usePlayerStore.getState().setStation({
+      stationuuid: "s1",
+      name: "Demo FM",
+      url: "http://stream.example/a",
+      url_resolved: "http://stream.example/b",
+      favicon: "https://example.com/station-icon.png",
+    });
+    usePlayerStore.getState().setPlaying(true);
+    render(<Player />);
+    const img = document.querySelector(`img[src="chrome-extension://test-id/icons/tajdin-radio-50.png"]`);
+    expect(img).toBeInTheDocument();
+  });
+
+  it("shows station favicon when stopped", () => {
+    usePlayerStore.getState().setStation({
+      stationuuid: "s1",
+      name: "Demo FM",
+      url: "http://stream.example/a",
+      url_resolved: "http://stream.example/b",
+      favicon: "https://example.com/station-icon.png",
+    });
+    usePlayerStore.getState().setPlaying(false);
+    render(<Player />);
+    const img = document.querySelector('img[src="https://example.com/station-icon.png"]');
+    expect(img).toBeInTheDocument();
   });
 
   it("mute sends volume 0 and unmute restores stored level", async () => {
