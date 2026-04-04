@@ -6,11 +6,12 @@ import {
   type StationSearchParams,
 } from "../../shared/api/radio-browser.api";
 import { fuzzySearchStations, regexSearchStations } from "../../shared/utils/fuzzy-search";
+import { mergeStationsDedupe } from "../../shared/utils/station-merge";
 import type { Group } from "../../shared/types/group";
 import type { Playlist } from "../../shared/types/playlist";
 import type { Station } from "../../shared/types/station";
 import type { SearchMode } from "../hooks/useSearch";
-import { loadPlaylistsAndGroups } from "../stationLibraryApi";
+import { loadCustomStations, loadPlaylistsAndGroups } from "../stationLibraryApi";
 import { useStationStore } from "../store/stationStore";
 import { StationCard } from "./StationCard";
 
@@ -33,6 +34,8 @@ export type StationListProps = {
   regexInvalid?: boolean;
   /** Radio Browser `language` search token (e.g. `spanish`); empty = any. */
   languageFilter?: string;
+  /** Bump to refetch and merge custom stations into the first browse/search page. */
+  customStationsTick?: number;
 };
 
 export type StationListContext = {
@@ -61,6 +64,7 @@ export function StationList({
   searchMode = "fuzzy",
   regexInvalid = false,
   languageFilter = "",
+  customStationsTick = 0,
 }: StationListProps) {
   const searchResults = useStationStore((s) => s.searchResults);
   const isSearchLoading = useStationStore((s) => s.isSearchLoading);
@@ -129,14 +133,17 @@ export function StationList({
         const batch = await client.searchStations(listParams(0));
         if (cancelled) return;
 
+        const customList = await loadCustomStations();
+        const mergedBase = mergeStationsDedupe(customList, batch);
+
         if (regexCorpusMode) {
-          corpusRef.current = batch;
+          corpusRef.current = mergedBase;
           const r = regexSearchStations(corpusRef.current, searchQuery);
           replaceSearchResults(r.ok ? r.stations : []);
         } else {
-          let out = batch;
+          let out = mergedBase;
           if (searchMode === "fuzzy" && q) {
-            out = fuzzySearchStations(batch, q);
+            out = fuzzySearchStations(out, q);
           }
           replaceSearchResults(out);
         }
@@ -166,6 +173,7 @@ export function StationList({
     searchMode,
     searchQuery,
     setSearchLoading,
+    customStationsTick,
   ]);
 
   const loadMore = useCallback(async () => {
