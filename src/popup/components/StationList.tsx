@@ -1,11 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import {
   defaultRadioBrowserClient,
   type RadioBrowserClient,
 } from "../../shared/api/radio-browser.api";
+import type { Group } from "../../shared/types/group";
+import type { Playlist } from "../../shared/types/playlist";
 import type { Station } from "../../shared/types/station";
+import { loadPlaylistsAndGroups } from "../stationLibraryApi";
 import { useStationStore } from "../store/stationStore";
+import { StationCard } from "./StationCard";
 
 export const BROWSE_PAGE_SIZE = 50;
 
@@ -22,18 +26,11 @@ export type StationListProps = {
   client?: RadioBrowserClient;
 };
 
-function StationRow({ station }: { station: Station }) {
-  const country = station.country ?? station.countrycode ?? "—";
-  const lang = station.language ?? station.languagecodes ?? "";
-  const meta = [country, lang].filter(Boolean).join(" · ");
-
-  return (
-    <div className="box-border flex h-14 flex-col justify-center border-b border-neutral-800/90 px-1 py-1.5">
-      <p className="truncate text-sm font-medium text-neutral-100">{station.name}</p>
-      <p className="truncate text-xs text-neutral-500">{meta || "Radio"}</p>
-    </div>
-  );
-}
+export type StationListContext = {
+  playlists: Playlist[];
+  groups: Group[];
+  refreshLibrary: () => void;
+};
 
 function StationListSkeleton() {
   return (
@@ -43,7 +40,7 @@ function StationListSkeleton() {
       aria-label="Loading stations"
     >
       {Array.from({ length: 8 }, (_, i) => (
-        <div key={i} className="h-14 shrink-0 animate-pulse rounded-md bg-neutral-800/80" />
+        <div key={i} className="h-[72px] shrink-0 animate-pulse rounded-md bg-neutral-800/80" />
       ))}
     </div>
   );
@@ -55,6 +52,27 @@ export function StationList({ client = defaultRadioBrowserClient }: StationListP
   const replaceSearchResults = useStationStore((s) => s.replaceSearchResults);
   const appendSearchResults = useStationStore((s) => s.appendSearchResults);
   const setSearchLoading = useStationStore((s) => s.setSearchLoading);
+
+  const [library, setLibrary] = useState<{ playlists: Playlist[]; groups: Group[] }>({
+    playlists: [],
+    groups: [],
+  });
+  const refreshLibrary = useCallback(() => {
+    void loadPlaylistsAndGroups().then(setLibrary);
+  }, []);
+
+  useEffect(() => {
+    refreshLibrary();
+  }, [refreshLibrary]);
+
+  const listContext = useMemo<StationListContext>(
+    () => ({
+      playlists: library.playlists,
+      groups: library.groups,
+      refreshLibrary,
+    }),
+    [library.playlists, library.groups, refreshLibrary],
+  );
 
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const offsetRef = useRef(0);
@@ -138,20 +156,28 @@ export function StationList({ client = defaultRadioBrowserClient }: StationListP
   }
 
   return (
-    <Virtuoso<Station>
+    <Virtuoso<Station, StationListContext>
       className="h-full min-h-0"
       style={{ height: "100%" }}
+      context={listContext}
       data={searchResults}
-      defaultItemHeight={56}
+      defaultItemHeight={72}
       atBottomThreshold={BROWSE_LOAD_THRESHOLD_PX}
       endReached={handleEndReached}
       computeItemKey={(_index, station) => station.stationuuid}
-      itemContent={(_index, station) => <StationRow station={station} />}
+      itemContent={(_index, station, ctx) => (
+        <StationCard
+          station={station}
+          playlists={ctx.playlists}
+          groups={ctx.groups}
+          onLibraryMutated={ctx.refreshLibrary}
+        />
+      )}
       components={{
         Footer: () =>
           isLoadingMore ? (
             <div className="py-2" aria-hidden>
-              <div className="h-14 animate-pulse rounded-md bg-neutral-800/60" />
+              <div className="h-[72px] animate-pulse rounded-md bg-neutral-800/60" />
             </div>
           ) : null,
       }}
