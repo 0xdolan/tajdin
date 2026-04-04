@@ -1,14 +1,18 @@
+import type { RadioBrowserClient } from "../shared/api/radio-browser.api";
 import {
   STORAGE_KEYS,
+  localCustomStationsStorage,
   localGroupsStorage,
   localPlaylistsStorage,
 } from "../shared/storage/instances";
 import type { Group } from "../shared/types/group";
 import type { Playlist } from "../shared/types/playlist";
+import type { Station } from "../shared/types/station";
 import {
   DEFAULT_GROUP_ICON_KEY,
   isValidGroupIconKey,
 } from "../shared/utils/group-icon-keys";
+import { isValidHttpOrHttpsStreamUrl } from "../shared/utils/validate-stream-url";
 
 export async function loadPlaylistsAndGroups(): Promise<{
   playlists: Playlist[];
@@ -17,6 +21,44 @@ export async function loadPlaylistsAndGroups(): Promise<{
   const playlists = await localPlaylistsStorage.getWithDefault(STORAGE_KEYS.playlists, []);
   const groups = await localGroupsStorage.getWithDefault(STORAGE_KEYS.groups, []);
   return { playlists, groups };
+}
+
+export async function loadCustomStations(): Promise<Station[]> {
+  return localCustomStationsStorage.getWithDefault(STORAGE_KEYS.customStations, []);
+}
+
+/**
+ * Persist a user stream (`http`/`https` only). {@link Station.stationuuid} uses `custom:` + UUID (FR-009).
+ */
+export async function addCustomStation(
+  displayName: string,
+  streamUrl: string,
+): Promise<Station | null> {
+  const name = displayName.trim();
+  const url = streamUrl.trim();
+  if (!name || !isValidHttpOrHttpsStreamUrl(url)) return null;
+  const station: Station = {
+    stationuuid: `custom:${crypto.randomUUID()}`,
+    name,
+    url,
+    url_resolved: url,
+    tags: "custom",
+  };
+  const list = await loadCustomStations();
+  const r = await localCustomStationsStorage.set(STORAGE_KEYS.customStations, [...list, station]);
+  return r.success ? station : null;
+}
+
+/** Resolve a station for playlist/group rows: local `custom:*` first, then Radio Browser. */
+export async function resolveStationForLibrary(
+  client: RadioBrowserClient,
+  stationuuid: string,
+): Promise<Station | null> {
+  if (stationuuid.startsWith("custom:")) {
+    const list = await loadCustomStations();
+    return list.find((s) => s.stationuuid === stationuuid) ?? null;
+  }
+  return client.fetchStationByUuid(stationuuid);
 }
 
 function nowIso(): string {

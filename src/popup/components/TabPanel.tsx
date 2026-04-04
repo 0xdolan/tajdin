@@ -1,7 +1,9 @@
+import { useState } from "react";
 import type { SessionUi } from "../../shared/storage/schemas";
 import { useSearch } from "../hooks/useSearch";
 import { useStationStore } from "../store/stationStore";
 import { useUiStore } from "../store/uiStore";
+import { AddStationModal } from "./AddStationModal";
 import { GroupsPage } from "./GroupsPage";
 import { PlaylistsPage } from "./PlaylistsPage";
 import { StationLanguageFilter } from "./StationLanguageFilter";
@@ -35,6 +37,8 @@ export function TabPanel() {
   const browseLanguage = useStationStore((s) => s.browseLanguageApiValue);
   const setBrowseLanguage = useStationStore((s) => s.setBrowseLanguageApiValue);
   const { title, body } = COPY[activeTab];
+  const [addStationOpen, setAddStationOpen] = useState(false);
+  const [customStationsTick, setCustomStationsTick] = useState(0);
 
   return (
     <div
@@ -56,14 +60,29 @@ export function TabPanel() {
                 regexInvalid={search.regexInvalid}
               />
             </div>
-            <StationLanguageFilter value={browseLanguage} onChange={setBrowseLanguage} />
+            <div className="flex shrink-0 flex-wrap items-center gap-2">
+              <button
+                type="button"
+                className="rounded-md border border-neutral-600 bg-neutral-900 px-2.5 py-1.5 text-sm text-neutral-200 hover:bg-neutral-800"
+                onClick={() => setAddStationOpen(true)}
+              >
+                Add station
+              </button>
+              <StationLanguageFilter value={browseLanguage} onChange={setBrowseLanguage} />
+            </div>
           </div>
+          <AddStationModal
+            open={addStationOpen}
+            onOpenChange={setAddStationOpen}
+            onAdded={() => setCustomStationsTick((n) => n + 1)}
+          />
           <div className="min-h-0 flex-1" aria-label="Stations">
             <StationList
               searchQuery={search.debouncedQuery}
               searchMode={search.mode}
               regexInvalid={search.regexInvalid}
               languageFilter={browseLanguage}
+              customStationsTick={customStationsTick}
             />
           </div>
         </div>

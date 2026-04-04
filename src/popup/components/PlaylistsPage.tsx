@@ -30,6 +30,7 @@ import {
   removeStationFromPlaylist,
   renamePlaylist,
   reorderPlaylistStations,
+  resolveStationForLibrary,
 } from "../stationLibraryApi";
 import { usePlayerStore } from "../store/playerStore";
 
@@ -70,7 +71,7 @@ function SortableStationRow({
 
   useEffect(() => {
     let cancelled = false;
-    void client.fetchStationByUuid(uuid).then((s) => {
+    void resolveStationForLibrary(client, uuid).then((s) => {
       if (!cancelled) setStation(s);
     });
     return () => {
