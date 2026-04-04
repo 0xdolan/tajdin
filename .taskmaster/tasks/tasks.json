@@ -205,10 +205,10 @@
               2
             ],
             "details": "Implement 'get(key)' to return validated data or a default value, and 'set(key, value)' to validate data before calling chrome.storage. Serialize complex objects if necessary, though chrome.storage handles basic JSON.",
-            "status": "in-progress",
+            "status": "done",
             "testStrategy": "Verify that 'get' returns the default value or throws if data in storage is corrupted (fails validation).",
             "parentId": "undefined",
-            "updatedAt": "2026-04-04T02:16:03.519Z"
+            "updatedAt": "2026-04-04T02:21:26.188Z"
           },
           {
             "id": 4,
@@ -218,9 +218,10 @@
               3
             ],
             "details": "Implement an 'onChanged' or 'watch' method in the wrapper. It should use 'chrome.storage.onChanged.addListener', filter for specific keys, and validate new values using the Zod schema before notifying subscribers.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Simulate a chrome storage change event and verify that the subscriber receives the correctly typed and validated data.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-04-04T02:25:22.390Z"
           },
           {
             "id": 5,
@@ -235,7 +236,7 @@
             "parentId": "undefined"
           }
         ],
-        "updatedAt": "2026-04-04T02:16:03.519Z"
+        "updatedAt": "2026-04-04T02:25:22.390Z"
       },
       {
         "id": "4",
@@ -483,7 +484,7 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T02:16:03.519Z",
+      "lastModified": "2026-04-04T02:25:22.391Z",
       "taskCount": 20,
       "completedCount": 2,
       "tags": [
