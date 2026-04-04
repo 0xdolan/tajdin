@@ -171,8 +171,69 @@
         "dependencies": [
           "2"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "in-progress",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define Zod Schemas for Storage Data",
+            "description": "Define validation schemas for both persistent (local) and transient (session) data structures.",
+            "dependencies": [],
+            "details": "Create Zod schemas in src/shared/storage/chrome-storage.ts or a sibling file. Define schemas for Playlists, Custom Stations (local storage), and Player Status/UI state (session storage).",
+            "status": "done",
+            "testStrategy": "Unit test schemas with valid and invalid sample data objects to ensure validation logic is correct.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-04T01:58:50.211Z"
+          },
+          {
+            "id": 2,
+            "title": "Implement Generic ChromeStorageWrapper Class",
+            "description": "Develop the base wrapper class that encapsulates chrome.storage API calls.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create a class 'ChromeStorageWrapper<T>' that takes a Zod schema in its constructor. It should wrap a 'chrome.storage.StorageArea' (local or session) and provide type-safe accessors.",
+            "status": "pending",
+            "testStrategy": "Ensure the class properly interacts with a mocked chrome.storage object during development.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Integrate Validation in Get and Set Operations",
+            "description": "Implement the core logic for retrieving and storing data with automatic Zod validation.",
+            "dependencies": [
+              2
+            ],
+            "details": "Implement 'get(key)' to return validated data or a default value, and 'set(key, value)' to validate data before calling chrome.storage. Serialize complex objects if necessary, though chrome.storage handles basic JSON.",
+            "status": "pending",
+            "testStrategy": "Verify that 'get' returns the default value or throws if data in storage is corrupted (fails validation).",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Implement Storage Change Listeners",
+            "description": "Add functionality to observe changes in storage with type-safe callbacks.",
+            "dependencies": [
+              3
+            ],
+            "details": "Implement an 'onChanged' or 'watch' method in the wrapper. It should use 'chrome.storage.onChanged.addListener', filter for specific keys, and validate new values using the Zod schema before notifying subscribers.",
+            "status": "pending",
+            "testStrategy": "Simulate a chrome storage change event and verify that the subscriber receives the correctly typed and validated data.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Initialize and Export Storage Instances",
+            "description": "Create and export the singleton instances for local and session storage to be used throughout the app.",
+            "dependencies": [
+              4
+            ],
+            "details": "Instantiate 'storage.local' and 'storage.session' wrappers using the previously defined schemas. Export 'storageLocal' and 'storageSession' constants from src/shared/storage/chrome-storage.ts.",
+            "status": "pending",
+            "testStrategy": "Comprehensive unit tests using 'chrome-extension-mock' and Vitest to verify end-to-end get/set/watch flows for both storage types.",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-04-04T01:58:50.211Z"
       },
       {
         "id": "4",
@@ -420,7 +481,7 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T01:53:28.432Z",
+      "lastModified": "2026-04-04T01:58:50.212Z",
       "taskCount": 20,
       "completedCount": 2,
       "tags": [
