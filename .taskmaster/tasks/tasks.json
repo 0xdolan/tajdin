@@ -687,7 +687,7 @@
         "dependencies": [
           "21"
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -840,21 +840,21 @@
               10,
               11
             ],
-            "details": "feat/tajdin-rebrand or similar; merge to develop.",
-            "status": "pending",
+            "details": "DONE: `npm run lint`, `npm run typecheck`, `npm test -- --run`, `npm run verify:extension` — all green; `npm audit --audit-level=high` — 0 vulnerabilities. `rg zeng` in `src/` only hits intentional migration (`storage-migration*`), backup schema (`LEGACY_ZENG_BACKUP_FORMAT`, tests), settings storage listener. Rebrand work merged on `develop` across feat branches.",
+            "status": "done",
             "testStrategy": "All npm scripts green.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-05T12:00:00.000Z"
+            "updatedAt": "2026-04-05T01:10:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-05T01:05:00.000Z"
+        "updatedAt": "2026-04-05T01:10:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-05T01:05:00.000Z",
+      "lastModified": "2026-04-05T01:10:00.000Z",
       "taskCount": 22,
-      "completedCount": 21,
+      "completedCount": 22,
       "tags": [
         "master"
       ]
