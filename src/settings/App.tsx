@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
 import { ExtensionBranding } from "../shared/components/ExtensionBranding";
 import { PlaylistsPage } from "../popup/components/PlaylistsPage";
+import { AboutSection } from "./components/AboutSection";
 import { CustomStationsTable } from "./components/CustomStationsTable";
 import { GeneralSettingsSection } from "./components/GeneralSettingsSection";
 import { ImportExportSection } from "./components/ImportExportSection";
 
-type SettingsSectionId = "general" | "stations" | "playlists" | "backup";
+type SettingsSectionId = "general" | "stations" | "playlists" | "backup" | "about";
 
 const NAV: { id: SettingsSectionId; label: string; description: string }[] = [
   { id: "general", label: "General", description: "Theme, popup size, playback" },
   { id: "stations", label: "Stations", description: "Custom streams (table)" },
   { id: "playlists", label: "Playlists", description: "Create, reorder, delete" },
   { id: "backup", label: "Backup", description: "Export / import JSON" },
+  { id: "about", label: "About", description: "Version, story, links" },
 ];
 
 function isAppLocalStorageKey(key: string): boolean {
@@ -82,6 +84,7 @@ export function App() {
           </div>
         ) : null}
         {section === "backup" ? <ImportExportSection reloadToken={storageRev} /> : null}
+        {section === "about" ? <AboutSection /> : null}
       </main>
     </div>
   );
