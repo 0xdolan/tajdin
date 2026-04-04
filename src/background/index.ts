@@ -1,10 +1,19 @@
+import {
+  registerKeepAliveAlarmListener,
+  tryHandlePlayerMessage,
+} from "./audio-engine";
 import { ensureOffscreenDocument, pingOffscreenAudio } from "./offscreen-document";
 
+registerKeepAliveAlarmListener();
+
 chrome.runtime.onInstalled.addListener(() => {
-  // Install / update hook (alarms, defaults) — expand in audio-engine task.
+  // Install / update hook (defaults, migrations) — expand as needed.
 });
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (tryHandlePlayerMessage(message, sendResponse)) {
+    return true;
+  }
   if (message?.type === "zeng/health-check") {
     sendResponse({ ok: true });
     return true;

@@ -132,7 +132,7 @@ For real extension behavior (storage, service worker, host permissions), use **`
 |----------------------|------|
 | `manifest.json`      | Source manifest; copied into `dist/` on build          |
 | `public/icons/`      | Toolbar / store icons (`zeng-radio-50.png`, `zeng-radio-100.png`); copied to `dist/icons/` by Vite |
-| `src/background/`    | Service worker entry (`index.ts` → `dist/background.js`) |
+| `src/background/`    | Service worker: `index.ts`, `audio-engine.ts` (`zeng/player/*` → offscreen + ~20s `chrome.alarms` keep-alive), `offscreen-document.ts` |
 | `src/popup/`         | Extension popup (React + Tailwind)                     |
 | `src/settings/`      | Full-tab options UI (React + Tailwind)                 |
 | `src/offscreen/`     | Offscreen doc: `<audio id="player">`, `index.ts` handles `zeng/offscreen/*` (load, play, pause, volume, state). SW: `offscreen-document.ts` + `zeng/sw/ensure-offscreen` / `zeng/sw/ping-offscreen` |
