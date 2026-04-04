@@ -302,7 +302,7 @@
         "id": "8",
         "title": "Popup Layout and Navigation Component",
         "description": "Build the main shell of the popup including tabs and the container for the fixed player.",
-        "details": "Use React + Tailwind CSS. Implement the 400x600px fixed container. Create the top navigation bar (Browse, Favourites, Playlists, Groups) and a content area that renders the active page.",
+        "details": "Use React + Tailwind CSS. Implement the 400x600px fixed container. Create the top navigation bar (Browse, Favourites, Playlists; Groups removed in task 21) and a content area that renders the active page.",
         "testStrategy": "Visual verification of layout against design specs (48px top bar, 72px bottom player). Verify tab switching logic.",
         "priority": "medium",
         "dependencies": [
@@ -332,7 +332,7 @@
         "id": "10",
         "title": "Station Card and Context Menu",
         "description": "Build the individual station card UI and its interaction menu.",
-        "details": "Component should show favicon, name, country, language, and bitrate. Include an 'Add to Favourites' heart and a context menu (using a library like @radix-ui/react-context-menu) for adding to playlists/groups.",
+        "details": "Component should show favicon, name, country, language, and bitrate. Include an 'Add to Favourites' heart and a context menu (using a library like @radix-ui/react-context-menu) for adding to playlists (Add to group removed in task 21). Row click-to-play, copy link, and surface/light theme updates in task 21.",
         "testStrategy": "Snapshot tests for the UI and functional tests for the context menu triggers.",
         "priority": "medium",
         "dependencies": [
@@ -404,7 +404,7 @@
         "id": "15",
         "title": "Groups Organizational System",
         "description": "Implement user-defined groups for station organization.",
-        "details": "Similar to playlists but without playback ordering. Include functionality to assign Heroicons as group icons. Support collapsible/expandable views in the popup UI.",
+        "details": "Similar to playlists but without playback ordering. Include functionality to assign Heroicons as group icons. Support collapsible/expandable views in the popup UI. Product follow-up: Groups removed in task 21 (playlists-only UX); schema types may remain for legacy backup parse only.",
         "testStrategy": "Verify that a station can be added to multiple groups and that group deletions do not delete the underlying station metadata.",
         "priority": "low",
         "dependencies": [
@@ -434,7 +434,7 @@
         "id": "17",
         "title": "Settings Page Development",
         "description": "Create the full-page options UI for extension configuration and management.",
-        "details": "Implement src/settings/App.tsx with sidebar navigation. Sections: General, Stations (Table View), Playlists, Groups. Use the same shared components as the popup. Listen for chrome.storage.onChanged to sync with the popup.",
+        "details": "Implement src/settings/App.tsx with sidebar navigation. Sections: General, Stations (Table View), Playlists (Groups section removed in task 21). Use the same shared components as the popup. Listen for chrome.storage.onChanged to sync with the popup.",
         "testStrategy": "Open the options page from the popup gear icon. Modify a setting (e.g., theme) and verify it reflects in the popup instantly.",
         "priority": "medium",
         "dependencies": [
@@ -488,13 +488,201 @@
         ],
         "status": "done",
         "subtasks": []
+      },
+      {
+        "id": "21",
+        "title": "Popup UX overhaul (playback, favourites, theme, groups removal)",
+        "description": "Product/UX pass from popup_ux_overhaul plan: row play, list navigation, copy link, Add Station preview, search UI + session persistence, branding footer, light theme + Arabic font, tab icons, favourites list, remove Groups, backup legacy handling.",
+        "details": "Implemented on develop (e.g. browseNavigation, StationCard/StationList/StationSearchBar/TabNav/TabPanel, PopupHeader, AttributionFooter, FavouritesStationList, SessionUiSchema extensions, popupStorageSync, backup-io groups legacy, removed localGroupsStorage and Groups UI). Fuzzy vs regex retained per plan; Vazirmatn via @fontsource (arabic-400) not Google Fonts CDN.",
+        "testStrategy": "npm run lint && npm run typecheck && npm test && npm run verify:extension; manual smoke in Chrome light/dark.",
+        "priority": "high",
+        "dependencies": [
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12",
+          "14",
+          "15",
+          "16",
+          "17",
+          "18"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Play on station row click + selected state",
+            "description": "Wire StationCard primary click to play; heart/copy stop propagation; optional current-station highlight.",
+            "dependencies": [],
+            "details": "browseNavigation.playStationFromList; tests in StationCard.test.tsx.",
+            "status": "done",
+            "testStrategy": "Vitest + snapshot; manual row click plays audio.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-04T23:30:00.000Z"
+          },
+          {
+            "id": 2,
+            "title": "Player prev / next / shuffle from searchResults order",
+            "description": "Navigate by store searchResults index with wrap; shuffle optional.",
+            "dependencies": [
+              1
+            ],
+            "details": "browseNavigation.goToAdjacentInSearchResults, goToRandomInSearchResults; controls in Player.tsx.",
+            "status": "done",
+            "testStrategy": "Manual list order matches navigation.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-04T23:30:00.000Z"
+          },
+          {
+            "id": 3,
+            "title": "Copy stream URL on hover + clipboard permission",
+            "description": "Copy icon on artwork; url_resolved || url; manifest clipboardWrite if needed.",
+            "dependencies": [
+              1
+            ],
+            "details": "StationCard copy control; transient Copied/Failed hint.",
+            "status": "done",
+            "testStrategy": "Manual copy in extension popup.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-04T23:30:00.000Z"
+          },
+          {
+            "id": 4,
+            "title": "Add Station modal preview row (artwork + metadata)",
+            "description": "Match StationCard-style preview using shared StationArtwork.",
+            "dependencies": [],
+            "details": "StationArtwork.tsx; AddStationModal preview.",
+            "status": "done",
+            "testStrategy": "Visual check modal while typing.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-04T23:30:00.000Z"
+          },
+          {
+            "id": 5,
+            "title": "Search mode: icon toggles in field + fuzzy vs regex tooltips",
+            "description": "Replace dropdown with in-input icons; surface-aware styling; keep both modes per plan.",
+            "dependencies": [],
+            "details": "StationSearchBar.tsx + useSurface.",
+            "status": "done",
+            "testStrategy": "Toggle modes; verify labels/aria.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-04T23:30:00.000Z"
+          },
+          {
+            "id": 6,
+            "title": "Persist browse query, search mode, language in session UI storage",
+            "description": "Extend SessionUiSchema and popupStorageSync; useUiStore fields; default from settings when empty.",
+            "dependencies": [],
+            "details": "browseQuery, browseSearchMode, browseLanguageApiValue; hydrate on popup open.",
+            "status": "done",
+            "testStrategy": "Close/reopen popup preserves state.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-04T23:30:00.000Z"
+          },
+          {
+            "id": 7,
+            "title": "Header branding + attribution footer + manifest version",
+            "description": "Logo + Zeng above tabs; footer with 0xdolan, repo link, chrome.runtime.getManifest().version.",
+            "dependencies": [],
+            "details": "PopupHeader.tsx, AttributionFooter.tsx in App.tsx.",
+            "status": "done",
+            "testStrategy": "Visual + version string correct.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-04T23:30:00.000Z"
+          },
+          {
+            "id": 8,
+            "title": "Light theme polish for browse surfaces",
+            "description": "Surface-aware classes on StationCard, StationList skeleton/footer, StationLanguageFilter, TabPanel buttons.",
+            "dependencies": [],
+            "details": "useSurface() mirrors TabNav/TabPanel; PlaylistsPage may remain darker (follow-up).",
+            "status": "done",
+            "testStrategy": "Toggle light theme in settings.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-04T23:30:00.000Z"
+          },
+          {
+            "id": 9,
+            "title": "Arabic script: dir auto + Vazirmatn (self-hosted subset)",
+            "description": "Detect Arabic range; zeng-font-arabic; @import font before Tailwind in globals.css.",
+            "dependencies": [],
+            "details": "shared/utils/arabic-text.ts; @fontsource/vazirmatn arabic-400.",
+            "status": "done",
+            "testStrategy": "Station with Arabic name renders with font.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-04T23:30:00.000Z"
+          },
+          {
+            "id": 10,
+            "title": "Tab nav icons + labels (Browse, Favs, Lists)",
+            "description": "Heroicons-style inline SVGs per tab.",
+            "dependencies": [],
+            "details": "TabNav.tsx.",
+            "status": "done",
+            "testStrategy": "Visual tab bar.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-04T23:30:00.000Z"
+          },
+          {
+            "id": 11,
+            "title": "Favourites tab: resolve IDs, Virtuoso list, same StationCard UX",
+            "description": "Replace placeholder; sync searchResults for player navigation.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "FavouritesStationList.tsx.",
+            "status": "done",
+            "testStrategy": "Favourite stations play and copy like browse.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-04T23:30:00.000Z"
+          },
+          {
+            "id": 12,
+            "title": "Remove Groups feature + backup/session migration",
+            "description": "Drop Groups UI, storage key, APIs; SessionUi maps legacy activeTab groups→browse; backup import ignores groups.",
+            "dependencies": [],
+            "details": "Removed GroupsPage, GroupIcon, localGroupsStorage; backup-io legacy line in ImportExportSection.",
+            "status": "done",
+            "testStrategy": "No Groups tab; old backup still parses.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-04T23:30:00.000Z"
+          },
+          {
+            "id": 13,
+            "title": "Quality gate: lint, typecheck, tests, verify:extension, git merge",
+            "description": "Run full checks; commit/merge to develop per project workflow.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "details": "Branch feat/popup-ux-polish merged to develop.",
+            "status": "done",
+            "testStrategy": "CI scripts green locally.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-04T23:30:00.000Z"
+          }
+        ],
+        "updatedAt": "2026-04-04T23:30:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T02:25:22.391Z",
-      "taskCount": 20,
-      "completedCount": 2,
+      "lastModified": "2026-04-04T23:30:00.000Z",
+      "taskCount": 21,
+      "completedCount": 21,
       "tags": [
         "master"
       ]
