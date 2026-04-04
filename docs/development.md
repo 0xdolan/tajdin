@@ -134,7 +134,7 @@ For real extension behavior (storage, service worker, host permissions), use **`
 | `src/background/`    | Service worker entry (`index.ts` → `dist/background.js`) |
 | `src/popup/`         | Extension popup (React + Tailwind)                     |
 | `src/settings/`      | Full-tab options UI (React + Tailwind)                 |
-| `src/offscreen/`     | Offscreen document for audio (loaded via `chrome.offscreen` later) |
+| `src/offscreen/`     | Offscreen doc: `<audio id="player">`, `index.ts` handles `zeng/offscreen/*` (load, play, pause, volume, state). SW: `offscreen-document.ts` + `zeng/sw/ensure-offscreen` / `zeng/sw/ping-offscreen` |
 | `src/shared/`        | `types/`, `storage/`, `api/radio-browser.api.ts` (`RadioBrowserClient`, primary + fallback hosts, rate-spaced queue) |
 | `vite.config.ts`     | Multi-entry build, `base: './'` for extension-relative assets |
 | `dist/`              | **Output only** — gitignored; load this folder in Chrome |
