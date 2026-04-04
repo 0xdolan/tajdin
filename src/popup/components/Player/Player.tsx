@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useSurface } from "../../SurfaceContext";
 import { startPlaybackWithPlaylistSkip } from "../../playerPlayback";
 import { sendPlayerCommand } from "../../playerBridge";
 import { usePlayerStore } from "../../store/playerStore";
@@ -113,6 +114,7 @@ function SpeakerOffIcon() {
 }
 
 export function Player() {
+  const surface = useSurface();
   const station = usePlayerStore((s) => s.station);
   const streamUrl = usePlayerStore((s) => s.streamUrl);
   const isPlaying = usePlayerStore((s) => s.isPlaying);
@@ -171,6 +173,21 @@ export function Player() {
     [setMuted, setVolumePercent],
   );
 
+  const titleMain = surface === "light" ? "text-neutral-900" : "text-neutral-100";
+  const titleSub = surface === "light" ? "text-neutral-600" : "text-neutral-500";
+  const playBtn =
+    surface === "light"
+      ? "flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-neutral-200 text-neutral-900 hover:bg-neutral-300 disabled:cursor-not-allowed disabled:opacity-40"
+      : "flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-neutral-800 text-neutral-100 hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-40";
+  const muteBtn =
+    surface === "light"
+      ? `flex h-9 w-9 shrink-0 items-center justify-center rounded-md hover:bg-neutral-200 ${
+          muted ? "text-amber-600" : "text-neutral-600"
+        }`
+      : `flex h-9 w-9 shrink-0 items-center justify-center rounded-md hover:bg-neutral-800 ${
+          muted ? "text-amber-400" : "text-neutral-300"
+        }`;
+
   return (
     <div className="flex w-full min-w-0 items-center gap-2">
       <StationArt station={station} isPlaying={isPlaying} />
@@ -178,10 +195,10 @@ export function Player() {
         className="min-w-0 flex-1"
         title={tooltip}
       >
-        <p className="truncate text-sm font-medium text-neutral-100">
+        <p className={`truncate text-sm font-medium ${titleMain}`}>
           {station?.name ?? "No station selected"}
         </p>
-        <p className="truncate text-xs text-neutral-500">
+        <p className={`truncate text-xs ${titleSub}`}>
           {isPlaying ? "Playing" : "Stopped"}
           {muted ? " · Muted" : ""}
         </p>
@@ -190,7 +207,7 @@ export function Player() {
         type="button"
         disabled={busy || (!canStart && !isPlaying)}
         aria-label={isPlaying ? "Pause" : "Play"}
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-neutral-800 text-neutral-100 hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-40"
+        className={playBtn}
         onClick={() => void togglePlay()}
       >
         {isPlaying ? <PauseIcon /> : <PlayIcon />}
@@ -199,9 +216,7 @@ export function Player() {
         type="button"
         aria-label={muted ? "Unmute" : "Mute"}
         aria-pressed={muted}
-        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-md hover:bg-neutral-800 ${
-          muted ? "text-amber-400" : "text-neutral-300"
-        }`}
+        className={muteBtn}
         onClick={() => void toggleMute()}
       >
         {muted ? <SpeakerOffIcon /> : <SpeakerOnIcon />}

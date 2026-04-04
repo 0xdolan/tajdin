@@ -31,7 +31,12 @@ vi.mock("../shared/storage/instances", () => ({
   },
 }));
 
-import { addCustomStation, loadCustomStations, resolveStationForLibrary } from "./stationLibraryApi";
+import {
+  addCustomStation,
+  loadCustomStations,
+  removeCustomStation,
+  resolveStationForLibrary,
+} from "./stationLibraryApi";
 
 describe("custom stations", () => {
   beforeEach(() => {
@@ -49,6 +54,18 @@ describe("custom stations", () => {
 
   it("addCustomStation returns null for invalid URL", async () => {
     expect(await addCustomStation("X", "ftp://a")).toBeNull();
+  });
+
+  it("removeCustomStation drops the row and returns false for unknown uuid", async () => {
+    const a = await addCustomStation("A", "https://a.example/s");
+    const b = await addCustomStation("B", "https://b.example/s");
+    expect(await loadCustomStations()).toHaveLength(2);
+    expect(await removeCustomStation("custom:00000000-0000-4000-8000-000000000000")).toBe(false);
+    expect(await loadCustomStations()).toHaveLength(2);
+    expect(await removeCustomStation(a!.stationuuid)).toBe(true);
+    const rest = await loadCustomStations();
+    expect(rest).toHaveLength(1);
+    expect(rest[0]!.stationuuid).toBe(b!.stationuuid);
   });
 
   it("resolveStationForLibrary reads custom entries", async () => {
