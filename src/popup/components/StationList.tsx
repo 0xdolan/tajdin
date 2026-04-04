@@ -14,6 +14,7 @@ import { useSurface } from "../SurfaceContext";
 import { loadCustomStations, loadPlaylistsForLibrary } from "../stationLibraryApi";
 import { useStationStore } from "../store/stationStore";
 import { StationCard } from "./StationCard";
+import { TajdinVirtuosoScroller } from "./TajdinVirtuosoScroller";
 
 export const BROWSE_PAGE_SIZE = 50;
 
@@ -256,6 +257,7 @@ export function StationList({
         <StationCard station={station} playlists={ctx.playlists} onLibraryMutated={ctx.refreshLibrary} />
       )}
       components={{
+        Scroller: TajdinVirtuosoScroller,
         Footer: () =>
           isLoadingMore ? (
             <div className="py-2" aria-hidden>
