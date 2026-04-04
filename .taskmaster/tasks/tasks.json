@@ -999,12 +999,137 @@
           }
         ],
         "updatedAt": "2026-04-05T14:00:00.000Z"
+      },
+      {
+        "id": "24",
+        "title": "Popup polish: tabs, player metadata & art, about, footer, scroll, modal persistence, UI details",
+        "description": "Follow-up UX and copy: stable tab layout, correct player labels, About punctuation, artwork vs browser chrome icons, attribution line, list scroll styling, in-popup about, add-station draft survival, copy/regex control styling.",
+        "details": "User-requested batch (Apr 2026). Prefer small PR-sized subtasks. Run `npm run lint`, `npm run typecheck`, `npm test -- --run`, `npm run verify:extension` before merge. Subtask 24.4 revisits Task 23.10 (player showed extension icon while playing): confirm product — station cover/favicon in player while playing; extension packaged icon for toolbar / `chrome://extensions` as appropriate (`manifest` action icons, theme). Document choices in `docs/development.md` if manifest or layout changes.",
+        "testStrategy": "Manual: tab switch without resize flash; play → metadata matches station; About parentheses; playing artwork; extension list/toolbar icon; footer wording; scrollbar in lists; About reachable from popup; add-station survives copy-from-other-tab; copy button matches favicon well; regex toggle reads as .* .",
+        "priority": "medium",
+        "dependencies": [
+          "23"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Fix tab switch popup resize / transient scrollbar (Browse, Favs, Lists)",
+            "description": "Clicking Browse / Favourites / Playlists changes effective popup height briefly and shows a scrollbar for a moment.",
+            "dependencies": [],
+            "details": "Audit `TabPanel`, `TabNav`, `StationList` / `FavouritesStationList` / `PlaylistsPage` for inconsistent min-height, `overflow`, or content-driven flex growth. Stabilize layout (fixed min-heights, `min-h-0` chain, optional reserved space) so width/height do not jump and scrollbars do not flash. Light/dark surfaces.",
+            "status": "pending",
+            "testStrategy": "Manual: rapid tab switching at min popup size; no scrollbar flash; DevTools layout stable.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T20:00:00.000Z"
+          },
+          {
+            "id": 2,
+            "title": "Player: show correct station name and metadata after click-to-play",
+            "description": "Selecting a station to play does not show name/metadata correctly in the player bar.",
+            "dependencies": [],
+            "details": "Trace `playStationFromList`, `usePlayerStore.setStation`, `ensurePlayerStationResolved`, and `Player.tsx` title/subtitle (`buildStationSubtitle`, `sanitizeDisplayText`, Arabic `dir`). Reproduce browse vs favourites vs playlist. Fix stale state, wrong station object, or trim/sanitize edge cases; add Vitest where isolated.",
+            "status": "pending",
+            "testStrategy": "Manual: several stations; Vitest for subtitle/title helpers or store if added.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T20:00:00.000Z"
+          },
+          {
+            "id": 3,
+            "title": "About: replace em dashes (—) with parentheses in two places",
+            "description": "User wants ( ) instead of — in About narrative (two occurrences).",
+            "dependencies": [],
+            "details": "`src/settings/components/AboutSection.tsx` (and grep `src/` for the same sentences). Replace the two long-dash clauses with parenthetical phrasing; keep tone and line breaks readable.",
+            "status": "pending",
+            "testStrategy": "Grep no stray — in that copy; visual read in settings About.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T20:00:00.000Z"
+          },
+          {
+            "id": 4,
+            "title": "Playing: station artwork in player; extension icon in browser chrome",
+            "description": "While playing, player should show the station cover/favicon; browser extension row/toolbar should use the packaged extension icon.",
+            "dependencies": [],
+            "details": "Adjust `Player` / `StationArt` so **playing** state shows station artwork (cover/favicon), not the interim extension icon from 23.10. Separately ensure **manifest** `action.default_icon` / theme icons (and any declarative net request) match Tajdîn assets for `chrome://extensions` and toolbar. Confirm CSP and MV3 rules.",
+            "status": "pending",
+            "testStrategy": "Manual: play station → art in popup; `chrome://extensions` shows correct icon; toolbar badge/icon.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T20:00:00.000Z"
+          },
+          {
+            "id": 5,
+            "title": "Attribution footer: replace “Developed with ♥ by 0xdolan” with better line",
+            "description": "Improve the footer sentence (tone, clarity, optional heart).",
+            "dependencies": [],
+            "details": "`AttributionFooter` (+ tests if any). Propose concise credit + link pattern consistent with `shared/constants/links.ts`; update snapshots/strings.",
+            "status": "pending",
+            "testStrategy": "Vitest string assertions; read in popup light/dark.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T20:00:00.000Z"
+          },
+          {
+            "id": 6,
+            "title": "Station lists: scrollbar styling aligned with design",
+            "description": "Scrolling station lists should use on-brand scrollbars (light/dark).",
+            "dependencies": [],
+            "details": "`StationList` (Virtuoso), `FavouritesStationList`, possibly `PlaylistsPage` scroll areas. Tailwind arbitrary variants or shared utility for `::-webkit-scrollbar` / `scrollbar-*` (and Firefox `scrollbar-color`) matching surface tokens.",
+            "status": "pending",
+            "testStrategy": "Manual light/dark; narrow width; touch vs desktop.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T20:00:00.000Z"
+          },
+          {
+            "id": 7,
+            "title": "Popup: About entry from Browse / Favourites / Lists (responsive)",
+            "description": "Expose About from main tabs with responsive, polished presentation (not only settings).",
+            "dependencies": [],
+            "details": "Options: fourth tab, overflow menu, or compact link opening inline panel / options page. Reuse or slim `AboutSection` content; avoid duplicating long copy—link to full options About if needed. Mobile-first / narrow popup width.",
+            "status": "pending",
+            "testStrategy": "Manual: all breakpoints; no layout break; a11y labels.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T20:00:00.000Z"
+          },
+          {
+            "id": 8,
+            "title": "Add custom station: keep modal + draft when leaving popup (e.g. copy from another tab)",
+            "description": "Switching away closes the add-station UI and loses drafts; preserve until save or explicit cancel.",
+            "dependencies": [],
+            "details": "`AddStationModal` / Radix dialog: on `popup` hide, avoid unmounting without save; persist draft to `chrome.storage.session` or keep dialog state across visibility if API allows. On reopen, restore fields. Handle success/clear on save.",
+            "status": "pending",
+            "testStrategy": "Manual: open add flow, blur popup, return, draft intact; save clears.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T20:00:00.000Z"
+          },
+          {
+            "id": 9,
+            "title": "Station row: copy button background matches favicon frame",
+            "description": "Use the same background treatment as the station favicon area for the copy-stream button.",
+            "dependencies": [],
+            "details": "`StationCard.tsx`: align `StationFavicon` frame and copy button surface classes for light/dark (`useSurface`).",
+            "status": "pending",
+            "testStrategy": "Visual check browse + favourites rows.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T20:00:00.000Z"
+          },
+          {
+            "id": 10,
+            "title": "Regex toggle: editor-style icon (e.g. .* )",
+            "description": "Replace current regex glyph with a clearer “regex” affordance like editor patterns.",
+            "dependencies": [],
+            "details": "`StationSearchBar.tsx`: inline SVG or monospace `.*` treatment; keep touch target and a11y `aria-label`/`title` accurate.",
+            "status": "pending",
+            "testStrategy": "Visual; screen reader label unchanged in meaning.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T20:00:00.000Z"
+          }
+        ],
+        "updatedAt": "2026-04-03T20:00:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-05T14:00:00.000Z",
-      "taskCount": 23,
+      "lastModified": "2026-04-03T20:00:00.000Z",
+      "taskCount": 24,
       "completedCount": 23,
       "tags": [
         "master"
