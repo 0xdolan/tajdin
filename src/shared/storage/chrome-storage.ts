@@ -29,6 +29,17 @@ export type GetWithDefaultOptions = {
   onInvalidStored?: "throw" | "default";
 };
 
+/** Normalized shape (Chrome `StorageChange` is compatible). */
+export type StorageChangeRecord = {
+  oldValue?: unknown;
+  newValue?: unknown;
+};
+
+export type StorageWatchEvent<T> =
+  | { kind: "updated"; data: T }
+  | { kind: "removed" }
+  | { kind: "invalid"; formatted: string; error: ZodError };
+
 /**
  * Testable surface for `chrome.storage` read/write (callback API promisified).
  */
@@ -36,9 +47,35 @@ export interface StorageAreaAdapter {
   get(keys: string | string[] | null | undefined): Promise<Record<string, unknown>>;
   set(items: Record<string, unknown>): Promise<void>;
   remove(keys: string | string[]): Promise<void>;
+  /**
+   * Subscribe to changes for this logical area. Required for {@link ChromeStorageWrapper.watch}.
+   */
+  addStorageListener?(listener: (changes: Record<string, StorageChangeRecord>) => void): () => void;
 }
 
-export function chromeStorageAreaAdapter(area: chrome.storage.StorageArea): StorageAreaAdapter {
+const chromeSubscribers = {
+  local: new Set<(changes: Record<string, StorageChangeRecord>) => void>(),
+  session: new Set<(changes: Record<string, StorageChangeRecord>) => void>(),
+} as const;
+
+const chromeHookInstalled = { local: false, session: false };
+
+function ensureChromeOnChangedHook(areaName: "local" | "session"): void {
+  if (chromeHookInstalled[areaName]) return;
+  chromeHookInstalled[areaName] = true;
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area !== areaName) return;
+    const subs = chromeSubscribers[areaName];
+    for (const cb of [...subs]) {
+      cb(changes as Record<string, StorageChangeRecord>);
+    }
+  });
+}
+
+export function chromeStorageAreaAdapter(
+  area: chrome.storage.StorageArea,
+  areaName: "local" | "session",
+): StorageAreaAdapter {
   return {
     get(keys) {
       return new Promise((resolve, reject) => {
@@ -75,6 +112,13 @@ export function chromeStorageAreaAdapter(area: chrome.storage.StorageArea): Stor
           resolve();
         });
       });
+    },
+    addStorageListener(listener) {
+      ensureChromeOnChangedHook(areaName);
+      chromeSubscribers[areaName].add(listener);
+      return () => {
+        chromeSubscribers[areaName].delete(listener);
+      };
     },
   };
 }
@@ -133,5 +177,32 @@ export class ChromeStorageWrapper<TSchema extends z.ZodTypeAny> {
       throw new StorageValidationError(key, r.formatted, r.error);
     }
     return defaultValue;
+  }
+
+  /**
+   * Listen for `chrome.storage` updates to `key` in this adapter’s area.
+   * New values are validated before `updated` is emitted.
+   */
+  watch(key: string, handler: (event: StorageWatchEvent<z.infer<TSchema>>) => void): () => void {
+    const add = this.area.addStorageListener;
+    if (!add) {
+      throw new Error(
+        "ChromeStorageWrapper.watch requires StorageAreaAdapter.addStorageListener (e.g. chromeStorageAreaAdapter or a test adapter that implements it).",
+      );
+    }
+    return add((changes) => {
+      if (!(key in changes)) return;
+      const ch = changes[key]!;
+      if (ch.newValue === undefined) {
+        handler({ kind: "removed" });
+        return;
+      }
+      const parsed = parseWithSchema(this.schema, ch.newValue);
+      if (!parsed.success) {
+        handler({ kind: "invalid", formatted: parsed.formatted, error: parsed.error });
+        return;
+      }
+      handler({ kind: "updated", data: parsed.data });
+    });
   }
 }
