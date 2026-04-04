@@ -687,18 +687,18 @@
         "dependencies": [
           "21"
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
             "title": "Workspace + Git: folder `tajdin`, remote `git@github.com:0xdolan/tajdin.git`",
             "description": "Rename local project directory to tajdin; point origin at the new GitHub repo.",
             "dependencies": [],
-            "details": "Developer machine steps: mv project folder; git remote set-url origin git@github.com:0xdolan/tajdin.git; verify fetch/push. Update any hardcoded clone paths in internal docs only if the team keeps them.",
-            "status": "pending",
+            "details": "DONE: git remote set-url origin git@github.com:0xdolan/tajdin.git (verified git remote -v). REMAINING (manual): close IDE/workspace, run `mv …/zeng …/tajdin`, reopen project from `tajdin` folder so paths match repo name. Push to new remote after GitHub repo exists (create empty tajdin repo if needed).",
+            "status": "done",
             "testStrategy": "git remote -v; clone fresh from new URL builds.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-05T12:00:00.000Z"
+            "updatedAt": "2026-04-05T18:00:00.000Z"
           },
           {
             "id": 2,
@@ -847,12 +847,12 @@
             "updatedAt": "2026-04-05T12:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-05T12:00:00.000Z"
+        "updatedAt": "2026-04-05T18:00:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-05T12:00:00.000Z",
+      "lastModified": "2026-04-05T18:00:00.000Z",
       "taskCount": 22,
       "completedCount": 21,
       "tags": [
