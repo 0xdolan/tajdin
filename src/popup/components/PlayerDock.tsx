@@ -8,11 +8,11 @@ export function PlayerDock() {
   const surface = useSurface();
   const footerClass =
     surface === "light"
-      ? "flex min-h-[88px] shrink-0 items-stretch border-t border-neutral-200 bg-white/95 px-3 py-2 backdrop-blur-sm"
-      : "flex min-h-[88px] shrink-0 items-stretch border-t border-neutral-800 bg-neutral-900/95 px-3 py-2 backdrop-blur-sm";
+      ? "flex min-h-0 shrink-0 items-center border-t border-neutral-200 bg-white/95 px-3 py-2 backdrop-blur-sm"
+      : "flex min-h-0 shrink-0 items-center border-t border-neutral-800 bg-neutral-900/95 px-3 py-2 backdrop-blur-sm";
 
   return (
-    <footer className={`${footerClass} w-full`}>
+    <footer className={`${footerClass} w-full min-w-0`}>
       <div className="flex w-full min-w-0 items-center">
         <Player />
       </div>

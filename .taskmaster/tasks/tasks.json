@@ -1127,11 +1127,11 @@
             "title": "Player dock: fit within popup dimensions (no overflow/clipping)",
             "description": "The player bar does not fit the popup size correctly; audit layout and fix overflow, min-width, wrapping, and scrollbar issues.",
             "dependencies": [],
-            "details": "Review `PlayerDock`, `Player/Player.tsx`, `App.tsx` flex column (`main` min-h-0, footer shrink-0). Check narrow `popupWidthPx` / short `popupHeightPx` from settings; long station titles; transport + add-to-playlist + volume row. Use `min-w-0`, `truncate`, responsive gaps, optional wrap or overflow-x. Verify light/dark. Update `docs/development.md` if layout contract changes.",
-            "status": "pending",
+            "details": "DONE: `PlayerDock` — `min-h-0`, `items-center`, `min-w-0` (footer grows when controls wrap). `Player.tsx` — outer `flex-wrap` + `min-w-0`; artwork + transport in `flex-[1_1_0]` with inner `flex-wrap` on transport; mute + volume `shrink-0`, `ms-auto`; volume `max-w-[100px]` (no `vw`). `docs/development.md` popup row updated.",
+            "status": "done",
             "testStrategy": "Manual: min/max popup sizes from settings; long Arabic/Latin titles; no horizontal scrollbar on player; no clipped controls.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-03T20:00:00.000Z"
+            "updatedAt": "2026-04-04T20:12:45.481Z"
           },
           {
             "id": 12,
@@ -1156,12 +1156,12 @@
             "updatedAt": "2026-04-03T22:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-04T19:35:07.598Z"
+        "updatedAt": "2026-04-04T20:12:45.481Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T19:35:07.599Z",
+      "lastModified": "2026-04-04T20:12:45.481Z",
       "taskCount": 24,
       "completedCount": 23,
       "tags": [
