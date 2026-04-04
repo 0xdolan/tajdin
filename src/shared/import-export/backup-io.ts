@@ -11,12 +11,12 @@ import {
 import {
   TAJDIN_BACKUP_FORMAT,
   TAJDIN_BACKUP_VERSION,
-  type ZengBackupData,
-  type ZengBackupFile,
-  ZengBackupFileSchema,
+  type TajdinBackupData,
+  type TajdinBackupFile,
+  TajdinBackupFileSchema,
 } from "./backup-schema";
 
-export type { ZengBackupData, ZengBackupFile } from "./backup-schema";
+export type { TajdinBackupData, TajdinBackupFile } from "./backup-schema";
 
 export type LocalDataSnapshot = {
   settings: Settings;
@@ -191,7 +191,7 @@ export async function readLocalDataSnapshot(): Promise<LocalDataSnapshot> {
   return { playlists, customStations, favouriteIds, settings };
 }
 
-export function buildBackupFile(snapshot: LocalDataSnapshot): ZengBackupFile {
+export function buildBackupFile(snapshot: LocalDataSnapshot): TajdinBackupFile {
   return {
     format: TAJDIN_BACKUP_FORMAT,
     version: TAJDIN_BACKUP_VERSION,
@@ -205,18 +205,18 @@ export function buildBackupFile(snapshot: LocalDataSnapshot): ZengBackupFile {
   };
 }
 
-export function serializeBackupFile(file: ZengBackupFile): string {
+export function serializeBackupFile(file: TajdinBackupFile): string {
   return `${JSON.stringify(file, null, 2)}\n`;
 }
 
-export function parseBackupJsonText(text: string): { ok: true; file: ZengBackupFile } | { ok: false; error: string } {
+export function parseBackupJsonText(text: string): { ok: true; file: TajdinBackupFile } | { ok: false; error: string } {
   let parsed: unknown;
   try {
     parsed = JSON.parse(text) as unknown;
   } catch {
     return { ok: false, error: "File is not valid JSON." };
   }
-  const r = ZengBackupFileSchema.safeParse(parsed);
+  const r = TajdinBackupFileSchema.safeParse(parsed);
   if (!r.success) {
     const msg = r.error.issues.map((i) => i.message).join("; ");
     return { ok: false, error: msg || "Backup validation failed." };
@@ -224,7 +224,7 @@ export function parseBackupJsonText(text: string): { ok: true; file: ZengBackupF
   return { ok: true, file: r.data };
 }
 
-export function buildImportPreview(local: LocalDataSnapshot, data: ZengBackupData, mode: "merge" | "replace"): ImportPreview {
+export function buildImportPreview(local: LocalDataSnapshot, data: TajdinBackupData, mode: "merge" | "replace"): ImportPreview {
   const sections = {
     settings: buildSettingsLine(local.settings, data.settings, mode),
     playlists: buildPlaylistsLine(local.playlists, data.playlists, mode),
@@ -293,7 +293,7 @@ function buildPlaylistsLine(
   };
 }
 
-function buildGroupsLegacyLine(data: ZengBackupData): SectionLine {
+function buildGroupsLegacyLine(data: TajdinBackupData): SectionLine {
   const n = data.groups?.length ?? 0;
   if (n === 0) {
     return { state: "absent", detail: "No legacy groups section in backup." };
@@ -356,7 +356,7 @@ function buildFavouritesLine(
   };
 }
 
-export async function applyBackupReplace(data: ZengBackupData): Promise<boolean> {
+export async function applyBackupReplace(data: TajdinBackupData): Promise<boolean> {
   const settings = parseSettingsWithDefaults(data.settings ?? DEFAULT_SETTINGS);
   const playlists = data.playlists ?? [];
   const customStations = data.customStations ?? [];
@@ -370,7 +370,7 @@ export async function applyBackupReplace(data: ZengBackupData): Promise<boolean>
   return results.every((r) => r.success);
 }
 
-export async function applyBackupMerge(data: ZengBackupData): Promise<boolean> {
+export async function applyBackupMerge(data: TajdinBackupData): Promise<boolean> {
   const cur = await readLocalDataSnapshot();
   const settings = data.settings
     ? parseSettingsWithDefaults({ ...cur.settings, ...data.settings })

@@ -86,10 +86,10 @@ export function AddStationModal({ open, onOpenChange, onAdded }: AddStationModal
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="zeng-add-station-title"
+        aria-labelledby="tajdin-add-station-title"
         className="relative z-10 w-full max-w-md rounded-t-xl border border-neutral-700 bg-neutral-950 p-4 shadow-2xl sm:rounded-xl"
       >
-        <h2 id="zeng-add-station-title" className="mb-3 text-base font-semibold text-neutral-100">
+        <h2 id="tajdin-add-station-title" className="mb-3 text-base font-semibold text-neutral-100">
           Add custom station
         </h2>
         <p className="mb-3 text-xs text-neutral-500">

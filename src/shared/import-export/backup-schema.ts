@@ -9,18 +9,19 @@ import { SettingsSchema } from "../types/settings";
 
 /** Current backup `format` string written on export (see `buildBackupFile` in backup-io). */
 export const TAJDIN_BACKUP_FORMAT = "tajdin-backup" as const;
-/** Legacy label from pre–Tajdîn exports; still accepted on import. */
-export const ZENG_BACKUP_FORMAT = "zeng-backup" as const;
+/**
+ * Legacy JSON `format` value from older exports; still accepted on import.
+ * (String intentionally contains `zeng` for backward compatibility.)
+ */
+export const LEGACY_ZENG_BACKUP_FORMAT = "zeng-backup" as const;
 export const TAJDIN_BACKUP_VERSION = 1 as const;
-/** @deprecated Use {@link TAJDIN_BACKUP_VERSION}. */
-export const ZENG_BACKUP_VERSION = TAJDIN_BACKUP_VERSION;
 
 const BackupFormatLiteral = z.union([
   z.literal(TAJDIN_BACKUP_FORMAT),
-  z.literal(ZENG_BACKUP_FORMAT),
+  z.literal(LEGACY_ZENG_BACKUP_FORMAT),
 ]);
 
-export const ZengBackupDataSchema = z
+export const TajdinBackupDataSchema = z
   .object({
     settings: SettingsSchema.optional(),
     playlists: LocalPlaylistsSchema.optional(),
@@ -44,12 +45,12 @@ export const ZengBackupDataSchema = z
     }
   });
 
-export const ZengBackupFileSchema = z.object({
+export const TajdinBackupFileSchema = z.object({
   format: BackupFormatLiteral,
   version: z.literal(TAJDIN_BACKUP_VERSION),
   exportedAt: z.string(),
-  data: ZengBackupDataSchema,
+  data: TajdinBackupDataSchema,
 });
 
-export type ZengBackupFile = z.infer<typeof ZengBackupFileSchema>;
-export type ZengBackupData = z.infer<typeof ZengBackupDataSchema>;
+export type TajdinBackupFile = z.infer<typeof TajdinBackupFileSchema>;
+export type TajdinBackupData = z.infer<typeof TajdinBackupDataSchema>;

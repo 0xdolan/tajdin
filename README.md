@@ -1,16 +1,16 @@
-# Zeng
+# Tajdîn
 
 <p align="center">
-  <img src="public/icons/zeng-radio-100.png" alt="Zeng — radio broadcast icon" width="100" height="100" />
+  <img src="public/icons/tajdin-radio-100.png" alt="Tajdîn — radio broadcast icon" width="100" height="100" />
 </p>
 
-**Zeng** is a Chrome extension (Manifest V3) for discovering and playing **worldwide radio stations** via the [Radio Browser](https://www.radio-browser.info/) public API. It is designed for a compact popup UI, background playback through an offscreen audio document, playlists, favourites, and settings you can tune over time.
+**Tajdîn** is a Chrome extension (Manifest V3) for discovering and playing **worldwide radio stations** via the [Radio Browser](https://www.radio-browser.info/) public API. It is designed for a compact popup UI, background playback through an offscreen audio document, playlists, favourites, and settings you can tune over time.
 
 ## What it does
 
 - **Browse and search** — Find stations by name, language, country, tags, and more (API integration with primary + fallback hosts).
 - **Play in the background** — Audio runs in an offscreen document so playback can continue when the popup closes (service worker + `chrome.offscreen`, alarms for keep-alive — see Task Master / PRD for the full roadmap).
-- **Your library** — Favourites, playlists, custom stations, and groups (persisted in `chrome.storage`).
+- **Your library** — Favourites, playlists, and custom stations (persisted in `chrome.storage`).
 - **Settings** — Full-tab options page for theme, defaults, and data export/import.
 
 Work in progress: features land incrementally; task order lives in `.taskmaster/tasks/tasks.json`.

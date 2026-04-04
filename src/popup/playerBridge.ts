@@ -1,13 +1,13 @@
-import type { ZengPlayerCommand, ZengPlayerCommandResult } from "../shared/messages/player";
+import type { TajdinPlayerCommand, TajdinPlayerCommandResult } from "../shared/messages/player";
 
-export type PlayerBridgeSuccess = { ok: true; result: ZengPlayerCommandResult };
+export type PlayerBridgeSuccess = { ok: true; result: TajdinPlayerCommandResult };
 export type PlayerBridgeFailure = { ok: false; error: string };
 export type PlayerBridgeResponse = PlayerBridgeSuccess | PlayerBridgeFailure;
 
 /**
  * Send a typed playback command to the service worker (forwarded to offscreen audio).
  */
-export function sendPlayerCommand(cmd: ZengPlayerCommand): Promise<PlayerBridgeResponse> {
+export function sendPlayerCommand(cmd: TajdinPlayerCommand): Promise<PlayerBridgeResponse> {
   return new Promise((resolve) => {
     try {
       chrome.runtime.sendMessage(cmd, (response: unknown) => {
@@ -25,7 +25,7 @@ export function sendPlayerCommand(cmd: ZengPlayerCommand): Promise<PlayerBridgeR
         ) {
           resolve({
             ok: true,
-            result: (response as { result: ZengPlayerCommandResult }).result,
+            result: (response as { result: TajdinPlayerCommandResult }).result,
           });
           return;
         }
