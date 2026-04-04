@@ -11,9 +11,8 @@
     "isolatedModules": true,
     "resolveJsonModule": true,
     "types": ["chrome"],
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
