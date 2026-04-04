@@ -60,7 +60,7 @@ export function ImportExportSection({ reloadToken }: ImportExportSectionProps) {
       const a = document.createElement("a");
       const day = new Date().toISOString().slice(0, 10);
       a.href = url;
-      a.download = `zeng-backup-${day}.json`;
+      a.download = `tajdin-backup-${day}.json`;
       a.rel = "noopener";
       document.body.appendChild(a);
       a.click();
@@ -118,7 +118,7 @@ export function ImportExportSection({ reloadToken }: ImportExportSectionProps) {
       <div>
         <h2 className="text-base font-semibold text-neutral-100">Backup &amp; restore</h2>
         <p className="mt-1 text-sm text-neutral-500">
-          Export all local Zeng data (settings, playlists, custom stations, favourites) as JSON. Import validates
+          Export all local Tajdîn data (settings, playlists, custom stations, favourites) as JSON. Import validates
           with the same schemas used for storage. Older backups may list groups; those entries are ignored.
         </p>
       </div>

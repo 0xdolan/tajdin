@@ -718,11 +718,11 @@
             "dependencies": [
               2
             ],
-            "details": "Either one-time migration reading old keys into new, or keep zeng.* internally and only change user-visible labels. If format string changes, support import of legacy zeng-backup files.",
-            "status": "pending",
+            "details": "DONE: STORAGE_KEYS → tajdin.*; ensureLegacyStorageMigrated() copies zeng.* → tajdin.* then removes legacy (local + session); runs in SW startBackground() + popup/settings before render. Exports use format tajdin-backup; parse accepts zeng-backup + tajdin-backup. Settings storage listener matches both prefixes during transition. storage-keys.ts keeps migration import light (no full instances graph in popup chunk).",
+            "status": "done",
             "testStrategy": "Existing profile still works after update; export/import roundtrip.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-05T12:00:00.000Z"
+            "updatedAt": "2026-04-03T23:50:00.000Z"
           },
           {
             "id": 4,
@@ -847,12 +847,12 @@
             "updatedAt": "2026-04-05T12:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-05T18:00:00.000Z"
+        "updatedAt": "2026-04-03T23:50:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-05T18:00:00.000Z",
+      "lastModified": "2026-04-03T23:50:00.000Z",
       "taskCount": 22,
       "completedCount": 21,
       "tags": [

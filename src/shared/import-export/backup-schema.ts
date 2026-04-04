@@ -7,8 +7,18 @@ import {
 } from "../storage/schemas";
 import { SettingsSchema } from "../types/settings";
 
+/** Current backup `format` string written on export (see `buildBackupFile` in backup-io). */
+export const TAJDIN_BACKUP_FORMAT = "tajdin-backup" as const;
+/** Legacy label from pre–Tajdîn exports; still accepted on import. */
 export const ZENG_BACKUP_FORMAT = "zeng-backup" as const;
-export const ZENG_BACKUP_VERSION = 1 as const;
+export const TAJDIN_BACKUP_VERSION = 1 as const;
+/** @deprecated Use {@link TAJDIN_BACKUP_VERSION}. */
+export const ZENG_BACKUP_VERSION = TAJDIN_BACKUP_VERSION;
+
+const BackupFormatLiteral = z.union([
+  z.literal(TAJDIN_BACKUP_FORMAT),
+  z.literal(ZENG_BACKUP_FORMAT),
+]);
 
 export const ZengBackupDataSchema = z
   .object({
@@ -35,8 +45,8 @@ export const ZengBackupDataSchema = z
   });
 
 export const ZengBackupFileSchema = z.object({
-  format: z.literal(ZENG_BACKUP_FORMAT),
-  version: z.literal(ZENG_BACKUP_VERSION),
+  format: BackupFormatLiteral,
+  version: z.literal(TAJDIN_BACKUP_VERSION),
   exportedAt: z.string(),
   data: ZengBackupDataSchema,
 });
