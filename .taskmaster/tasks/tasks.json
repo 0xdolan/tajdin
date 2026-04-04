@@ -294,8 +294,9 @@
           "3",
           "6"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-04-04T19:59:00.000Z"
       },
       {
         "id": "8",
