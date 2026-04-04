@@ -2,6 +2,7 @@ import type { RadioBrowserClient } from "../shared/api/radio-browser.api";
 import {
   STORAGE_KEYS,
   localCustomStationsStorage,
+  localFavouriteIdsStorage,
   localPlaylistsStorage,
 } from "../shared/storage/instances";
 import type { Playlist } from "../shared/types/playlist";
@@ -12,6 +13,10 @@ import { isValidHttpOrHttpsStreamUrl } from "../shared/utils/validate-stream-url
 export async function loadPlaylistsForLibrary(): Promise<{ playlists: Playlist[] }> {
   const playlists = await localPlaylistsStorage.getWithDefault(STORAGE_KEYS.playlists, []);
   return { playlists };
+}
+
+export async function loadFavouriteIds(): Promise<string[]> {
+  return localFavouriteIdsStorage.getWithDefault(STORAGE_KEYS.favouriteIds, []);
 }
 
 export async function loadCustomStations(): Promise<Station[]> {

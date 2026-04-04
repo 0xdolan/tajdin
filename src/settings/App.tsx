@@ -11,7 +11,7 @@ type SettingsSectionId = "general" | "stations" | "playlists" | "backup" | "abou
 const NAV: { id: SettingsSectionId; label: string; description: string }[] = [
   { id: "general", label: "General", description: "Theme, popup size, playback" },
   { id: "stations", label: "Stations", description: "Custom streams (table)" },
-  { id: "playlists", label: "Playlists", description: "Create, reorder, delete" },
+  { id: "playlists", label: "Playlists", description: "Create, add/remove stations, reorder" },
   { id: "backup", label: "Backup", description: "Export / import JSON" },
   { id: "about", label: "About", description: "Version, story, links" },
 ];
