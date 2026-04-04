@@ -171,7 +171,7 @@
         "dependencies": [
           "2"
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -231,12 +231,13 @@
               4
             ],
             "details": "Instantiate 'storage.local' and 'storage.session' wrappers using the previously defined schemas. Export 'storageLocal' and 'storageSession' constants from src/shared/storage/chrome-storage.ts.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Comprehensive unit tests using 'chrome-extension-mock' and Vitest to verify end-to-end get/set/watch flows for both storage types.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-04-04T19:30:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-04T02:25:22.390Z"
+        "updatedAt": "2026-04-04T19:30:00.000Z"
       },
       {
         "id": "4",

@@ -135,7 +135,7 @@ For real extension behavior (storage, service worker, host permissions), use **`
 | `src/popup/`         | Extension popup (React + Tailwind)                     |
 | `src/settings/`      | Full-tab options UI (React + Tailwind)                 |
 | `src/offscreen/`     | Offscreen document for audio (loaded via `chrome.offscreen` later) |
-| `src/shared/`        | `types/` + `storage/` (`ChromeStorageWrapper`, `watch` via `chrome.storage.onChanged`, `chromeStorageAreaAdapter(area, areaName)`) |
+| `src/shared/`        | `types/` + `storage/` (`ChromeStorageWrapper`, `watch`, `chromeStorageAreaAdapter(area, areaName)`, `instances.ts`: `storageLocal` / `storageSession`, `STORAGE_KEYS`, pre-wired `local*Storage` / `session*Storage`) |
 | `vite.config.ts`     | Multi-entry build, `base: './'` for extension-relative assets |
 | `dist/`              | **Output only** — gitignored; load this folder in Chrome |
 
