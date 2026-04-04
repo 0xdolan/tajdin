@@ -1017,11 +1017,11 @@
             "title": "Fix tab switch popup resize / transient scrollbar (Browse, Favs, Lists)",
             "description": "Clicking Browse / Favourites / Playlists changes effective popup height briefly and shows a scrollbar for a moment.",
             "dependencies": [],
-            "details": "Audit `TabPanel`, `TabNav`, `StationList` / `FavouritesStationList` / `PlaylistsPage` for inconsistent min-height, `overflow`, or content-driven flex growth. Stabilize layout (fixed min-heights, `min-h-0` chain, optional reserved space) so width/height do not jump and scrollbars do not flash. Light/dark surfaces.",
-            "status": "pending",
+            "details": "DONE: `tajdin-popup-root` on popup html + `overflow:hidden` chain on html/body/#root; App root `overflow-hidden min-h-0 h-full`; `main` `overflow-hidden min-w-0`; `TabPanel` + tab bodies `overflow-hidden`; playlists wrapped in `flex-1 min-h-0`; `PlaylistsPage` `overflow-x-hidden`. Internal lists keep their own `overflow-y-auto` / Virtuoso.",
+            "status": "done",
             "testStrategy": "Manual: rapid tab switching at min popup size; no scrollbar flash; DevTools layout stable.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-03T20:00:00.000Z"
+            "updatedAt": "2026-04-05T15:00:00.000Z"
           },
           {
             "id": 2,

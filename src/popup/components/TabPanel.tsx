@@ -27,8 +27,8 @@ export function TabPanel() {
 
   const panelClass =
     surface === "light"
-      ? "box-border flex min-h-0 flex-1 flex-col bg-neutral-100 px-3 py-3"
-      : "box-border flex min-h-0 flex-1 flex-col px-3 py-3";
+      ? "box-border flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-neutral-100 px-3 py-3"
+      : "box-border flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden px-3 py-3";
   const titleClass =
     surface === "light"
       ? "mb-2 shrink-0 text-sm font-semibold text-neutral-800"
@@ -47,7 +47,7 @@ export function TabPanel() {
     >
       <h2 className={titleClass}>{title}</h2>
       {activeTab === "browse" ? (
-        <div className="flex min-h-0 flex-1 flex-col gap-2">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2 overflow-hidden">
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start">
             <div className="min-w-0 flex-1">
               <StationSearchBar
@@ -81,9 +81,11 @@ export function TabPanel() {
           </div>
         </div>
       ) : activeTab === "playlists" ? (
-        <PlaylistsPage />
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+          <PlaylistsPage />
+        </div>
       ) : (
-        <div className="min-h-0 flex-1" aria-label="Favourite stations">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden" aria-label="Favourite stations">
           <FavouritesStationList />
         </div>
       )}
