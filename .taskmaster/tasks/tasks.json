@@ -805,11 +805,11 @@
             "dependencies": [
               6
             ],
-            "details": "Keep equalizer overlay when playing; same icon path as header (icons/*.png).",
-            "status": "pending",
+            "details": "DONE: `packagedPlayerIconUrl()` → `icons/tajdin-radio-50.png` via getURL; `StationArt` shows extension img when isPlaying (object-contain), favicon or glyph when stopped; equalizer overlay unchanged.",
+            "status": "done",
             "testStrategy": "Play/pause toggles image; no broken img src.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-05T12:00:00.000Z"
+            "updatedAt": "2026-04-05T00:35:00.000Z"
           },
           {
             "id": 11,
@@ -847,12 +847,12 @@
             "updatedAt": "2026-04-05T12:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-04T00:25:00.000Z"
+        "updatedAt": "2026-04-05T00:35:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T00:25:00.000Z",
+      "lastModified": "2026-04-05T00:35:00.000Z",
       "taskCount": 22,
       "completedCount": 21,
       "tags": [
