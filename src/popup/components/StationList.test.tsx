@@ -6,6 +6,10 @@ import type { RadioBrowserClient } from "../../shared/api/radio-browser.api";
 import { useStationStore } from "../store/stationStore";
 import { BROWSE_PAGE_SIZE, StationList } from "./StationList";
 
+vi.mock("../stationLibraryApi", () => ({
+  loadPlaylistsAndGroups: vi.fn().mockResolvedValue({ playlists: [], groups: [] }),
+}));
+
 describe("StationList", () => {
   let host: HTMLDivElement;
   let root: ReturnType<typeof createRoot>;
