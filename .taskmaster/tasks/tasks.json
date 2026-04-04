@@ -899,11 +899,11 @@
             "title": "Station row: hide heart/copy when pointer leaves the row",
             "description": "Row actions stay visible after mouse leaves; they should hide again for fine pointers (desktop hover).",
             "dependencies": [],
-            "details": "Review `StationCard` group-hover / focus-within / `pointer:coarse` rules. Ensure opacity returns to hidden state on mouseout while keeping keyboard focus and coarse-pointer behavior per prior UX spec.",
-            "status": "pending",
+            "details": "DONE: `group-focus-within` kept for keyboard; pointer clicks leave focus on heart/copy so column stayed visible. Added `onMouseLeave` → `blur()` when focused descendant is not `:focus-visible` (skip if `pointer: coarse`). JSDOM-safe try/catch around `matches(':focus-visible')`. Test: blur after leave on fine pointer.",
+            "status": "done",
             "testStrategy": "Manual hover out; RTL/long titles unchanged; update snapshot tests if any.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-05T02:00:00.000Z"
+            "updatedAt": "2026-04-05T03:15:00.000Z"
           },
           {
             "id": 5,
@@ -998,12 +998,12 @@
             "updatedAt": "2026-04-05T02:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-05T03:00:00.000Z"
+        "updatedAt": "2026-04-05T03:15:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-05T03:00:00.000Z",
+      "lastModified": "2026-04-05T03:15:00.000Z",
       "taskCount": 23,
       "completedCount": 22,
       "tags": [
