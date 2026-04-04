@@ -848,12 +848,163 @@
           }
         ],
         "updatedAt": "2026-04-05T01:10:00.000Z"
+      },
+      {
+        "id": "23",
+        "title": "Popup v2: playback reliability, layout, search, custom stations, playlists, discover",
+        "description": "Fix station playback; move footer under player; compact tabs; row hover polish; custom station cover URLs + settings CRUD; simplify search to exact vs regex; playlist actions from popup and settings; resume last on play; new tagline; random stations on each popup open.",
+        "details": "Umbrella for user-reported regressions (click-to-play) and feature requests. Prefer small PR-sized subtasks; run lint/typecheck/test/verify:extension before merge. Playback (23.1) is highest priority and likely blocks 23.10. Align popup search UI with settings after removing fuzzy (23.8). Random browse (23.12) should not break favourites/playlists as primary curated surfaces.",
+        "testStrategy": "Manual: click station → audio; play with empty selection → last station; popup open → random list; hover row actions hide on leave (fine pointer). Automated: extend Vitest for search mode, playlist mutations, custom station schema if touched.",
+        "priority": "high",
+        "dependencies": [
+          "22"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Fix: clicking a station must start playback",
+            "description": "User report: play does not start when selecting a station from the list (same as top-level “playing still not working”).",
+            "dependencies": [],
+            "details": "Trace popup click → `browseNavigation` / `playerPlayback` → `tajdin/player/load` + `play` through service worker and offscreen `<audio>`. Reproduce in unpacked `dist/`, check MV3 offscreen lifecycle, CSP, stream URL resolution, and errors in service worker console. Fix root cause; add or extend tests/mocks where feasible.",
+            "status": "pending",
+            "testStrategy": "Manual: several Radio Browser + custom stations play. Optional: integration-style test for message wiring if stubbable.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T02:00:00.000Z"
+          },
+          {
+            "id": 2,
+            "title": "Move “Developed with ♥ …” footer below the player dock",
+            "description": "Relocate `AttributionFooter` so it sits under `PlayerDock` in the popup layout.",
+            "dependencies": [],
+            "details": "Adjust `src/popup/App.tsx` (or layout wrapper): order header → main content → player → footer. Preserve surface-aware styling and version line; ensure scroll region still behaves (footer not trapped inside wrong flex child).",
+            "status": "pending",
+            "testStrategy": "Visual check light/dark; footer visible without overlapping player controls.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T02:00:00.000Z"
+          },
+          {
+            "id": 3,
+            "title": "Narrower tab buttons for Browse vs Favourites",
+            "description": "Reduce horizontal footprint of primary popup tabs (Browse / Favs).",
+            "dependencies": [],
+            "details": "Tune `TabNav` (padding, text size, min-width) so labels stay readable but tabs take less width; keep touch targets acceptable for `pointer:coarse`.",
+            "status": "pending",
+            "testStrategy": "Visual in narrow popup width; a11y: buttons still activatable.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T02:00:00.000Z"
+          },
+          {
+            "id": 4,
+            "title": "Station row: hide heart/copy when pointer leaves the row",
+            "description": "Row actions stay visible after mouse leaves; they should hide again for fine pointers (desktop hover).",
+            "dependencies": [],
+            "details": "Review `StationCard` group-hover / focus-within / `pointer:coarse` rules. Ensure opacity returns to hidden state on mouseout while keeping keyboard focus and coarse-pointer behavior per prior UX spec.",
+            "status": "pending",
+            "testStrategy": "Manual hover out; RTL/long titles unchanged; update snapshot tests if any.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T02:00:00.000Z"
+          },
+          {
+            "id": 5,
+            "title": "Custom stations: optional cover image URL (http/https)",
+            "description": "Allow a user-supplied image URL for custom stations; use for artwork in lists/player where favicon would be.",
+            "dependencies": [],
+            "details": "Extend custom station model + Zod validation; sanitize with existing URL helpers; fallback on broken image; persist in storage and backup import/export. No file upload—URL only.",
+            "status": "pending",
+            "testStrategy": "Unit tests for schema + invalid URL; manual load of valid image URL.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T02:00:00.000Z"
+          },
+          {
+            "id": 6,
+            "title": "Settings → Stations: edit existing custom station",
+            "description": "In options custom-stations section, allow editing name/stream URL (and cover URL once 23.5 exists).",
+            "dependencies": [
+              5
+            ],
+            "details": "UI in `CustomStationsTable` or dedicated form: load row → save updates to storage; validate stream URL; reflect in popup without reload if storage sync already wired.",
+            "status": "pending",
+            "testStrategy": "Edit saves and survives reload; invalid URL rejected.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T02:00:00.000Z"
+          },
+          {
+            "id": 7,
+            "title": "Settings → Stations: create new custom station",
+            "description": "Add-station flow in settings (not only popup modal).",
+            "dependencies": [],
+            "details": "Expose “Add custom station” in settings stations section reusing or mirroring `AddStationModal` validation; ensure new row appears and syncs to popup.",
+            "status": "pending",
+            "testStrategy": "Create from settings; appears in popup custom list and plays after 23.1 fix.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T02:00:00.000Z"
+          },
+          {
+            "id": 8,
+            "title": "Search: remove fuzzy; single Regex toggle (off = exact, on = regex + selected styling)",
+            "description": "Settings show three search-related options but popup search has two; user wants fuzzy removed—only regex vs non-regex, with clear selected state for regex.",
+            "dependencies": [],
+            "details": "Remove fuzzy mode from UI and state (`useUiStore`, `SessionUi`, settings `GeneralSettingsSection`). Default-off = exact/name search per Radio Browser API; toggle on = regex mode with distinct active color. Align settings page copy and controls with popup `StationSearchBar`. Update `StationList` fetch params and tests that referenced fuzzy.",
+            "status": "pending",
+            "testStrategy": "Vitest: list fetch uses correct mode; no fuzzy code paths left in UI; manual toggle styling.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T02:00:00.000Z"
+          },
+          {
+            "id": 9,
+            "title": "Playlists: add station from popup; add/remove stations in settings playlists section",
+            "description": "User can add to playlist from popup; manage playlist membership in settings.",
+            "dependencies": [],
+            "details": "Popup: action on current station or list row to add to chosen playlist (UI pattern TBD). Settings: `PlaylistsPage` (or equivalent) supports removing stations and adding from library/search within options context. Persist via existing playlist storage APIs.",
+            "status": "pending",
+            "testStrategy": "Roundtrip: add in popup → visible in settings → remove in settings → gone from playlist.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T02:00:00.000Z"
+          },
+          {
+            "id": 10,
+            "title": "Player: Play with no station selected resumes last played station",
+            "description": "Opening popup and pressing play without a focused selection should play the last station the user had started.",
+            "dependencies": [
+              1
+            ],
+            "details": "Use session/player store or persisted `lastStation`/`currentStation`—confirm source of truth after 23.1. If nothing ever played, keep current no-op or subtle hint. Edge cases: invalid URL after edit, offline.",
+            "status": "pending",
+            "testStrategy": "Manual: play A, close popup, open, play → A resumes. Unit test store helper if isolated.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T02:00:00.000Z"
+          },
+          {
+            "id": 11,
+            "title": "Branding tagline: “Always by your side · Radio Browser”",
+            "description": "Replace “Worldwide radio · Radio Browser” in shared branding.",
+            "dependencies": [],
+            "details": "Update `ExtensionBranding` subtitle; grep for duplicate tagline (About, manifest description if matched) and keep copy consistent where appropriate.",
+            "status": "pending",
+            "testStrategy": "Snapshot or string assertion in branding test; visual check popup + settings sidebar.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T02:00:00.000Z"
+          },
+          {
+            "id": 12,
+            "title": "Each popup open: show random stations in browse",
+            "description": "On extension popup open, browse tab loads a random set so users can discover; favourites/playlists remain for saved curation and prev/next within playlists.",
+            "dependencies": [],
+            "details": "On popup mount or browse tab focus, trigger Radio Browser random (or shuffled) fetch with defined count; avoid clobbering user mid-search—define UX (e.g. only when query empty and tab is browse). Document interaction with session-restored query vs fresh random.",
+            "status": "pending",
+            "testStrategy": "Manual: repeated opens show varied lists; fav tab unchanged; playlists still navigable with transport controls.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T02:00:00.000Z"
+          }
+        ],
+        "updatedAt": "2026-04-05T02:00:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-05T01:10:00.000Z",
-      "taskCount": 22,
+      "lastModified": "2026-04-05T02:00:00.000Z",
+      "taskCount": 23,
       "completedCount": 22,
       "tags": [
         "master"
