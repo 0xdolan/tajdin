@@ -127,8 +127,8 @@ export function StationCard({ station, playlists, onLibraryMutated }: StationCar
   const heartIdle = surface === "light" ? "text-neutral-500 hover:text-rose-500" : "text-neutral-500 hover:text-rose-300";
   const copyBtn =
     surface === "light"
-      ? "border-neutral-200 bg-white/95 text-neutral-600 hover:bg-neutral-100 hover:text-amber-700"
-      : "border-neutral-700 bg-neutral-900/95 text-neutral-300 hover:bg-neutral-800 hover:text-amber-300";
+      ? "border-neutral-300/80 bg-neutral-200/90 text-neutral-600 hover:bg-neutral-200 hover:text-amber-700"
+      : "border-neutral-700 bg-neutral-800 text-neutral-300 hover:bg-neutral-700 hover:text-amber-300";
   const hintC = surface === "light" ? "text-amber-700" : "text-amber-400";
   /** Fade in on row hover/focus; stay visible on touch (no hover). */
   const actionsColOpacity =
@@ -172,7 +172,7 @@ export function StationCard({ station, playlists, onLibraryMutated }: StationCar
           }}
         >
           <div className="shrink-0">
-            <StationFavicon coverUrl={station.coverUrl} favicon={station.favicon} />
+            <StationFavicon coverUrl={station.coverUrl} favicon={station.favicon} surface={surface} />
           </div>
           <div className="min-w-0 flex-1">
             <p className={`truncate text-sm font-medium ${titleC} ${nameAr ? "tajdin-font-arabic" : ""}`} dir="auto">
@@ -206,7 +206,7 @@ export function StationCard({ station, playlists, onLibraryMutated }: StationCar
                   type="button"
                   data-testid="station-copy-stream"
                   className={[
-                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-md border shadow-sm transition-colors",
+                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition-colors",
                     copyBtn,
                   ].join(" ")}
                   aria-label="Copy stream URL"
