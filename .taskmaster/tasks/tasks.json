@@ -1061,11 +1061,11 @@
             "title": "Attribution footer: replace “Developed with ♥ by 0xdolan” with better line",
             "description": "Improve the footer sentence (tone, clarity, optional heart).",
             "dependencies": [],
-            "details": "`AttributionFooter` (+ tests if any). Propose concise credit + link pattern consistent with `shared/constants/links.ts`; update snapshots/strings.",
-            "status": "pending",
+            "details": "DONE: `AttributionFooter` copy → “Made by 0xdolan” (same `EXTENSION_AUTHOR_GITHUB_URL` / `TAJDIN_EXTENSION_REPO_URL` / version chips); heart removed. `AttributionFooter.test.tsx` asserts “made by”. `docs/development.md` popup row.",
+            "status": "done",
             "testStrategy": "Vitest string assertions; read in popup light/dark.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-03T20:00:00.000Z"
+            "updatedAt": "2026-04-06T00:00:00.000Z"
           },
           {
             "id": 6,
@@ -1156,12 +1156,12 @@
             "updatedAt": "2026-04-03T22:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-04T10:03:13.082Z"
+        "updatedAt": "2026-04-04T10:04:32.383Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T10:03:13.082Z",
+      "lastModified": "2026-04-04T10:04:32.383Z",
       "taskCount": 24,
       "completedCount": 23,
       "tags": [
