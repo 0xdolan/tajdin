@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@keyframes zeng-eq-bar {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.zeng-eq-bar {
+  transform-origin: center bottom;
+  animation: zeng-eq-bar 0.55s ease-in-out infinite;
+}

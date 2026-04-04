@@ -3,10 +3,13 @@ import { Virtuoso } from "react-virtuoso";
 import {
   defaultRadioBrowserClient,
   type RadioBrowserClient,
+  type StationSearchParams,
 } from "../../shared/api/radio-browser.api";
+import { fuzzySearchStations, regexSearchStations } from "../../shared/utils/fuzzy-search";
 import type { Group } from "../../shared/types/group";
 import type { Playlist } from "../../shared/types/playlist";
 import type { Station } from "../../shared/types/station";
+import type { SearchMode } from "../hooks/useSearch";
 import { loadPlaylistsAndGroups } from "../stationLibraryApi";
 import { useStationStore } from "../store/stationStore";
 import { StationCard } from "./StationCard";
@@ -24,6 +27,10 @@ const BROWSE_QUERY = {
 
 export type StationListProps = {
   client?: RadioBrowserClient;
+  /** Debounced query (e.g. from {@link useSearch}). */
+  searchQuery?: string;
+  searchMode?: SearchMode;
+  regexInvalid?: boolean;
 };
 
 export type StationListContext = {
@@ -46,7 +53,12 @@ function StationListSkeleton() {
   );
 }
 
-export function StationList({ client = defaultRadioBrowserClient }: StationListProps) {
+export function StationList({
+  client = defaultRadioBrowserClient,
+  searchQuery = "",
+  searchMode = "fuzzy",
+  regexInvalid = false,
+}: StationListProps) {
   const searchResults = useStationStore((s) => s.searchResults);
   const isSearchLoading = useStationStore((s) => s.isSearchLoading);
   const replaceSearchResults = useStationStore((s) => s.replaceSearchResults);
@@ -78,23 +90,47 @@ export function StationList({ client = defaultRadioBrowserClient }: StationListP
   const offsetRef = useRef(0);
   const hasMoreRef = useRef(true);
   const fetchingRef = useRef(false);
+  const corpusRef = useRef<Station[]>([]);
+
+  const q = searchQuery.trim();
+  const regexCorpusMode =
+    searchMode === "regex" && q !== "" && !regexInvalid;
 
   useEffect(() => {
+    if (searchMode === "regex" && q !== "" && regexInvalid) {
+      return;
+    }
+
     let cancelled = false;
     offsetRef.current = 0;
     hasMoreRef.current = true;
     fetchingRef.current = false;
+    corpusRef.current = [];
+
     replaceSearchResults([]);
     setSearchLoading(true);
 
     void (async () => {
       try {
-        const batch = await client.searchStations({
+        const params: StationSearchParams = {
           ...BROWSE_QUERY,
           offset: 0,
-        });
+          ...(searchMode === "fuzzy" && q ? { name: q } : {}),
+        };
+        const batch = await client.searchStations(params);
         if (cancelled) return;
-        replaceSearchResults(batch);
+
+        if (regexCorpusMode) {
+          corpusRef.current = batch;
+          const r = regexSearchStations(corpusRef.current, searchQuery);
+          replaceSearchResults(r.ok ? r.stations : []);
+        } else {
+          let out = batch;
+          if (searchMode === "fuzzy" && q) {
+            out = fuzzySearchStations(batch, q);
+          }
+          replaceSearchResults(out);
+        }
         offsetRef.current = batch.length;
         hasMoreRef.current = batch.length >= BROWSE_PAGE_SIZE;
       } catch {
@@ -111,24 +147,52 @@ export function StationList({ client = defaultRadioBrowserClient }: StationListP
     return () => {
       cancelled = true;
     };
-  }, [client, replaceSearchResults, setSearchLoading]);
+  }, [
+    client,
+    q,
+    regexCorpusMode,
+    regexInvalid,
+    replaceSearchResults,
+    searchMode,
+    searchQuery,
+    setSearchLoading,
+  ]);
 
   const loadMore = useCallback(async () => {
     if (fetchingRef.current || !hasMoreRef.current || isSearchLoading) {
       return;
     }
+    if (searchMode === "regex" && q !== "" && regexInvalid) {
+      return;
+    }
+
     fetchingRef.current = true;
     setIsLoadingMore(true);
     try {
-      const batch = await client.searchStations({
+      const params: StationSearchParams = {
         ...BROWSE_QUERY,
         offset: offsetRef.current,
-      });
+        ...(searchMode === "fuzzy" && q ? { name: q } : {}),
+      };
+      const batch = await client.searchStations(params);
       if (batch.length === 0) {
         hasMoreRef.current = false;
         return;
       }
-      appendSearchResults(batch);
+
+      if (regexCorpusMode) {
+        corpusRef.current = [...corpusRef.current, ...batch];
+        const r = regexSearchStations(corpusRef.current, searchQuery);
+        if (r.ok) {
+          replaceSearchResults(r.stations);
+        }
+      } else {
+        let out = batch;
+        if (searchMode === "fuzzy" && q) {
+          out = fuzzySearchStations(batch, q);
+        }
+        appendSearchResults(out);
+      }
       offsetRef.current += batch.length;
       hasMoreRef.current = batch.length >= BROWSE_PAGE_SIZE;
     } catch {
@@ -137,7 +201,17 @@ export function StationList({ client = defaultRadioBrowserClient }: StationListP
       fetchingRef.current = false;
       setIsLoadingMore(false);
     }
-  }, [appendSearchResults, client, isSearchLoading]);
+  }, [
+    appendSearchResults,
+    client,
+    isSearchLoading,
+    q,
+    regexCorpusMode,
+    regexInvalid,
+    replaceSearchResults,
+    searchMode,
+    searchQuery,
+  ]);
 
   const handleEndReached = useCallback(() => {
     void loadMore();

@@ -6,6 +6,8 @@ export type PlayerStoreState = {
   stationuuid: string | null;
   isPlaying: boolean;
   volumePercent: number;
+  /** UI + engine: when true, offscreen volume is forced to 0 while slider keeps {@link volumePercent}. */
+  muted: boolean;
   streamUrl: string | null;
   station: Station | null;
 };
@@ -14,6 +16,7 @@ const defaults: PlayerStoreState = {
   stationuuid: null,
   isPlaying: false,
   volumePercent: 100,
+  muted: false,
   streamUrl: null,
   station: null,
 };
@@ -25,6 +28,7 @@ export type PlayerStoreActions = {
   setStreamUrl: (url: string | null) => void;
   setPlaying: (isPlaying: boolean) => void;
   setVolumePercent: (volumePercent: number) => void;
+  setMuted: (muted: boolean) => void;
 };
 
 export const usePlayerStore = create<PlayerStoreState & PlayerStoreActions>((set) => ({
@@ -58,4 +62,5 @@ export const usePlayerStore = create<PlayerStoreState & PlayerStoreActions>((set
     set({
       volumePercent: Math.min(100, Math.max(0, Math.round(volumePercent))),
     }),
+  setMuted: (muted) => set({ muted }),
 }));
