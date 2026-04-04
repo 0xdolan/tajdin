@@ -6,6 +6,7 @@ import {
   sessionUiStorage,
 } from "../../shared/storage/instances";
 import { DEFAULT_SETTINGS } from "../../shared/types/settings";
+import { ensurePlayerStationResolved } from "../ensurePlayerStationResolved";
 import { usePlayerStore } from "./playerStore";
 import { useStationStore } from "./stationStore";
 import { useUiStore, type BrowseSearchMode } from "./uiStore";
@@ -49,6 +50,7 @@ export async function hydratePopupStoresFromChrome(): Promise<void> {
     { onInvalidStored: "default" },
   );
   usePlayerStore.getState().applySessionPlayer(playerBlob);
+  await ensurePlayerStationResolved();
 
   const favs = await localFavouriteIdsStorage.getWithDefault(STORAGE_KEYS.favouriteIds, []);
   useStationStore.getState().setFavouriteIds(favs);
@@ -89,6 +91,7 @@ export function attachPopupStorageSyncListeners(): () => void {
       }
       if (ev.kind === "updated") {
         usePlayerStore.getState().applySessionPlayer(ev.data);
+        void ensurePlayerStationResolved();
       }
     }),
   );

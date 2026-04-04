@@ -10,11 +10,13 @@ const TEST_PLAYLIST_ID = "550e8400-e29b-41d4-a716-446655440000";
 const playlistLibMocks = vi.hoisted(() => ({
   loadPlaylistsForLibrary: vi.fn(),
   appendStationToPlaylist: vi.fn(),
+  resolveStationForLibrary: vi.fn(),
 }));
 
 vi.mock("../../stationLibraryApi", () => ({
   loadPlaylistsForLibrary: playlistLibMocks.loadPlaylistsForLibrary,
   appendStationToPlaylist: playlistLibMocks.appendStationToPlaylist,
+  resolveStationForLibrary: playlistLibMocks.resolveStationForLibrary,
 }));
 
 describe("Player", () => {
@@ -33,6 +35,12 @@ describe("Player", () => {
       ],
     });
     playlistLibMocks.appendStationToPlaylist.mockResolvedValue(true);
+    playlistLibMocks.resolveStationForLibrary.mockResolvedValue({
+      stationuuid: "s1",
+      name: "Demo FM",
+      url: "http://stream.example/a",
+      url_resolved: "http://stream.example/b",
+    });
     usePlayerStore.getState().resetPlayer();
     usePlayerStore.getState().setStation({
       stationuuid: "s1",
@@ -149,5 +157,22 @@ describe("Player", () => {
     await user.click(screen.getByRole("button", { name: /add current station to playlist/i }));
     await user.click(screen.getByRole("menuitem", { name: /test playlist/i }));
     expect(playlistLibMocks.appendStationToPlaylist).toHaveBeenCalledWith("s1", TEST_PLAYLIST_ID);
+  });
+
+  it("resolves a session-only stationuuid and starts playback when Play is pressed", async () => {
+    const user = userEvent.setup();
+    usePlayerStore.getState().resetPlayer();
+    usePlayerStore.setState({
+      stationuuid: "s1",
+      station: null,
+      streamUrl: null,
+      isPlaying: false,
+      volumePercent: 80,
+      muted: false,
+    });
+    render(<Player />);
+    await user.click(screen.getByRole("button", { name: /^play$/i }));
+    expect(playlistLibMocks.resolveStationForLibrary).toHaveBeenCalled();
+    expect(sendMessage).toHaveBeenCalled();
   });
 });
