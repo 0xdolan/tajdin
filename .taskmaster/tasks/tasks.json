@@ -1083,11 +1083,11 @@
             "title": "Popup: About entry from Browse / Favourites / Lists (responsive)",
             "description": "Expose About from main tabs with responsive, polished presentation (not only settings).",
             "dependencies": [],
-            "details": "Options: fourth tab, overflow menu, or compact link opening inline panel / options page. Reuse or slim `AboutSection` content; avoid duplicating long copy—link to full options About if needed. Mobile-first / narrow popup width.",
-            "status": "pending",
+            "details": "DONE: Fourth main tab `about`; `SessionUiSchema` + `TabNav` / `TabPanel`; full `AboutSection` reused with `surface` prop (light/dark tokens + links). Panel title `sr-only` (visible `h2` in section). Scroll + `listScrollbarClass`. Tests: `TabNav` about click, `SessionUiSchema` parse, `AboutSection` light styling.",
+            "status": "done",
             "testStrategy": "Manual: all breakpoints; no layout break; a11y labels.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-03T20:00:00.000Z"
+            "updatedAt": "2026-04-06T00:00:00.000Z"
           },
           {
             "id": 8,
@@ -1156,12 +1156,12 @@
             "updatedAt": "2026-04-03T22:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-04T10:07:14.770Z"
+        "updatedAt": "2026-04-04T10:24:55.928Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T10:07:14.771Z",
+      "lastModified": "2026-04-04T10:24:55.928Z",
       "taskCount": 24,
       "completedCount": 23,
       "tags": [

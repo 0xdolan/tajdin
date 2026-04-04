@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { AboutSection } from "../../settings/components/AboutSection";
+import { listScrollbarClass } from "../../shared/utils/list-scrollbar";
 import { useSurface } from "../SurfaceContext";
 import { useSearch } from "../hooks/useSearch";
 import { useUiStore, type ActiveTab } from "../store/uiStore";
@@ -13,6 +15,7 @@ const TITLES: Record<ActiveTab, string> = {
   browse: "Browse",
   favourites: "Favourites",
   playlists: "Playlists",
+  about: "About",
 };
 
 export function TabPanel() {
@@ -33,6 +36,8 @@ export function TabPanel() {
     surface === "light"
       ? "mb-2 shrink-0 text-sm font-semibold text-neutral-800"
       : "mb-2 shrink-0 text-sm font-semibold text-neutral-200";
+  const panelHeadingClass =
+    activeTab === "about" ? `${titleClass} sr-only` : titleClass;
   const addBtn =
     surface === "light"
       ? "rounded-md border border-neutral-300 bg-white px-2.5 py-1.5 text-sm text-neutral-800 shadow-sm hover:bg-neutral-50"
@@ -45,7 +50,7 @@ export function TabPanel() {
       aria-labelledby={`tab-${activeTab}`}
       className={panelClass}
     >
-      <h2 className={titleClass}>{title}</h2>
+      <h2 className={panelHeadingClass}>{title}</h2>
       {activeTab === "browse" ? (
         <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2 overflow-hidden">
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start">
@@ -83,6 +88,12 @@ export function TabPanel() {
       ) : activeTab === "playlists" ? (
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           <PlaylistsPage />
+        </div>
+      ) : activeTab === "about" ? (
+        <div
+          className={`min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto pb-1 ${listScrollbarClass(surface)}`}
+        >
+          <AboutSection surface={surface} />
         </div>
       ) : (
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden" aria-label="Favourite stations">

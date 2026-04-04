@@ -35,4 +35,11 @@ describe("AboutSection", () => {
     const wiki = screen.getByRole("link", { name: /mem û zîn/i });
     expect(wiki).toHaveAttribute("href", "https://en.wikipedia.org/wiki/Mem_and_Zin");
   });
+
+  it("uses light-surface link styling when surface is light", () => {
+    const { container } = render(<AboutSection surface="light" />);
+    const gh = screen.getByRole("link", { name: /source on github/i });
+    expect(gh.className).toContain("text-sky-700");
+    expect(container.querySelector("h2")?.className).toContain("text-neutral-900");
+  });
 });

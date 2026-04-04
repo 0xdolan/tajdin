@@ -38,7 +38,7 @@ export const SessionUiSchema = z.object({
   /** Legacy `"groups"` is normalized to `"browse"` on read. */
   activeTab: z.preprocess(
     (v) => (v === "groups" ? "browse" : v),
-    z.enum(["browse", "favourites", "playlists"]).optional(),
+    z.enum(["browse", "favourites", "playlists", "about"]).optional(),
   ),
   /** Last browse search query (raw, not debounced). */
   browseQuery: z.string().optional(),
