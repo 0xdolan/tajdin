@@ -19,7 +19,7 @@ export function ExtensionBranding({
       : "/icons/tajdin-radio-50.png";
 
   return (
-    <div className={`flex min-w-0 items-center gap-2 ${className}`.trim()}>
+    <div className={`flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 ${className}`.trim()}>
       <img
         src={iconUrl}
         alt=""
