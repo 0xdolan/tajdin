@@ -131,6 +131,7 @@ For real extension behavior (storage, service worker, host permissions), use **`
 | Path                 | Role |
 |----------------------|------|
 | `manifest.json`      | Source manifest; copied into `dist/` on build          |
+| `public/icons/`      | Toolbar / store icons (`zeng-radio-50.png`, `zeng-radio-100.png`); copied to `dist/icons/` by Vite |
 | `src/background/`    | Service worker entry (`index.ts` → `dist/background.js`) |
 | `src/popup/`         | Extension popup (React + Tailwind)                     |
 | `src/settings/`      | Full-tab options UI (React + Tailwind)                 |
