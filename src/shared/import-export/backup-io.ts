@@ -9,8 +9,8 @@ import {
   localSettingsStorage,
 } from "../storage/instances";
 import {
-  ZENG_BACKUP_FORMAT,
-  ZENG_BACKUP_VERSION,
+  TAJDIN_BACKUP_FORMAT,
+  TAJDIN_BACKUP_VERSION,
   type ZengBackupData,
   type ZengBackupFile,
   ZengBackupFileSchema,
@@ -193,8 +193,8 @@ export async function readLocalDataSnapshot(): Promise<LocalDataSnapshot> {
 
 export function buildBackupFile(snapshot: LocalDataSnapshot): ZengBackupFile {
   return {
-    format: ZENG_BACKUP_FORMAT,
-    version: ZENG_BACKUP_VERSION,
+    format: TAJDIN_BACKUP_FORMAT,
+    version: TAJDIN_BACKUP_VERSION,
     exportedAt: new Date().toISOString(),
     data: {
       settings: snapshot.settings,

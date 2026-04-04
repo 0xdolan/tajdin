@@ -7,16 +7,9 @@ import {
   SessionPlayerSchema,
   SessionUiSchema,
 } from "./schemas";
+import { STORAGE_KEYS } from "./storage-keys";
 
-/** Stable keys for Zeng blobs in `chrome.storage`. */
-export const STORAGE_KEYS = {
-  playlists: "zeng.playlists.v1",
-  customStations: "zeng.customStations.v1",
-  favouriteIds: "zeng.favouriteIds.v1",
-  settings: "zeng.settings.v1",
-  sessionPlayer: "zeng.session.player.v1",
-  sessionUi: "zeng.session.ui.v1",
-} as const;
+export { STORAGE_KEYS };
 
 /**
  * Adapter for `chrome.storage.local` (persistent). Use with {@link ChromeStorageWrapper} or the

@@ -28,12 +28,12 @@ const store = vi.hoisted(() => ({
 
 vi.mock("../storage/instances", () => ({
   STORAGE_KEYS: {
-    playlists: "zeng.playlists.v1",
-    customStations: "zeng.customStations.v1",
-    favouriteIds: "zeng.favouriteIds.v1",
-    settings: "zeng.settings.v1",
-    sessionPlayer: "zeng.session.player.v1",
-    sessionUi: "zeng.session.ui.v1",
+    playlists: "tajdin.playlists.v1",
+    customStations: "tajdin.customStations.v1",
+    favouriteIds: "tajdin.favouriteIds.v1",
+    settings: "tajdin.settings.v1",
+    sessionPlayer: "tajdin.session.player.v1",
+    sessionUi: "tajdin.session.ui.v1",
   },
   localPlaylistsStorage: {
     getWithDefault: vi.fn(async () => [...store.playlists]),
@@ -109,6 +109,19 @@ describe("parseBackupJsonText", () => {
     );
     expect(r.ok).toBe(true);
     if (r.ok) expect(r.file.data.favouriteIds).toEqual(["a", "b"]);
+  });
+
+  it("accepts tajdin-backup format label", () => {
+    const r = parseBackupJsonText(
+      JSON.stringify({
+        format: "tajdin-backup",
+        version: 1,
+        exportedAt: "2026-01-01T00:00:00.000Z",
+        data: { favouriteIds: ["x"] },
+      }),
+    );
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.file.format).toBe("tajdin-backup");
   });
 });
 
@@ -230,5 +243,11 @@ describe("readLocalDataSnapshot + buildBackupFile", () => {
     const snap = await readLocalDataSnapshot();
     const file = buildBackupFile(snap);
     expect(file.data).not.toHaveProperty("groups");
+  });
+
+  it("export uses tajdin-backup format", async () => {
+    const snap = await readLocalDataSnapshot();
+    const file = buildBackupFile(snap);
+    expect(file.format).toBe("tajdin-backup");
   });
 });

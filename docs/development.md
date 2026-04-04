@@ -1,4 +1,4 @@
-# Zeng — development guide
+# Tajdîn — development guide
 
 How to run the project from scratch, produce a loadable Chrome extension, and iterate during development.
 
@@ -20,8 +20,8 @@ Optional:
 1. **Clone** the repository and enter the project directory:
 
    ```bash
-   git clone <repository-url> zeng
-   cd zeng
+   git clone <repository-url> tajdin
+   cd tajdin
    ```
 
 2. **Install dependencies** (uses `package-lock.json` for reproducible installs):
@@ -65,9 +65,9 @@ After `npm run build` (or `build:watch`), load **`dist/`** as unpacked and confi
 
 - [ ] **No manifest errors** on the extension card on `chrome://extensions`.
 - [ ] **Service worker** is active (click “Service worker” / inspect; no crash on startup).
-- [ ] **Popup** opens from the toolbar icon and shows the basic Zeng UI (dark shell, title, bottom **Player** bar with play/pause, mute, volume, station tooltip).
+- [ ] **Popup** opens from the toolbar icon and shows the basic Tajdîn UI (dark shell, title, bottom **Player** bar with play/pause, mute, volume, station tooltip).
 - [ ] **Options** open from the toolbar **gear** in the popup (`chrome.runtime.openOptionsPage()`), from “Extension options” on the extension card, or the manifest options URL, and render the settings shell (General, Stations, Playlists, Groups).
-- [ ] **Storage sync** — change a setting on the options page (for example theme) and confirm the popup updates without a full reload (`chrome.storage.onChanged` on `zeng.*` keys).
+- [ ] **Storage sync** — change a setting on the options page (for example theme) and confirm the popup updates without a full reload (`chrome.storage.onChanged` on `tajdin.*` keys; legacy `zeng.*` is migrated to `tajdin.*` on startup).
 - [ ] **Permissions** listed on the card include **storage**, **alarms**, **offscreen**, and Radio Browser **host** access.
 
 Automated checks in `npm run verify:dist` do **not** replace this pass; they only validate `dist/` layout and manifest fields.
@@ -85,7 +85,7 @@ npm run build:watch
 Leave that process running. After each successful rebuild:
 
 1. Go to `chrome://extensions`
-2. Click **Reload** on Zeng
+2. Click **Reload** on Tajdîn
 3. Open the popup or options page again to see changes
 
 This is the most reliable workflow for **Manifest V3** + **Vite** until a dedicated extension HMR setup (for example a CRXJS-based pipeline) is added.
@@ -124,7 +124,7 @@ For real extension behavior (storage, service worker, host permissions), use **`
 | `npm run verify:dist` | Assert `dist/` manifest, entries, and key files exist |
 | `npm run verify:extension` | `build` then `verify:dist` (local smoke)      |
 | `npm run lint`        | ESLint on `src/**/*.ts(x)` and `scripts/**/*.mjs`    |
-| `npm run pack:zip`    | Zip `dist/` → `artifacts/zeng-extension-v{version}.zip` (needs `zip` CLI) |
+| `npm run pack:zip`    | Zip `dist/` → `artifacts/tajdin-extension-v{version}.zip` (needs `zip` CLI) |
 | `npm run pack:extension` | `build` then `pack:zip` (Web Store bundle)     |
 | `npm run test`        | `vitest run` (unit tests)                          |
 | `npm run typecheck`   | `tsc --noEmit` across `src/`                      |
@@ -140,9 +140,9 @@ GitHub Actions (`.github/workflows/`): **CI** (Task Master JSON, `npm ci`, audit
 | `public/icons/`      | Toolbar / store icons (`zeng-radio-50.png`, `zeng-radio-100.png`); copied to `dist/icons/` by Vite |
 | `src/background/`    | Service worker: `index.ts`, `audio-engine.ts` (`zeng/player/*` → offscreen + ~20s `chrome.alarms` keep-alive), `offscreen-document.ts` |
 | `src/popup/`         | `SurfaceContext.tsx` (`SurfaceProvider` / `useSurface`) resolves **light** vs **dark** chrome (tabs, panels, player dock, `Player` labels/buttons) from settings + system preference. `components/`: `TabNav` (gear → options), `Player`, `PlaylistsPage`, `GroupsPage`, `AddStationModal` (`custom:` stations), `StationSearchBar`, `StationLanguageFilter`, `StationCard`, `StationList`; `playerPlayback.ts`; `playerBridge.ts`; `stationLibraryApi.ts` (`loadCustomStations`, `addCustomStation`, `removeCustomStation`, `resolveStationForLibrary`); `store/` + sync |
-| `src/settings/`      | Full-tab options UI: sidebar + `GeneralSettingsSection`, `CustomStationsTable`, reused `PlaylistsPage` / `GroupsPage`; listens to `chrome.storage.local` changes for `zeng.*` to stay in sync with the popup |
+| `src/settings/`      | Full-tab options UI: sidebar + `GeneralSettingsSection`, `CustomStationsTable`, reused `PlaylistsPage` / `GroupsPage`; listens to `chrome.storage.local` changes for `tajdin.*` (and legacy `zeng.*` during migration) to stay in sync with the popup |
 | `src/offscreen/`     | Offscreen doc: `<audio id="player">`, `index.ts` handles `zeng/offscreen/*` (load, play, pause, volume, state). SW: `offscreen-document.ts` + `zeng/sw/ensure-offscreen` / `zeng/sw/ping-offscreen` |
-| `src/shared/`        | `types/`, `storage/`, `import-export/` (`backup-schema.ts`, `backup-io.ts` — Zod `zeng-backup` v1 JSON, merge vs replace), `utils/sanitize.ts` (display text + http(s) URLs for UI), `utils/fuzzy-search.ts`, `utils/language-mapper.ts`, `utils/group-icon-keys.ts`, `utils/validate-stream-url.ts`, `utils/station-merge.ts`, `api/radio-browser.api.ts` (`RadioBrowserClient`, primary + fallback hosts, rate-spaced queue) |
+| `src/shared/`        | `types/`, `storage/` (`storage-migration.ts` copies legacy `zeng.*` keys to `tajdin.*`), `import-export/` (`backup-schema.ts`, `backup-io.ts` — Zod `tajdin-backup` v1 JSON on export, import also accepts legacy `zeng-backup`, merge vs replace), `utils/sanitize.ts` (display text + http(s) URLs for UI), `utils/fuzzy-search.ts`, `utils/language-mapper.ts`, `utils/group-icon-keys.ts`, `utils/validate-stream-url.ts`, `utils/station-merge.ts`, `api/radio-browser.api.ts` (`RadioBrowserClient`, primary + fallback hosts, rate-spaced queue) |
 | `vite.config.ts`     | Multi-entry build, `base: './'` for extension-relative assets |
 | `dist/`              | **Output only** — gitignored; load this folder in Chrome |
 

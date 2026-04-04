@@ -33,7 +33,7 @@ try {
 }
 
 mkdirSync(artifacts, { recursive: true });
-const out = join(artifacts, `zeng-extension-v${version}.zip`);
+const out = join(artifacts, `tajdin-extension-v${version}.zip`);
 
 try {
   execFileSync("zip", ["-q", "-r", out, "."], { cwd: dist, stdio: "inherit" });

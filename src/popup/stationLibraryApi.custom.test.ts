@@ -8,8 +8,8 @@ const store = vi.hoisted(() => ({
 
 vi.mock("../shared/storage/instances", () => ({
   STORAGE_KEYS: {
-    playlists: "zeng.playlists.v1",
-    customStations: "zeng.customStations.v1",
+    playlists: "tajdin.playlists.v1",
+    customStations: "tajdin.customStations.v1",
   },
   localPlaylistsStorage: {
     getWithDefault: vi.fn(async (_k: string, def: unknown[]) => def),

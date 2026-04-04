@@ -13,8 +13,8 @@ const NAV: { id: SettingsSectionId; label: string; description: string }[] = [
   { id: "backup", label: "Backup", description: "Export / import JSON" },
 ];
 
-function isZengLocalKey(key: string): boolean {
-  return key.startsWith("zeng.");
+function isAppLocalStorageKey(key: string): boolean {
+  return key.startsWith("tajdin.") || key.startsWith("zeng.");
 }
 
 export function App() {
@@ -27,7 +27,7 @@ export function App() {
       areaName: string,
     ) => {
       if (areaName !== "local") return;
-      if (Object.keys(changes).some(isZengLocalKey)) {
+      if (Object.keys(changes).some(isAppLocalStorageKey)) {
         setStorageRev((n) => n + 1);
       }
     };
