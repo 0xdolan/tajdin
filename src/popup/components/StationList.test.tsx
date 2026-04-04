@@ -50,8 +50,8 @@ describe("StationList", () => {
       expect.objectContaining({
         limit: BROWSE_PAGE_SIZE,
         offset: 0,
-        order: "clickcount",
-        reverse: true,
+        order: "random",
+        reverse: false,
       }),
     );
   });
@@ -71,6 +71,8 @@ describe("StationList", () => {
       expect.objectContaining({
         name: "bbc",
         offset: 0,
+        order: "clickcount",
+        reverse: true,
       }),
     );
   });
@@ -90,6 +92,28 @@ describe("StationList", () => {
       expect.objectContaining({
         language: "german",
         offset: 0,
+        order: "random",
+        reverse: false,
+      }),
+    );
+  });
+
+  it("uses ranked browse pages when building a regex corpus", async () => {
+    const searchStations = vi.fn().mockResolvedValue([]);
+    const client = { searchStations } as unknown as RadioBrowserClient;
+
+    await act(async () => {
+      root.render(
+        <StationList client={client} searchQuery="news" searchMode="regex" regexInvalid={false} />,
+      );
+    });
+
+    await vi.waitFor(() => expect(searchStations).toHaveBeenCalled());
+    expect(searchStations).toHaveBeenCalledWith(
+      expect.objectContaining({
+        offset: 0,
+        order: "clickcount",
+        reverse: true,
       }),
     );
   });

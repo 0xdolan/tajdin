@@ -859,7 +859,7 @@
         "dependencies": [
           "22"
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -991,21 +991,21 @@
             "title": "Each popup open: show random stations in browse",
             "description": "On extension popup open, browse tab loads a random set so users can discover; favourites/playlists remain for saved curation and prev/next within playlists.",
             "dependencies": [],
-            "details": "On popup mount or browse tab focus, trigger Radio Browser random (or shuffled) fetch with defined count; avoid clobbering user mid-search—define UX (e.g. only when query empty and tab is browse). Document interaction with session-restored query vs fresh random.",
-            "status": "pending",
+            "details": "DONE: `StationList` uses API `order=random` when not in exact name search or regex corpus mode (popup remount / Browse mount refetches). Ranked `clickcount` for search + regex corpus pagination. `docs/development.md` + Vitest.",
+            "status": "done",
             "testStrategy": "Manual: repeated opens show varied lists; fav tab unchanged; playlists still navigable with transport controls.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-05T02:00:00.000Z"
+            "updatedAt": "2026-04-05T14:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-05T04:00:00.000Z"
+        "updatedAt": "2026-04-05T14:00:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-05T04:00:00.000Z",
+      "lastModified": "2026-04-05T14:00:00.000Z",
       "taskCount": 23,
-      "completedCount": 22,
+      "completedCount": 23,
       "tags": [
         "master"
       ]
