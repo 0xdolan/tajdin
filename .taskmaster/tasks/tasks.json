@@ -923,11 +923,11 @@
             "dependencies": [
               5
             ],
-            "details": "UI in `CustomStationsTable` or dedicated form: load row → save updates to storage; validate stream URL; reflect in popup without reload if storage sync already wired.",
-            "status": "pending",
+            "details": "DONE: `updateCustomStation()` in `stationLibraryApi` (custom ids only; preserves uuid/tags; cover clear via empty string). `EditCustomStationModal` + Edit in `CustomStationsTable`; same validation as add. Tests in `stationLibraryApi.custom.test.ts`.",
+            "status": "done",
             "testStrategy": "Edit saves and survives reload; invalid URL rejected.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-05T02:00:00.000Z"
+            "updatedAt": "2026-04-05T03:45:00.000Z"
           },
           {
             "id": 7,
@@ -998,12 +998,12 @@
             "updatedAt": "2026-04-05T02:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-05T03:30:00.000Z"
+        "updatedAt": "2026-04-05T03:45:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-05T03:30:00.000Z",
+      "lastModified": "2026-04-05T03:45:00.000Z",
       "taskCount": 23,
       "completedCount": 22,
       "tags": [

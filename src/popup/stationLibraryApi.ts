@@ -62,6 +62,44 @@ export async function removeCustomStation(stationuuid: string): Promise<boolean>
   return (await localCustomStationsStorage.set(STORAGE_KEYS.customStations, next)).success;
 }
 
+/** Update a saved custom station (`custom:*` id). Preserves `stationuuid` and other fields (e.g. `tags`). */
+export async function updateCustomStation(
+  stationuuid: string,
+  args: {
+    displayName: string;
+    streamUrl: string;
+    /** Empty string removes `coverUrl`. */
+    coverImageUrl: string;
+  },
+): Promise<Station | null> {
+  if (!stationuuid.startsWith("custom:")) return null;
+  const name = sanitizeDisplayText(args.displayName.trim(), { maxLength: 200 });
+  const url = args.streamUrl.trim();
+  if (!name || !isValidHttpOrHttpsStreamUrl(url)) return null;
+
+  const coverRaw = args.coverImageUrl.trim();
+  const coverSanitized = coverRaw ? sanitizeHttpOrHttpsUrl(coverRaw) : undefined;
+  if (coverRaw && !coverSanitized) return null;
+
+  const list = await loadCustomStations();
+  const idx = list.findIndex((s) => s.stationuuid === stationuuid);
+  if (idx < 0) return null;
+  const prev = list[idx]!;
+  const { coverUrl: _drop, ...rest } = prev;
+  const nextStation: Station = {
+    ...rest,
+    name,
+    url,
+    url_resolved: url,
+    ...(coverSanitized ? { coverUrl: coverSanitized } : {}),
+  };
+
+  const next = [...list];
+  next[idx] = nextStation;
+  const r = await localCustomStationsStorage.set(STORAGE_KEYS.customStations, next);
+  return r.success ? nextStation : null;
+}
+
 function nowIso(): string {
   return new Date().toISOString();
 }
