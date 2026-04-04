@@ -7,7 +7,7 @@
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; base-uri 'self'; frame-ancestors 'none';"
   },
-  "permissions": ["alarms", "offscreen", "storage"],
+  "permissions": ["alarms", "clipboardWrite", "offscreen", "storage"],
   "host_permissions": [
     "https://all.api.radio-browser.info/*",
     "https://de1.api.radio-browser.info/*",
