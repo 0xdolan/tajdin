@@ -45,11 +45,20 @@ export type StationListProps = {
   languageFilter?: string;
   /** Bump to refetch and merge custom stations into the first browse/search page. */
   customStationsTick?: number;
+  /**
+   * When true, results and loading live in this component only (do not read/write global {@link useStationStore} search buffers).
+   */
+  isolated?: boolean;
+  /**
+   * With {@link isolated}, row tap appends the station to this playlist instead of starting playback.
+   */
+  appendToPlaylist?: { playlistId: string };
 };
 
 export type StationListContext = {
   playlists: Playlist[];
   refreshLibrary: () => void;
+  appendToPlaylist?: { playlistId: string };
 };
 
 function StationListSkeleton() {
@@ -72,13 +81,38 @@ export function StationList({
   regexInvalid = false,
   languageFilter = "",
   customStationsTick = 0,
+  isolated = false,
+  appendToPlaylist,
 }: StationListProps) {
   const surface = useSurface();
-  const searchResults = useStationStore((s) => s.searchResults);
-  const isSearchLoading = useStationStore((s) => s.isSearchLoading);
+  const storeResults = useStationStore((s) => s.searchResults);
+  const storeLoading = useStationStore((s) => s.isSearchLoading);
   const replaceSearchResults = useStationStore((s) => s.replaceSearchResults);
   const appendSearchResults = useStationStore((s) => s.appendSearchResults);
   const setSearchLoading = useStationStore((s) => s.setSearchLoading);
+
+  const [localResults, setLocalResults] = useState<Station[]>([]);
+  const [localLoading, setLocalLoading] = useState(false);
+
+  const appendLocalResults = useCallback((more: Station[]) => {
+    setLocalResults((prev) => {
+      const seen = new Set(prev.map((x) => x.stationuuid));
+      const merged = [...prev];
+      for (const st of more) {
+        if (!seen.has(st.stationuuid)) {
+          seen.add(st.stationuuid);
+          merged.push(st);
+        }
+      }
+      return merged;
+    });
+  }, []);
+
+  const searchResults = isolated ? localResults : storeResults;
+  const isSearchLoading = isolated ? localLoading : storeLoading;
+  const replaceResults = isolated ? setLocalResults : replaceSearchResults;
+  const appendResults = isolated ? appendLocalResults : appendSearchResults;
+  const setLoading = isolated ? setLocalLoading : setSearchLoading;
 
   const [library, setLibrary] = useState<{ playlists: Playlist[] }>({ playlists: [] });
   const refreshLibrary = useCallback(() => {
@@ -93,8 +127,9 @@ export function StationList({
     () => ({
       playlists: library.playlists,
       refreshLibrary,
+      appendToPlaylist,
     }),
-    [library.playlists, refreshLibrary],
+    [appendToPlaylist, library.playlists, refreshLibrary],
   );
 
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -135,8 +170,8 @@ export function StationList({
     fetchingRef.current = false;
     corpusRef.current = [];
 
-    replaceSearchResults([]);
-    setSearchLoading(true);
+    replaceResults([]);
+    setLoading(true);
 
     void (async () => {
       try {
@@ -149,9 +184,9 @@ export function StationList({
         if (regexCorpusMode) {
           corpusRef.current = mergedBase;
           const r = regexSearchStations(corpusRef.current, searchQuery);
-          replaceSearchResults(r.ok ? r.stations : []);
+          replaceResults(r.ok ? r.stations : []);
         } else {
-          replaceSearchResults(mergedBase);
+          replaceResults(mergedBase);
         }
         offsetRef.current = batch.length;
         hasMoreRef.current = batch.length >= BROWSE_PAGE_SIZE;
@@ -161,7 +196,7 @@ export function StationList({
         }
       } finally {
         if (!cancelled) {
-          setSearchLoading(false);
+          setLoading(false);
         }
       }
     })();
@@ -169,15 +204,7 @@ export function StationList({
     return () => {
       cancelled = true;
     };
-  }, [
-    client,
-    listParams,
-    regexInvalid,
-    replaceSearchResults,
-    searchQuery,
-    setSearchLoading,
-    customStationsTick,
-  ]);
+  }, [client, customStationsTick, listParams, regexInvalid, replaceResults, searchQuery, setLoading]);
 
   const loadMore = useCallback(async () => {
     if (fetchingRef.current || !hasMoreRef.current || isSearchLoading) {
@@ -200,10 +227,10 @@ export function StationList({
         corpusRef.current = [...corpusRef.current, ...batch];
         const r = regexSearchStations(corpusRef.current, searchQuery);
         if (r.ok) {
-          replaceSearchResults(r.stations);
+          replaceResults(r.stations);
         }
       } else {
-        appendSearchResults(batch);
+        appendResults(batch);
       }
       offsetRef.current += batch.length;
       hasMoreRef.current = batch.length >= BROWSE_PAGE_SIZE;
@@ -214,14 +241,14 @@ export function StationList({
       setIsLoadingMore(false);
     }
   }, [
-    appendSearchResults,
+    appendResults,
     client,
     isSearchLoading,
     listParams,
     q,
     regexCorpusMode,
     regexInvalid,
-    replaceSearchResults,
+    replaceResults,
     searchMode,
     searchQuery,
   ]);
@@ -254,7 +281,12 @@ export function StationList({
       endReached={handleEndReached}
       computeItemKey={(_index, station) => station.stationuuid}
       itemContent={(_index, station, ctx) => (
-        <StationCard station={station} playlists={ctx.playlists} onLibraryMutated={ctx.refreshLibrary} />
+        <StationCard
+          station={station}
+          playlists={ctx.playlists}
+          onLibraryMutated={ctx.refreshLibrary}
+          appendToPlaylistOnActivate={ctx.appendToPlaylist}
+        />
       )}
       components={{
         Scroller: TajdinVirtuosoScroller,

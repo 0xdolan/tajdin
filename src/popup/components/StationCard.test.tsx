@@ -13,10 +13,14 @@ vi.mock("../browseNavigation", () => ({
 
 const loadPlaylistsForLibrary = vi.fn().mockResolvedValue({ playlists: [] });
 
+const appendStationToPlaylist = vi.fn().mockResolvedValue(true);
+
 vi.mock("../stationLibraryApi", () => ({
-  appendStationToPlaylist: vi.fn().mockResolvedValue(true),
+  appendStationToPlaylist: (...a: unknown[]) => appendStationToPlaylist(...a),
   loadPlaylistsForLibrary: (...a: unknown[]) => loadPlaylistsForLibrary(...a),
 }));
+
+const TEST_PLAYLIST_ID = "550e8400-e29b-41d4-a716-446655440000";
 
 const sampleStation: Station = {
   stationuuid: "abc-1",
@@ -34,6 +38,7 @@ const sampleStation: Station = {
 describe("StationCard", () => {
   beforeEach(() => {
     playStationFromList.mockClear();
+    appendStationToPlaylist.mockClear();
     loadPlaylistsForLibrary.mockClear();
     loadPlaylistsForLibrary.mockResolvedValue({ playlists: [] });
     useStationStore.setState({
@@ -68,6 +73,20 @@ describe("StationCard", () => {
     const st = { ...sampleStation, name: "A<script>x</script>B" };
     render(<StationCard station={st} playlists={[]} />);
     expect(screen.getByText("AB")).toBeInTheDocument();
+  });
+
+  it("appends to playlist when appendToPlaylistOnActivate is set", async () => {
+    const user = userEvent.setup();
+    render(
+      <StationCard
+        station={sampleStation}
+        playlists={[]}
+        appendToPlaylistOnActivate={{ playlistId: TEST_PLAYLIST_ID }}
+      />,
+    );
+    await user.click(screen.getByTestId("station-card"));
+    expect(appendStationToPlaylist).toHaveBeenCalledWith("abc-1", TEST_PLAYLIST_ID);
+    expect(playStationFromList).not.toHaveBeenCalled();
   });
 
   it("starts playback when the row is clicked", async () => {

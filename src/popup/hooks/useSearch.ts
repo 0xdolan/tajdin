@@ -16,6 +16,48 @@ export type UseSearchResult = {
 };
 
 /**
+ * Same debounce + regex validation as {@link useSearch}, but local state (e.g. Playlists tab search without touching Browse session fields).
+ */
+export function useLocalSearch(debounceMs: number = DEFAULT_DEBOUNCE_MS): UseSearchResult {
+  const [rawQuery, setRawQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [mode, setMode] = useState<SearchMode>("exact");
+  const [regexInvalid, setRegexInvalid] = useState(false);
+
+  useEffect(() => {
+    const t = window.setTimeout(() => setDebouncedQuery(rawQuery), debounceMs);
+    return () => window.clearTimeout(t);
+  }, [rawQuery, debounceMs]);
+
+  useEffect(() => {
+    if (mode !== "regex") {
+      setRegexInvalid(false);
+      return;
+    }
+    const p = debouncedQuery.trim();
+    if (!p) {
+      setRegexInvalid(false);
+      return;
+    }
+    try {
+      new RegExp(p, "iu");
+      setRegexInvalid(false);
+    } catch {
+      setRegexInvalid(true);
+    }
+  }, [mode, debouncedQuery]);
+
+  return {
+    rawQuery,
+    setRawQuery,
+    debouncedQuery,
+    mode,
+    setMode,
+    regexInvalid,
+  };
+}
+
+/**
  * Debounced search query plus exact (API name) vs regex mode; state lives in {@link useUiStore} for session persistence.
  */
 export function useSearch(debounceMs: number = DEFAULT_DEBOUNCE_MS): UseSearchResult {
