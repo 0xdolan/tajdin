@@ -676,12 +676,184 @@
           }
         ],
         "updatedAt": "2026-04-04T23:30:00.000Z"
+      },
+      {
+        "id": "22",
+        "title": "Rebrand Zeng → Tajdîn (Tajdin in repo/code) + player & settings UX",
+        "description": "Rename project/workspace and remote to tajdin; user-facing name Tajdîn; fix search-mode list refresh; redesign player and station row actions; settings header + About; playing state shows extension icon.",
+        "details": "Naming: use Tajdîn in manifest name/description, popup/options chrome, footers, and About copy. Use ASCII Tajdin for repo URL, folder name, package name, and code identifiers (no î in git or npm). Git remote: git@github.com:0xdolan/tajdin.git. About: link https://en.wikipedia.org/wiki/Mem_and_Zin and include the full 'Why Tajdîn?' narrative (Mem û Zîn, loyalty, radio companion). Audit every 'Zeng' / zeng string: UI, manifest, backup format key, STORAGE_KEYS, tests, CI. Decide whether to migrate chrome.storage keys from zeng.* to tajdin.* (data migration) or keep legacy key prefix for compatibility—document in subtask.",
+        "testStrategy": "Grep for Zeng/zeng leftovers; npm run lint, typecheck, test, verify:extension; manual: toggle fuzzy/regex without list flash, player layout, hover actions, About page, playing favicon swap.",
+        "priority": "high",
+        "dependencies": [
+          "21"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Workspace + Git: folder `tajdin`, remote `git@github.com:0xdolan/tajdin.git`",
+            "description": "Rename local project directory to tajdin; point origin at the new GitHub repo.",
+            "dependencies": [],
+            "details": "Developer machine steps: mv project folder; git remote set-url origin git@github.com:0xdolan/tajdin.git; verify fetch/push. Update any hardcoded clone paths in internal docs only if the team keeps them.",
+            "status": "pending",
+            "testStrategy": "git remote -v; clone fresh from new URL builds.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T12:00:00.000Z"
+          },
+          {
+            "id": 2,
+            "title": "Package + manifest + internal identifiers (Tajdin ASCII, Tajdîn display)",
+            "description": "package.json name, manifest name/description/default_title, HTML titles, build output names if any.",
+            "dependencies": [],
+            "details": "manifest.json: use Tajdîn where user-visible. Keep technical paths ASCII. Replace package description strings as needed.",
+            "status": "pending",
+            "testStrategy": "Build loads in Chrome; store listing fields read correctly.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T12:00:00.000Z"
+          },
+          {
+            "id": 3,
+            "title": "Storage keys + backup format: zeng → tajdin strategy",
+            "description": "STORAGE_KEYS, session keys, ZENG_BACKUP_FORMAT / file schema strings; migration vs backward compatibility.",
+            "dependencies": [
+              2
+            ],
+            "details": "Either one-time migration reading old keys into new, or keep zeng.* internally and only change user-visible labels. If format string changes, support import of legacy zeng-backup files.",
+            "status": "pending",
+            "testStrategy": "Existing profile still works after update; export/import roundtrip.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T12:00:00.000Z"
+          },
+          {
+            "id": 4,
+            "title": "Replace residual Zeng/zeng across src, tests, scripts, workflows",
+            "description": "Grep-driven pass: comments, test fixtures, ImportExport copy, PopupHeader, AttributionFooter, backup-io.",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Include .github workflows if they reference the repo name. Update GitHub URLs to 0xdolan/tajdin where appropriate.",
+            "status": "pending",
+            "testStrategy": "rg -i zeng; CI green.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T12:00:00.000Z"
+          },
+          {
+            "id": 5,
+            "title": "Fix: toggling fuzzy/regex must not refresh entire station list",
+            "description": "Decouple search mode change from StationList effect that replaces results / refetches unnecessarily.",
+            "dependencies": [],
+            "details": "Review useSearch + StationList useEffect deps; mode-only change should update filter client-side or minimal API behavior without full skeleton reload when query/language unchanged.",
+            "status": "pending",
+            "testStrategy": "Toggle mode: list stays populated without full flash; regex invalid still handled.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T12:00:00.000Z"
+          },
+          {
+            "id": 6,
+            "title": "Player layout: metadata above artwork; prev | play | next",
+            "description": "Improve title/subtitle visibility; center play between skip buttons; optional shuffle placement.",
+            "dependencies": [],
+            "details": "Player.tsx / PlayerDock: stack layout for narrow popup width; preserve surface theming.",
+            "status": "pending",
+            "testStrategy": "Visual in light/dark; long station names truncate gracefully.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T12:00:00.000Z"
+          },
+          {
+            "id": 7,
+            "title": "StationCard: copy under favourite; fade in/out on row hover",
+            "description": "Vertical stack for heart + copy; CSS transition for opacity (hover + focus-within).",
+            "dependencies": [],
+            "details": "Replace copy-on-artwork pattern if superseded; keep keyboard focus and stopPropagation on buttons.",
+            "status": "pending",
+            "testStrategy": "Hover/focus shows both controls; update snapshots/tests.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T12:00:00.000Z"
+          },
+          {
+            "id": 8,
+            "title": "Settings sidebar: logo + Tajdîn title (match popup branding)",
+            "description": "Reuse extension icon + wordmark pattern from popup header.",
+            "dependencies": [
+              2
+            ],
+            "details": "settings/App.tsx aside header; chrome.runtime.getURL for icon.",
+            "status": "pending",
+            "testStrategy": "Open options tab: branding visible.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T12:00:00.000Z"
+          },
+          {
+            "id": 9,
+            "title": "Settings: new About section (logo, version, GitHub, story)",
+            "description": "Nav item About with extension logo, manifest version, repo link, and Mem û Zîn / Tajdîn narrative.",
+            "dependencies": [
+              2,
+              8
+            ],
+            "details": "Link https://en.wikipedia.org/wiki/Mem_and_Zin. Embed full user-provided copy: Why Tajdîn? — Tajdîn in Mem û Zîn as loyalty/companionship vs Mem’s path; extension as dependable radio friend; closing line on daily listening. Scannable headings; optional Radio Browser / issues links.",
+            "status": "pending",
+            "testStrategy": "Content renders; links open; version matches manifest.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T12:00:00.000Z"
+          },
+          {
+            "id": 10,
+            "title": "Player: when playing, show extension icon instead of station favicon",
+            "description": "Replace artwork in player bar with packaged icon while isPlaying; station favicon when stopped/paused.",
+            "dependencies": [
+              6
+            ],
+            "details": "Keep equalizer overlay when playing; same icon path as header (icons/*.png).",
+            "status": "pending",
+            "testStrategy": "Play/pause toggles image; no broken img src.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T12:00:00.000Z"
+          },
+          {
+            "id": 11,
+            "title": "Popup header/footer: GitHub URL + strings → tajdin repo / Tajdîn",
+            "description": "AttributionFooter, PopupHeader, any 0xdolan/zeng links → 0xdolan/tajdin.",
+            "dependencies": [
+              2,
+              4
+            ],
+            "details": "Align profile vs repo links with product preference.",
+            "status": "pending",
+            "testStrategy": "Click-through to correct repo.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T12:00:00.000Z"
+          },
+          {
+            "id": 12,
+            "title": "Quality gate and merge",
+            "description": "lint, typecheck, test, verify:extension; branch/commit/merge per workflow.",
+            "dependencies": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "details": "feat/tajdin-rebrand or similar; merge to develop.",
+            "status": "pending",
+            "testStrategy": "All npm scripts green.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-05T12:00:00.000Z"
+          }
+        ],
+        "updatedAt": "2026-04-05T12:00:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T23:30:00.000Z",
-      "taskCount": 21,
+      "lastModified": "2026-04-05T12:00:00.000Z",
+      "taskCount": 22,
       "completedCount": 21,
       "tags": [
         "master"
