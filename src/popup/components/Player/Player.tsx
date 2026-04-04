@@ -1,9 +1,15 @@
 import { useCallback, useState } from "react";
+import { textContainsArabicScript } from "../../../shared/utils/arabic-text";
 import { sanitizeDisplayText, sanitizeHttpOrHttpsUrl } from "../../../shared/utils/sanitize";
+import {
+  goToAdjacentInSearchResults,
+  goToRandomInSearchResults,
+} from "../../browseNavigation";
 import { useSurface } from "../../SurfaceContext";
 import { startPlaybackWithPlaylistSkip } from "../../playerPlayback";
 import { sendPlayerCommand } from "../../playerBridge";
 import { usePlayerStore } from "../../store/playerStore";
+import { useStationStore } from "../../store/stationStore";
 import type { Station } from "../../../shared/types/station";
 
 function buildStationTooltip(station: Station | null): string | undefined {
@@ -106,6 +112,34 @@ function SpeakerOnIcon() {
   );
 }
 
+function SkipBackIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M6 6h2v12H6V6zm3.5 6l8.5 6V6l-8.5 6z" />
+    </svg>
+  );
+}
+
+function SkipForwardIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+    </svg>
+  );
+}
+
+function ShuffleIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M19.5 12c-1.214 0-2.304-.504-3.09-1.318M19.5 12c0 1.214-.504 2.304-1.318 3.09M4.5 12c1.214 0 2.304.504 3.09 1.318M4.5 12c0-1.214.504-2.304 1.318-3.09M8.25 5.25 9 12l-2.25 6.75M16.5 5.25 14.25 12 16.5 18.75"
+      />
+    </svg>
+  );
+}
+
 function SpeakerOffIcon() {
   return (
     <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
@@ -120,6 +154,7 @@ function SpeakerOffIcon() {
 
 export function Player() {
   const surface = useSurface();
+  const searchResultsLen = useStationStore((s) => s.searchResults.length);
   const station = usePlayerStore((s) => s.station);
   const streamUrl = usePlayerStore((s) => s.streamUrl);
   const isPlaying = usePlayerStore((s) => s.isPlaying);
@@ -180,6 +215,8 @@ export function Player() {
 
   const titleMain = surface === "light" ? "text-neutral-900" : "text-neutral-100";
   const titleSub = surface === "light" ? "text-neutral-600" : "text-neutral-500";
+  const stationTitle = station ? sanitizeDisplayText(station.name, { maxLength: 200 }) : "";
+  const titleArabic = stationTitle ? textContainsArabicScript(stationTitle) : false;
   const playBtn =
     surface === "light"
       ? "flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-neutral-200 text-neutral-900 hover:bg-neutral-300 disabled:cursor-not-allowed disabled:opacity-40"
@@ -192,16 +229,57 @@ export function Player() {
       : `flex h-9 w-9 shrink-0 items-center justify-center rounded-md hover:bg-neutral-800 ${
           muted ? "text-amber-400" : "text-neutral-300"
         }`;
+  const navBtn =
+    surface === "light"
+      ? "flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-neutral-600 hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-35"
+      : "flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-neutral-300 hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-35";
+
+  const listNavDisabled = searchResultsLen === 0 || busy;
 
   return (
-    <div className="flex w-full min-w-0 items-center gap-2">
+    <div className="flex w-full min-w-0 items-center gap-1 sm:gap-2">
       <StationArt station={station} isPlaying={isPlaying} />
+      <div className="flex shrink-0 items-center gap-0.5">
+        <button
+          type="button"
+          className={navBtn}
+          aria-label="Previous station in list"
+          title="Previous in list (wraps)"
+          disabled={listNavDisabled}
+          onClick={() => void goToAdjacentInSearchResults(-1)}
+        >
+          <SkipBackIcon />
+        </button>
+        <button
+          type="button"
+          className={navBtn}
+          aria-label="Next station in list"
+          title="Next in list (wraps)"
+          disabled={listNavDisabled}
+          onClick={() => void goToAdjacentInSearchResults(1)}
+        >
+          <SkipForwardIcon />
+        </button>
+        <button
+          type="button"
+          className={navBtn}
+          aria-label="Random station from list"
+          title="Random from current list"
+          disabled={listNavDisabled}
+          onClick={() => void goToRandomInSearchResults()}
+        >
+          <ShuffleIcon />
+        </button>
+      </div>
       <div
         className="min-w-0 flex-1"
         title={tooltip}
       >
-        <p className={`truncate text-sm font-medium ${titleMain}`}>
-          {station ? sanitizeDisplayText(station.name, { maxLength: 200 }) : "No station selected"}
+        <p
+          className={`truncate text-sm font-medium ${titleMain} ${titleArabic ? "zeng-font-arabic" : ""}`}
+          dir="auto"
+        >
+          {station ? stationTitle : "No station selected"}
         </p>
         <p className={`truncate text-xs ${titleSub}`}>
           {isPlaying ? "Playing" : "Stopped"}

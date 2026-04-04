@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react";
-import { GroupsPage } from "../popup/components/GroupsPage";
 import { PlaylistsPage } from "../popup/components/PlaylistsPage";
 import { CustomStationsTable } from "./components/CustomStationsTable";
 import { GeneralSettingsSection } from "./components/GeneralSettingsSection";
 import { ImportExportSection } from "./components/ImportExportSection";
 
-type SettingsSectionId = "general" | "stations" | "playlists" | "groups" | "backup";
+type SettingsSectionId = "general" | "stations" | "playlists" | "backup";
 
 const NAV: { id: SettingsSectionId; label: string; description: string }[] = [
   { id: "general", label: "General", description: "Theme, popup size, playback" },
   { id: "stations", label: "Stations", description: "Custom streams (table)" },
   { id: "playlists", label: "Playlists", description: "Create, reorder, delete" },
-  { id: "groups", label: "Groups", description: "Organize with icons" },
   { id: "backup", label: "Backup", description: "Export / import JSON" },
 ];
 
@@ -76,14 +74,6 @@ export function App() {
             <h2 className="mb-3 shrink-0 text-base font-semibold text-neutral-100">Playlists</h2>
             <div className="min-h-0 flex-1">
               <PlaylistsPage key={storageRev} />
-            </div>
-          </div>
-        ) : null}
-        {section === "groups" ? (
-          <div className="flex h-[min(70vh,800px)] min-h-[320px] flex-col">
-            <h2 className="mb-3 shrink-0 text-base font-semibold text-neutral-100">Groups</h2>
-            <div className="min-h-0 flex-1">
-              <GroupsPage key={storageRev} />
             </div>
           </div>
         ) : null}

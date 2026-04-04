@@ -1,44 +1,27 @@
 import { useState } from "react";
-import type { SessionUi } from "../../shared/storage/schemas";
 import { useSurface } from "../SurfaceContext";
 import { useSearch } from "../hooks/useSearch";
-import { useStationStore } from "../store/stationStore";
-import { useUiStore } from "../store/uiStore";
+import { useUiStore, type ActiveTab } from "../store/uiStore";
 import { AddStationModal } from "./AddStationModal";
-import { GroupsPage } from "./GroupsPage";
+import { FavouritesStationList } from "./FavouritesStationList";
 import { PlaylistsPage } from "./PlaylistsPage";
 import { StationLanguageFilter } from "./StationLanguageFilter";
 import { StationList } from "./StationList";
 import { StationSearchBar } from "./StationSearchBar";
 
-type ActiveTab = NonNullable<SessionUi["activeTab"]>;
-
-const COPY: Record<ActiveTab, { title: string; body: string }> = {
-  browse: {
-    title: "Browse",
-    body: "Station discovery and search will appear here.",
-  },
-  favourites: {
-    title: "Favourites",
-    body: "Saved stations will appear here.",
-  },
-  playlists: {
-    title: "Playlists",
-    body: "Your playlists will appear here.",
-  },
-  groups: {
-    title: "Groups",
-    body: "Station groups will appear here.",
-  },
+const TITLES: Record<ActiveTab, string> = {
+  browse: "Browse",
+  favourites: "Favourites",
+  playlists: "Playlists",
 };
 
 export function TabPanel() {
   const surface = useSurface();
   const activeTab = useUiStore((s) => s.activeTab);
   const search = useSearch();
-  const browseLanguage = useStationStore((s) => s.browseLanguageApiValue);
-  const setBrowseLanguage = useStationStore((s) => s.setBrowseLanguageApiValue);
-  const { title, body } = COPY[activeTab];
+  const browseLanguage = useUiStore((s) => s.browseLanguageApiValue);
+  const setBrowseLanguage = useUiStore((s) => s.setBrowseLanguageApiValue);
+  const title = TITLES[activeTab];
   const [addStationOpen, setAddStationOpen] = useState(false);
   const [customStationsTick, setCustomStationsTick] = useState(0);
 
@@ -50,7 +33,10 @@ export function TabPanel() {
     surface === "light"
       ? "mb-2 shrink-0 text-sm font-semibold text-neutral-800"
       : "mb-2 shrink-0 text-sm font-semibold text-neutral-200";
-  const mutedClass = surface === "light" ? "text-sm leading-relaxed text-neutral-600" : "text-sm leading-relaxed text-neutral-500";
+  const addBtn =
+    surface === "light"
+      ? "rounded-md border border-neutral-300 bg-white px-2.5 py-1.5 text-sm text-neutral-800 shadow-sm hover:bg-neutral-50"
+      : "rounded-md border border-neutral-600 bg-neutral-900 px-2.5 py-1.5 text-sm text-neutral-200 hover:bg-neutral-800";
 
   return (
     <div
@@ -73,11 +59,7 @@ export function TabPanel() {
               />
             </div>
             <div className="flex shrink-0 flex-wrap items-center gap-2">
-              <button
-                type="button"
-                className="rounded-md border border-neutral-600 bg-neutral-900 px-2.5 py-1.5 text-sm text-neutral-200 hover:bg-neutral-800"
-                onClick={() => setAddStationOpen(true)}
-              >
+              <button type="button" className={addBtn} onClick={() => setAddStationOpen(true)}>
                 Add station
               </button>
               <StationLanguageFilter value={browseLanguage} onChange={setBrowseLanguage} />
@@ -100,10 +82,10 @@ export function TabPanel() {
         </div>
       ) : activeTab === "playlists" ? (
         <PlaylistsPage />
-      ) : activeTab === "groups" ? (
-        <GroupsPage />
       ) : (
-        <p className={mutedClass}>{body}</p>
+        <div className="min-h-0 flex-1" aria-label="Favourite stations">
+          <FavouritesStationList />
+        </div>
       )}
     </div>
   );

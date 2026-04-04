@@ -9,14 +9,9 @@ const store = vi.hoisted(() => ({
 vi.mock("../shared/storage/instances", () => ({
   STORAGE_KEYS: {
     playlists: "zeng.playlists.v1",
-    groups: "zeng.groups.v1",
     customStations: "zeng.customStations.v1",
   },
   localPlaylistsStorage: {
-    getWithDefault: vi.fn(async (_k: string, def: unknown[]) => def),
-    set: vi.fn(async () => ({ success: true })),
-  },
-  localGroupsStorage: {
     getWithDefault: vi.fn(async (_k: string, def: unknown[]) => def),
     set: vi.fn(async () => ({ success: true })),
   },

@@ -35,7 +35,15 @@ export type SessionPlayer = z.infer<typeof SessionPlayerSchema>;
 
 /** Popup navigation / lightweight UI flags (session). */
 export const SessionUiSchema = z.object({
-  activeTab: z.enum(["browse", "favourites", "playlists", "groups"]).optional(),
+  /** Legacy `"groups"` is normalized to `"browse"` on read. */
+  activeTab: z.preprocess(
+    (v) => (v === "groups" ? "browse" : v),
+    z.enum(["browse", "favourites", "playlists"]).optional(),
+  ),
+  /** Last browse search query (raw, not debounced). */
+  browseQuery: z.string().optional(),
+  browseSearchMode: z.enum(["fuzzy", "regex"]).optional(),
+  browseLanguageApiValue: z.string().optional(),
 });
 
 export type SessionUi = z.infer<typeof SessionUiSchema>;

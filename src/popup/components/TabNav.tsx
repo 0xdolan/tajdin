@@ -2,11 +2,46 @@ import { useSurface } from "../SurfaceContext";
 import { useUiStore } from "../store/uiStore";
 
 const TABS = [
-  { id: "browse" as const, label: "Browse" },
-  { id: "favourites" as const, label: "Favourites" },
-  { id: "playlists" as const, label: "Playlists" },
-  { id: "groups" as const, label: "Groups" },
+  { id: "browse" as const, label: "Browse", Icon: BrowseIcon },
+  { id: "favourites" as const, label: "Favs", Icon: HeartOutlineIcon },
+  { id: "playlists" as const, label: "Lists", Icon: QueueListIcon },
 ];
+
+function BrowseIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+      />
+    </svg>
+  );
+}
+
+function HeartOutlineIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+      />
+    </svg>
+  );
+}
+
+function QueueListIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M8.25 6.75h12M8.25 12h12m-12 4.5h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 4.5h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+      />
+    </svg>
+  );
+}
 
 function CogIcon() {
   return (
@@ -27,8 +62,8 @@ export function TabNav() {
   const setActiveTab = useUiStore((s) => s.setActiveTab);
   const navBar =
     surface === "light"
-      ? "flex h-12 shrink-0 items-stretch border-b border-neutral-200 bg-white px-1"
-      : "flex h-12 shrink-0 items-stretch border-b border-neutral-800 bg-neutral-950 px-1";
+      ? "flex h-[52px] shrink-0 items-stretch border-b border-neutral-200 bg-white px-1"
+      : "flex h-[52px] shrink-0 items-stretch border-b border-neutral-800 bg-neutral-950 px-1";
   const tabIdle =
     surface === "light"
       ? "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
@@ -47,6 +82,7 @@ export function TabNav() {
       <ul className="flex min-w-0 flex-1 items-stretch gap-0.5" role="tablist">
         {TABS.map((tab) => {
           const selected = activeTab === tab.id;
+          const Icon = tab.Icon;
           return (
             <li key={tab.id} className="min-w-0 flex-1" role="presentation">
               <button
@@ -57,13 +93,15 @@ export function TabNav() {
                 aria-controls={`panel-${tab.id}`}
                 tabIndex={selected ? 0 : -1}
                 data-tab={tab.id}
+                title={tab.id === "favourites" ? "Favourites" : tab.id === "playlists" ? "Playlists" : "Browse"}
                 className={[
-                  "h-full w-full rounded-md px-1.5 text-center text-xs font-medium transition-colors",
+                  "flex h-full w-full flex-col items-center justify-center gap-0.5 rounded-md px-1 py-1 text-[10px] font-medium leading-tight transition-colors sm:text-xs",
                   selected ? tabSel : tabIdle,
                 ].join(" ")}
                 onClick={() => setActiveTab(tab.id)}
               >
-                {tab.label}
+                <Icon className="h-4 w-4 shrink-0" />
+                <span className="max-w-full truncate">{tab.label}</span>
               </button>
             </li>
           );
