@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Zeng",
+  "name": "Tajdîn",
   "version": "0.0.1",
-  "description": "Worldwide radio in your browser (Radio Browser).",
+  "description": "Tajdîn — worldwide radio in your browser (Radio Browser).",
   "minimum_chrome_version": "116",
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; base-uri 'self'; frame-ancestors 'none';"
@@ -24,7 +24,7 @@
     "type": "module"
   },
   "action": {
-    "default_title": "Zeng",
+    "default_title": "Tajdîn",
     "default_popup": "src/popup/index.html",
     "default_icon": {
       "16": "icons/zeng-radio-50.png",
