@@ -7,7 +7,7 @@ import {
   parseBackupJsonText,
   readLocalDataSnapshot,
   serializeBackupFile,
-  type ZengBackupFile,
+  type TajdinBackupFile,
 } from "../../shared/import-export/backup-io";
 
 type ImportExportSectionProps = {
@@ -17,7 +17,7 @@ type ImportExportSectionProps = {
 export function ImportExportSection({ reloadToken }: ImportExportSectionProps) {
   const [status, setStatus] = useState<string | null>(null);
   const [importMode, setImportMode] = useState<"merge" | "replace">("merge");
-  const [parsedFile, setParsedFile] = useState<ZengBackupFile | null>(null);
+  const [parsedFile, setParsedFile] = useState<TajdinBackupFile | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [preview, setPreview] = useState<ReturnType<typeof buildImportPreview> | null>(null);

@@ -1,39 +1,39 @@
 import { ensureOffscreenDocument } from "./offscreen-document";
 import type {
-  ZengOffscreenCommand,
-  ZengOffscreenGetStateResponse,
-  ZengOffscreenLoadResponse,
-  ZengOffscreenPlayResponse,
+  TajdinOffscreenCommand,
+  TajdinOffscreenGetStateResponse,
+  TajdinOffscreenLoadResponse,
+  TajdinOffscreenPlayResponse,
 } from "../shared/messages/offscreen";
 import {
   isPlayerCommand,
-  type ZengPlayerCommand,
-  type ZengPlayerCommandResult,
+  type TajdinPlayerCommand,
+  type TajdinPlayerCommandResult,
 } from "../shared/messages/player";
 
 /** ~20s between ticks (FR-003). Uses chained one-shot alarms so sub-minute delays work on older Chrome. */
-export const ZENG_KEEP_ALIVE_ALARM = "zeng-keep-alive";
+export const TAJDIN_KEEP_ALIVE_ALARM = "tajdin-keep-alive";
 
 const KEEP_ALIVE_DELAY_MINUTES = 20 / 60;
 
 /** When false, keep-alive ticks do not reschedule (avoids races after pause). */
 let keepAliveEnabled = false;
 
-async function dispatchToOffscreen<T>(command: ZengOffscreenCommand): Promise<T> {
+async function dispatchToOffscreen<T>(command: TajdinOffscreenCommand): Promise<T> {
   await ensureOffscreenDocument();
   return chrome.runtime.sendMessage(command) as Promise<T>;
 }
 
 function scheduleKeepAliveAlarm(): void {
-  chrome.alarms.create(ZENG_KEEP_ALIVE_ALARM, { delayInMinutes: KEEP_ALIVE_DELAY_MINUTES });
+  chrome.alarms.create(TAJDIN_KEEP_ALIVE_ALARM, { delayInMinutes: KEEP_ALIVE_DELAY_MINUTES });
 }
 
 export function clearKeepAliveAlarm(): void {
-  void chrome.alarms.clear(ZENG_KEEP_ALIVE_ALARM);
+  void chrome.alarms.clear(TAJDIN_KEEP_ALIVE_ALARM);
 }
 
 function onKeepAliveAlarm(alarm: chrome.alarms.Alarm): void {
-  if (alarm.name !== ZENG_KEEP_ALIVE_ALARM) {
+  if (alarm.name !== TAJDIN_KEEP_ALIVE_ALARM) {
     return;
   }
   if (!keepAliveEnabled) {
@@ -53,46 +53,46 @@ export function registerKeepAliveAlarmListener(): void {
 /** Test helper: clears keep-alive intent and alarm state between Vitest cases. */
 export function resetAudioEngineStateForTests(): void {
   keepAliveEnabled = false;
-  void chrome.alarms.clear(ZENG_KEEP_ALIVE_ALARM);
+  void chrome.alarms.clear(TAJDIN_KEEP_ALIVE_ALARM);
 }
 
-export async function executePlayerCommand(cmd: ZengPlayerCommand): Promise<ZengPlayerCommandResult> {
+export async function executePlayerCommand(cmd: TajdinPlayerCommand): Promise<TajdinPlayerCommandResult> {
   switch (cmd.type) {
-    case "zeng/player/load": {
-      const data = await dispatchToOffscreen<ZengOffscreenLoadResponse>({
-        type: "zeng/offscreen/load",
+    case "tajdin/player/load": {
+      const data = await dispatchToOffscreen<TajdinOffscreenLoadResponse>({
+        type: "tajdin/offscreen/load",
         url: cmd.url,
       });
-      return { type: "zeng/player/load", data };
+      return { type: "tajdin/player/load", data };
     }
-    case "zeng/player/play": {
-      const data = await dispatchToOffscreen<ZengOffscreenPlayResponse>({
-        type: "zeng/offscreen/play",
+    case "tajdin/player/play": {
+      const data = await dispatchToOffscreen<TajdinOffscreenPlayResponse>({
+        type: "tajdin/offscreen/play",
       });
       if (data.ok) {
         keepAliveEnabled = true;
         scheduleKeepAliveAlarm();
       }
-      return { type: "zeng/player/play", data };
+      return { type: "tajdin/player/play", data };
     }
-    case "zeng/player/pause": {
+    case "tajdin/player/pause": {
       keepAliveEnabled = false;
       clearKeepAliveAlarm();
-      await dispatchToOffscreen<{ ok: true }>({ type: "zeng/offscreen/pause" });
-      return { type: "zeng/player/pause", data: { ok: true } };
+      await dispatchToOffscreen<{ ok: true }>({ type: "tajdin/offscreen/pause" });
+      return { type: "tajdin/player/pause", data: { ok: true } };
     }
-    case "zeng/player/set-volume": {
+    case "tajdin/player/set-volume": {
       await dispatchToOffscreen<{ ok: true }>({
-        type: "zeng/offscreen/set-volume",
+        type: "tajdin/offscreen/set-volume",
         volumePercent: cmd.volumePercent,
       });
-      return { type: "zeng/player/set-volume", data: { ok: true } };
+      return { type: "tajdin/player/set-volume", data: { ok: true } };
     }
-    case "zeng/player/get-state": {
-      const data = await dispatchToOffscreen<ZengOffscreenGetStateResponse>({
-        type: "zeng/offscreen/get-state",
+    case "tajdin/player/get-state": {
+      const data = await dispatchToOffscreen<TajdinOffscreenGetStateResponse>({
+        type: "tajdin/offscreen/get-state",
       });
-      return { type: "zeng/player/get-state", data };
+      return { type: "tajdin/player/get-state", data };
     }
     default: {
       const _never: never = cmd;
@@ -102,11 +102,11 @@ export async function executePlayerCommand(cmd: ZengPlayerCommand): Promise<Zeng
 }
 
 /**
- * Handle `zeng/player/*` messages. Returns `false` if `message` is not a player command.
+ * Handle `tajdin/player/*` messages. Returns `false` if `message` is not a player command.
  */
 export function tryHandlePlayerMessage(
   message: unknown,
-  sendResponse: (response: { ok: true; result: ZengPlayerCommandResult } | { ok: false; error: string }) => void,
+  sendResponse: (response: { ok: true; result: TajdinPlayerCommandResult } | { ok: false; error: string }) => void,
 ): boolean {
   if (!isPlayerCommand(message)) {
     return false;

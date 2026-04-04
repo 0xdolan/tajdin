@@ -5,11 +5,11 @@
 @tailwind utilities;
 
 /* Arabic script: Vazirmatn (OFL). Latin UI stays on Tailwind/system stack. */
-.zeng-font-arabic {
+.tajdin-font-arabic {
   font-family: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
 }
 
-@keyframes zeng-eq-bar {
+@keyframes tajdin-eq-bar {
   0%,
   100% {
     transform: scaleY(0.35);
@@ -19,7 +19,7 @@
   }
 }
 
-.zeng-eq-bar {
+.tajdin-eq-bar {
   transform-origin: center bottom;
-  animation: zeng-eq-bar 0.55s ease-in-out infinite;
+  animation: tajdin-eq-bar 0.55s ease-in-out infinite;
 }

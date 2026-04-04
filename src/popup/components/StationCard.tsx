@@ -174,10 +174,10 @@ export function StationCard({ station, playlists, onLibraryMutated }: StationCar
             ) : null}
           </div>
           <div className="min-w-0 flex-1">
-            <p className={`truncate text-sm font-medium ${titleC} ${nameAr ? "zeng-font-arabic" : ""}`} dir="auto">
+            <p className={`truncate text-sm font-medium ${titleC} ${nameAr ? "tajdin-font-arabic" : ""}`} dir="auto">
               {nameLine}
             </p>
-            <p className={`truncate text-xs ${subC} ${metaAr ? "zeng-font-arabic" : ""}`} dir="auto">
+            <p className={`truncate text-xs ${subC} ${metaAr ? "tajdin-font-arabic" : ""}`} dir="auto">
               {country} · {lang}
             </p>
             <p className={`truncate text-xs ${sub2C}`}>{bitrate}</p>

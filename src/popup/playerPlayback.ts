@@ -5,12 +5,12 @@ import { usePlayerStore } from "./store/playerStore";
 export type LoadPlayResult = "ok" | "load-failed" | "play-failed";
 
 export async function loadUrlAndPlay(url: string): Promise<LoadPlayResult> {
-  const loadR = await sendPlayerCommand({ type: "zeng/player/load", url });
-  if (!loadR.ok || loadR.result.type !== "zeng/player/load" || !loadR.result.data.ok) {
+  const loadR = await sendPlayerCommand({ type: "tajdin/player/load", url });
+  if (!loadR.ok || loadR.result.type !== "tajdin/player/load" || !loadR.result.data.ok) {
     return "load-failed";
   }
-  const playR = await sendPlayerCommand({ type: "zeng/player/play" });
-  if (!playR.ok || playR.result.type !== "zeng/player/play" || !playR.result.data.ok) {
+  const playR = await sendPlayerCommand({ type: "tajdin/player/play" });
+  if (!playR.ok || playR.result.type !== "tajdin/player/play" || !playR.result.data.ok) {
     return "play-failed";
   }
   return "ok";

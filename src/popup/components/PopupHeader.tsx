@@ -4,8 +4,8 @@ export function PopupHeader() {
   const surface = useSurface();
   const iconUrl =
     typeof chrome !== "undefined" && chrome.runtime?.getURL
-      ? chrome.runtime.getURL("icons/zeng-radio-50.png")
-      : "/icons/zeng-radio-50.png";
+      ? chrome.runtime.getURL("icons/tajdin-radio-50.png")
+      : "/icons/tajdin-radio-50.png";
 
   const bar =
     surface === "light"
@@ -18,7 +18,7 @@ export function PopupHeader() {
     <header className={bar}>
       <img src={iconUrl} alt="" className="h-8 w-8 shrink-0 rounded-md object-contain" width={32} height={32} />
       <div className="min-w-0">
-        <div className={title}>Zeng</div>
+        <div className={title}>Tajdîn</div>
         <div className={sub}>Worldwide radio · Radio Browser</div>
       </div>
     </header>

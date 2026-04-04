@@ -1,4 +1,4 @@
-import type { ZengOffscreenPingResponse } from "../shared/messages/offscreen";
+import type { TajdinOffscreenPingResponse } from "../shared/messages/offscreen";
 
 const OFFSCREEN_PAGE = "src/offscreen/index.html";
 
@@ -21,12 +21,12 @@ export async function ensureOffscreenDocument(): Promise<void> {
     if (await chrome.offscreen.hasDocument()) {
       return;
     }
-    throw new Error("Failed to create Zeng offscreen document");
+    throw new Error("Failed to create Tajdîn offscreen document");
   }
 }
 
 /** Create offscreen page if needed, then ping its audio listener. */
-export async function pingOffscreenAudio(): Promise<ZengOffscreenPingResponse> {
+export async function pingOffscreenAudio(): Promise<TajdinOffscreenPingResponse> {
   await ensureOffscreenDocument();
-  return chrome.runtime.sendMessage({ type: "zeng/offscreen/ping" }) as Promise<ZengOffscreenPingResponse>;
+  return chrome.runtime.sendMessage({ type: "tajdin/offscreen/ping" }) as Promise<TajdinOffscreenPingResponse>;
 }

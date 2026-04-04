@@ -4,7 +4,7 @@ import {
   registerKeepAliveAlarmListener,
   resetAudioEngineStateForTests,
   tryHandlePlayerMessage,
-  ZENG_KEEP_ALIVE_ALARM,
+  TAJDIN_KEEP_ALIVE_ALARM,
 } from "./audio-engine";
 
 vi.mock("./offscreen-document", () => ({
@@ -44,8 +44,8 @@ describe("audio-engine", () => {
 
   it("schedules keep-alive after successful play", async () => {
     vi.mocked(chrome.runtime.sendMessage).mockResolvedValueOnce({ ok: true });
-    await executePlayerCommand({ type: "zeng/player/play" });
-    expect(create).toHaveBeenCalledWith(ZENG_KEEP_ALIVE_ALARM, { delayInMinutes: 20 / 60 });
+    await executePlayerCommand({ type: "tajdin/player/play" });
+    expect(create).toHaveBeenCalledWith(TAJDIN_KEEP_ALIVE_ALARM, { delayInMinutes: 20 / 60 });
   });
 
   it("does not schedule keep-alive when play fails", async () => {
@@ -53,28 +53,28 @@ describe("audio-engine", () => {
       ok: false,
       error: "blocked",
     });
-    await executePlayerCommand({ type: "zeng/player/play" });
+    await executePlayerCommand({ type: "tajdin/player/play" });
     expect(create).not.toHaveBeenCalled();
   });
 
   it("clears keep-alive on pause", async () => {
     vi.mocked(chrome.runtime.sendMessage).mockResolvedValueOnce({ ok: true });
-    await executePlayerCommand({ type: "zeng/player/play" });
+    await executePlayerCommand({ type: "tajdin/player/play" });
     vi.mocked(chrome.runtime.sendMessage).mockResolvedValueOnce({ ok: true });
-    await executePlayerCommand({ type: "zeng/player/pause" });
-    expect(clear).toHaveBeenCalledWith(ZENG_KEEP_ALIVE_ALARM);
+    await executePlayerCommand({ type: "tajdin/player/pause" });
+    expect(clear).toHaveBeenCalledWith(TAJDIN_KEEP_ALIVE_ALARM);
   });
 
   it("reschedules from alarm tick only while playback keep-alive is armed", async () => {
     vi.mocked(chrome.runtime.sendMessage).mockResolvedValue({ ok: true });
-    await executePlayerCommand({ type: "zeng/player/play" });
+    await executePlayerCommand({ type: "tajdin/player/play" });
     create.mockClear();
     expect(alarmListener).toBeDefined();
-    alarmListener!({ name: ZENG_KEEP_ALIVE_ALARM, scheduledTime: Date.now() });
+    alarmListener!({ name: TAJDIN_KEEP_ALIVE_ALARM, scheduledTime: Date.now() });
     expect(create).toHaveBeenCalledTimes(1);
-    await executePlayerCommand({ type: "zeng/player/pause" });
+    await executePlayerCommand({ type: "tajdin/player/pause" });
     create.mockClear();
-    alarmListener!({ name: ZENG_KEEP_ALIVE_ALARM, scheduledTime: Date.now() });
+    alarmListener!({ name: TAJDIN_KEEP_ALIVE_ALARM, scheduledTime: Date.now() });
     expect(create).not.toHaveBeenCalled();
   });
 
@@ -88,12 +88,12 @@ describe("audio-engine", () => {
     vi.mocked(chrome.runtime.sendMessage).mockResolvedValueOnce({ ok: true });
     const sendResponse = vi.fn();
     expect(
-      tryHandlePlayerMessage({ type: "zeng/player/load", url: "https://stream.example/a" }, sendResponse),
+      tryHandlePlayerMessage({ type: "tajdin/player/load", url: "https://stream.example/a" }, sendResponse),
     ).toBe(true);
     await vi.waitFor(() => expect(sendResponse).toHaveBeenCalled());
     expect(sendResponse).toHaveBeenCalledWith({
       ok: true,
-      result: { type: "zeng/player/load", data: { ok: true } },
+      result: { type: "tajdin/player/load", data: { ok: true } },
     });
   });
 });
