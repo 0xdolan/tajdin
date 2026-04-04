@@ -754,11 +754,11 @@
             "title": "Player layout: metadata above artwork; prev | play | next",
             "description": "Improve title/subtitle visibility; center play between skip buttons; optional shuffle placement.",
             "dependencies": [],
-            "details": "Player.tsx / PlayerDock: stack layout for narrow popup width; preserve surface theming.",
-            "status": "pending",
+            "details": "DONE: Two-row layout — title + subtitle (country/lang/tags · state) above control row; prev | play (rounded, h-10) | next | shuffle; spacer; mute + volume. StationArt h-12 + surface-aware frame. PlayerDock min-h 88px + py-2.",
+            "status": "done",
             "testStrategy": "Visual in light/dark; long station names truncate gracefully.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-05T12:00:00.000Z"
+            "updatedAt": "2026-04-04T00:05:00.000Z"
           },
           {
             "id": 7,
@@ -847,12 +847,12 @@
             "updatedAt": "2026-04-05T12:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-04T00:00:00.000Z"
+        "updatedAt": "2026-04-04T00:05:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T00:00:00.000Z",
+      "lastModified": "2026-04-04T00:05:00.000Z",
       "taskCount": 22,
       "completedCount": 21,
       "tags": [

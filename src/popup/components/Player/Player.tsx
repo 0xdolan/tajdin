@@ -12,6 +12,26 @@ import { usePlayerStore } from "../../store/playerStore";
 import { useStationStore } from "../../store/stationStore";
 import type { Station } from "../../../shared/types/station";
 
+function buildStationSubtitle(station: Station | null, isPlaying: boolean, muted: boolean): string {
+  if (!station) {
+    return muted ? "Muted" : "Browse or search to play";
+  }
+  const bits: string[] = [];
+  const country = station.country ?? station.countrycode;
+  const lang = station.language ?? station.languagecodes;
+  if (country) bits.push(sanitizeDisplayText(String(country), { maxLength: 48 }));
+  if (lang) bits.push(sanitizeDisplayText(String(lang), { maxLength: 48 }));
+  if (bits.length === 0 && station.tags?.trim()) {
+    bits.push(sanitizeDisplayText(station.tags.trim(), { maxLength: 72 }));
+  }
+  const meta = bits.join(" · ");
+  const state = isPlaying ? "Playing" : "Stopped";
+  if (meta) {
+    return `${meta} · ${state}${muted ? " · Muted" : ""}`;
+  }
+  return `${state}${muted ? " · Muted" : ""}`;
+}
+
 function buildStationTooltip(station: Station | null): string | undefined {
   if (!station) return undefined;
   const pieces = [
@@ -44,15 +64,25 @@ function RadioGlyph() {
 function StationArt({
   station,
   isPlaying,
+  frameClassName,
 }: {
   station: Station | null;
   isPlaying: boolean;
+  /** Tailwind size utilities, e.g. `h-12 w-12`. */
+  frameClassName?: string;
 }) {
+  const surface = useSurface();
   const [imgFailed, setImgFailed] = useState(false);
   const favicon = sanitizeHttpOrHttpsUrl(station?.favicon);
+  const frame =
+    surface === "light"
+      ? "bg-neutral-200/90 text-neutral-500"
+      : "bg-neutral-800 text-neutral-500";
 
   return (
-    <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-md bg-neutral-800 text-neutral-500">
+    <div
+      className={`relative shrink-0 overflow-hidden rounded-md ${frame} ${frameClassName ?? "h-12 w-12"}`}
+    >
       {favicon && !imgFailed ? (
         <img
           src={favicon}
@@ -217,10 +247,11 @@ export function Player() {
   const titleSub = surface === "light" ? "text-neutral-600" : "text-neutral-500";
   const stationTitle = station ? sanitizeDisplayText(station.name, { maxLength: 200 }) : "";
   const titleArabic = stationTitle ? textContainsArabicScript(stationTitle) : false;
+  const subtitleLine = buildStationSubtitle(station, isPlaying, muted);
   const playBtn =
     surface === "light"
-      ? "flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-neutral-200 text-neutral-900 hover:bg-neutral-300 disabled:cursor-not-allowed disabled:opacity-40"
-      : "flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-neutral-800 text-neutral-100 hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-40";
+      ? "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-white shadow-sm hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-40"
+      : "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-500/95 text-neutral-950 shadow-sm hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-40";
   const muteBtn =
     surface === "light"
       ? `flex h-9 w-9 shrink-0 items-center justify-center rounded-md hover:bg-neutral-200 ${
@@ -237,87 +268,91 @@ export function Player() {
   const listNavDisabled = searchResultsLen === 0 || busy;
 
   return (
-    <div className="flex w-full min-w-0 items-center gap-1 sm:gap-2">
-      <StationArt station={station} isPlaying={isPlaying} />
-      <div className="flex shrink-0 items-center gap-0.5">
-        <button
-          type="button"
-          className={navBtn}
-          aria-label="Previous station in list"
-          title="Previous in list (wraps)"
-          disabled={listNavDisabled}
-          onClick={() => void goToAdjacentInSearchResults(-1)}
-        >
-          <SkipBackIcon />
-        </button>
-        <button
-          type="button"
-          className={navBtn}
-          aria-label="Next station in list"
-          title="Next in list (wraps)"
-          disabled={listNavDisabled}
-          onClick={() => void goToAdjacentInSearchResults(1)}
-        >
-          <SkipForwardIcon />
-        </button>
-        <button
-          type="button"
-          className={navBtn}
-          aria-label="Random station from list"
-          title="Random from current list"
-          disabled={listNavDisabled}
-          onClick={() => void goToRandomInSearchResults()}
-        >
-          <ShuffleIcon />
-        </button>
-      </div>
-      <div
-        className="min-w-0 flex-1"
-        title={tooltip}
-      >
+    <div className="flex w-full min-w-0 flex-col gap-1.5">
+      <div className="min-w-0" title={tooltip}>
         <p
-          className={`truncate text-sm font-medium ${titleMain} ${titleArabic ? "tajdin-font-arabic" : ""}`}
+          className={`truncate text-sm font-semibold leading-tight sm:text-[0.95rem] ${titleMain} ${titleArabic ? "tajdin-font-arabic" : ""}`}
           dir="auto"
         >
           {station ? stationTitle : "No station selected"}
         </p>
-        <p className={`truncate text-xs ${titleSub}`}>
-          {isPlaying ? "Playing" : "Stopped"}
-          {muted ? " · Muted" : ""}
-        </p>
+        <p className={`mt-0.5 truncate text-xs leading-snug ${titleSub}`}>{subtitleLine}</p>
       </div>
-      <button
-        type="button"
-        disabled={busy || (!canStart && !isPlaying)}
-        aria-label={isPlaying ? "Pause" : "Play"}
-        className={playBtn}
-        onClick={() => void togglePlay()}
-      >
-        {isPlaying ? <PauseIcon /> : <PlayIcon />}
-      </button>
-      <button
-        type="button"
-        aria-label={muted ? "Unmute" : "Mute"}
-        aria-pressed={muted}
-        className={muteBtn}
-        onClick={() => void toggleMute()}
-      >
-        {muted ? <SpeakerOffIcon /> : <SpeakerOnIcon />}
-      </button>
-      <label className="flex w-[100px] shrink-0 items-center gap-1.5">
-        <span className="sr-only">Volume</span>
-        <input
-          type="range"
-          min={0}
-          max={100}
-          value={volumePercent}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={volumePercent}
-          className="h-1 w-full cursor-pointer accent-amber-500"
-          onChange={(e) => onVolumeChange(Number(e.target.value))}
-        />
-      </label>
+
+      <div className="flex w-full min-w-0 items-center gap-2">
+        <StationArt station={station} isPlaying={isPlaying} />
+        <div
+          className="flex shrink-0 items-center gap-0.5"
+          role="group"
+          aria-label="Playback and list navigation"
+        >
+          <button
+            type="button"
+            className={navBtn}
+            aria-label="Previous station in list"
+            title="Previous in list (wraps)"
+            disabled={listNavDisabled}
+            onClick={() => void goToAdjacentInSearchResults(-1)}
+          >
+            <SkipBackIcon />
+          </button>
+          <button
+            type="button"
+            disabled={busy || (!canStart && !isPlaying)}
+            aria-label={isPlaying ? "Pause" : "Play"}
+            className={playBtn}
+            onClick={() => void togglePlay()}
+          >
+            {isPlaying ? <PauseIcon /> : <PlayIcon />}
+          </button>
+          <button
+            type="button"
+            className={navBtn}
+            aria-label="Next station in list"
+            title="Next in list (wraps)"
+            disabled={listNavDisabled}
+            onClick={() => void goToAdjacentInSearchResults(1)}
+          >
+            <SkipForwardIcon />
+          </button>
+          <button
+            type="button"
+            className={navBtn}
+            aria-label="Random station from list"
+            title="Random from current list"
+            disabled={listNavDisabled}
+            onClick={() => void goToRandomInSearchResults()}
+          >
+            <ShuffleIcon />
+          </button>
+        </div>
+
+        <div className="min-w-0 flex-1" />
+
+        <button
+          type="button"
+          aria-label={muted ? "Unmute" : "Mute"}
+          aria-pressed={muted}
+          className={muteBtn}
+          onClick={() => void toggleMute()}
+        >
+          {muted ? <SpeakerOffIcon /> : <SpeakerOnIcon />}
+        </button>
+        <label className="flex w-[min(100px,28vw)] min-w-[72px] shrink-0 items-center gap-1.5">
+          <span className="sr-only">Volume</span>
+          <input
+            type="range"
+            min={0}
+            max={100}
+            value={volumePercent}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={volumePercent}
+            className="h-1 w-full cursor-pointer accent-amber-500"
+            onChange={(e) => onVolumeChange(Number(e.target.value))}
+          />
+        </label>
+      </div>
     </div>
   );
 }
