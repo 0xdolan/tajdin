@@ -1,0 +1,43 @@
+import { beforeEach, describe, expect, it } from "vitest";
+import { usePlayerStore } from "./playerStore";
+
+describe("usePlayerStore", () => {
+  beforeEach(() => {
+    usePlayerStore.getState().resetPlayer();
+  });
+
+  it("setVolumePercent clamps to 0–100", () => {
+    usePlayerStore.getState().setVolumePercent(150);
+    expect(usePlayerStore.getState().volumePercent).toBe(100);
+    usePlayerStore.getState().setVolumePercent(-10);
+    expect(usePlayerStore.getState().volumePercent).toBe(0);
+  });
+
+  it("applySessionPlayer merges and skips identical session fields", () => {
+    usePlayerStore.getState().applySessionPlayer({
+      stationuuid: "abc",
+      isPlaying: true,
+      volumePercent: 40,
+    });
+    const s1 = usePlayerStore.getState();
+    usePlayerStore.getState().applySessionPlayer({
+      stationuuid: "abc",
+      isPlaying: true,
+      volumePercent: 40,
+    });
+    expect(usePlayerStore.getState()).toBe(s1);
+  });
+
+  it("setStation derives streamUrl and stationuuid", () => {
+    usePlayerStore.getState().setStation({
+      stationuuid: "u1",
+      name: "X",
+      url: "http://a",
+      url_resolved: "http://b",
+    });
+    const s = usePlayerStore.getState();
+    expect(s.stationuuid).toBe("u1");
+    expect(s.streamUrl).toBe("http://b");
+    expect(s.station?.name).toBe("X");
+  });
+});
