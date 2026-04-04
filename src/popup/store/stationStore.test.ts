@@ -7,6 +7,7 @@ describe("useStationStore", () => {
       searchResults: [],
       isSearchLoading: false,
       favouriteIds: [],
+      browseLanguageApiValue: "",
     });
   });
 
@@ -22,7 +23,12 @@ describe("useStationStore", () => {
   it("appendSearchResults dedupes by stationuuid", () => {
     const a = { stationuuid: "a", name: "A", url: "http://a" };
     const b = { stationuuid: "b", name: "B", url: "http://b" };
-    useStationStore.setState({ searchResults: [a], isSearchLoading: false, favouriteIds: [] });
+    useStationStore.setState({
+      searchResults: [a],
+      isSearchLoading: false,
+      favouriteIds: [],
+      browseLanguageApiValue: "",
+    });
     useStationStore.getState().appendSearchResults([a, b]);
     expect(useStationStore.getState().searchResults).toEqual([a, b]);
   });
@@ -32,6 +38,7 @@ describe("useStationStore", () => {
       searchResults: [{ stationuuid: "x", name: "N", url: "u" }],
       isSearchLoading: true,
       favouriteIds: [],
+      browseLanguageApiValue: "",
     });
     useStationStore.getState().clearSearch();
     expect(useStationStore.getState().searchResults).toEqual([]);

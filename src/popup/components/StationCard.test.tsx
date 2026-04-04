@@ -30,6 +30,7 @@ describe("StationCard", () => {
       searchResults: [],
       isSearchLoading: false,
       favouriteIds: [],
+      browseLanguageApiValue: "",
     });
   });
 
