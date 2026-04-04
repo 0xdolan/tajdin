@@ -56,13 +56,13 @@ describe("StationList", () => {
     );
   });
 
-  it("passes name to the API when fuzzy mode has a debounced query", async () => {
+  it("passes name to the API when exact mode has a debounced query", async () => {
     const searchStations = vi.fn().mockResolvedValue([]);
     const client = { searchStations } as unknown as RadioBrowserClient;
 
     await act(async () => {
       root.render(
-        <StationList client={client} searchQuery="bbc" searchMode="fuzzy" />,
+        <StationList client={client} searchQuery="bbc" searchMode="exact" />,
       );
     });
 
@@ -99,7 +99,7 @@ describe("StationList", () => {
     const client = { searchStations } as unknown as RadioBrowserClient;
 
     await act(async () => {
-      root.render(<StationList client={client} searchMode="fuzzy" />);
+      root.render(<StationList client={client} searchMode="exact" />);
     });
 
     await vi.waitFor(() => expect(searchStations).toHaveBeenCalledTimes(1));
@@ -115,12 +115,12 @@ describe("StationList", () => {
     expect(searchStations).toHaveBeenCalledTimes(1);
   });
 
-  it("refetches when switching from fuzzy to regex with a non-empty query", async () => {
+  it("refetches when switching from exact to regex with a non-empty query", async () => {
     const searchStations = vi.fn().mockResolvedValue([]);
     const client = { searchStations } as unknown as RadioBrowserClient;
 
     await act(async () => {
-      root.render(<StationList client={client} searchQuery="bbc" searchMode="fuzzy" />);
+      root.render(<StationList client={client} searchQuery="bbc" searchMode="exact" />);
     });
 
     await vi.waitFor(() => expect(searchStations).toHaveBeenCalledTimes(1));

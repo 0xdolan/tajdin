@@ -945,11 +945,11 @@
             "title": "Search: remove fuzzy; single Regex toggle (off = exact, on = regex + selected styling)",
             "description": "Settings show three search-related options but popup search has two; user wants fuzzy removed—only regex vs non-regex, with clear selected state for regex.",
             "dependencies": [],
-            "details": "Remove fuzzy mode from UI and state (`useUiStore`, `SessionUi`, settings `GeneralSettingsSection`). Default-off = exact/name search per Radio Browser API; toggle on = regex mode with distinct active color. Align settings page copy and controls with popup `StationSearchBar`. Update `StationList` fetch params and tests that referenced fuzzy.",
-            "status": "pending",
+            "details": "DONE: `BrowseSearchMode` / settings `searchMode` = `exact` | `regex` (legacy `fuzzy` coerced on read). Popup `StationSearchBar` single regex toggle; `GeneralSettingsSection` two options; `StationList` uses API `name` only in exact mode (no client Fuse). Vitest + verify:extension.",
+            "status": "done",
             "testStrategy": "Vitest: list fetch uses correct mode; no fuzzy code paths left in UI; manual toggle styling.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-05T02:00:00.000Z"
+            "updatedAt": "2026-04-05T12:00:00.000Z"
           },
           {
             "id": 9,

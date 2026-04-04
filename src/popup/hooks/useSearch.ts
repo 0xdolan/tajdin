@@ -16,7 +16,7 @@ export type UseSearchResult = {
 };
 
 /**
- * Debounced search query plus fuzzy/regex mode; state lives in {@link useUiStore} for session persistence.
+ * Debounced search query plus exact (API name) vs regex mode; state lives in {@link useUiStore} for session persistence.
  */
 export function useSearch(debounceMs: number = DEFAULT_DEBOUNCE_MS): UseSearchResult {
   const rawQuery = useUiStore((s) => s.browseRawQuery);

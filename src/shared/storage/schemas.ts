@@ -42,7 +42,10 @@ export const SessionUiSchema = z.object({
   ),
   /** Last browse search query (raw, not debounced). */
   browseQuery: z.string().optional(),
-  browseSearchMode: z.enum(["fuzzy", "regex"]).optional(),
+  browseSearchMode: z.preprocess(
+    (v) => (v === "fuzzy" ? "exact" : v),
+    z.enum(["exact", "regex"]).optional(),
+  ),
   browseLanguageApiValue: z.string().optional(),
 });
 

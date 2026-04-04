@@ -9,7 +9,7 @@ describe("useSearch", () => {
     useUiStore.setState({
       activeTab: "browse",
       browseRawQuery: "",
-      browseSearchMode: "fuzzy",
+      browseSearchMode: "exact",
       browseLanguageApiValue: "",
     });
     vi.useFakeTimers();
@@ -84,7 +84,7 @@ describe("useSearch", () => {
     expect(result.current.regexInvalid).toBe(true);
   });
 
-  it("clears regexInvalid in fuzzy mode", () => {
+  it("clears regexInvalid in exact mode", () => {
     const { result } = renderHook(() => useSearch(0));
 
     act(() => {
@@ -97,7 +97,7 @@ describe("useSearch", () => {
     expect(result.current.regexInvalid).toBe(true);
 
     act(() => {
-      result.current.setMode("fuzzy");
+      result.current.setMode("exact");
     });
     expect(result.current.regexInvalid).toBe(false);
   });
