@@ -6,7 +6,7 @@ import {
 } from "../shared/storage/instances";
 import type { Playlist } from "../shared/types/playlist";
 import type { Station } from "../shared/types/station";
-import { sanitizeDisplayText } from "../shared/utils/sanitize";
+import { sanitizeDisplayText, sanitizeHttpOrHttpsUrl } from "../shared/utils/sanitize";
 import { isValidHttpOrHttpsStreamUrl } from "../shared/utils/validate-stream-url";
 
 export async function loadPlaylistsForLibrary(): Promise<{ playlists: Playlist[] }> {
@@ -24,16 +24,19 @@ export async function loadCustomStations(): Promise<Station[]> {
 export async function addCustomStation(
   displayName: string,
   streamUrl: string,
+  coverImageUrl?: string,
 ): Promise<Station | null> {
   const name = sanitizeDisplayText(displayName.trim(), { maxLength: 200 });
   const url = streamUrl.trim();
   if (!name || !isValidHttpOrHttpsStreamUrl(url)) return null;
+  const cover = sanitizeHttpOrHttpsUrl(coverImageUrl?.trim());
   const station: Station = {
     stationuuid: `custom:${crypto.randomUUID()}`,
     name,
     url,
     url_resolved: url,
     tags: "custom",
+    ...(cover ? { coverUrl: cover } : {}),
   };
   const list = await loadCustomStations();
   const r = await localCustomStationsStorage.set(STORAGE_KEYS.customStations, [...list, station]);

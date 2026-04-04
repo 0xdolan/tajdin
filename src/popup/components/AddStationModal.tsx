@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { sanitizeDisplayText } from "../../shared/utils/sanitize";
+import { sanitizeDisplayText, stationArtworkHttpUrl } from "../../shared/utils/sanitize";
 import { isValidHttpOrHttpsStreamUrl } from "../../shared/utils/validate-stream-url";
 import { addCustomStation } from "../stationLibraryApi";
 import { StationFavicon } from "./StationArtwork";
@@ -13,12 +13,14 @@ type AddStationModalProps = {
 export function AddStationModal({ open, onOpenChange, onAdded }: AddStationModalProps) {
   const [name, setName] = useState("");
   const [streamUrl, setStreamUrl] = useState("");
+  const [coverUrl, setCoverUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const resetForm = useCallback(() => {
     setName("");
     setStreamUrl("");
+    setCoverUrl("");
     setError(null);
   }, []);
 
@@ -55,6 +57,7 @@ export function AddStationModal({ open, onOpenChange, onAdded }: AddStationModal
     setError(null);
     const n = name.trim();
     const u = streamUrl.trim();
+    const c = coverUrl.trim();
     if (!n) {
       setError("Enter a station name.");
       return;
@@ -63,8 +66,12 @@ export function AddStationModal({ open, onOpenChange, onAdded }: AddStationModal
       setError("Stream URL must start with http:// or https://");
       return;
     }
+    if (c && !stationArtworkHttpUrl({ coverUrl: c, favicon: undefined })) {
+      setError("Cover image URL must be a valid http:// or https:// link.");
+      return;
+    }
     setBusy(true);
-    void addCustomStation(n, u).then((st) => {
+    void addCustomStation(n, u, c || undefined).then((st) => {
       setBusy(false);
       if (st) {
         onAdded?.();
@@ -93,14 +100,15 @@ export function AddStationModal({ open, onOpenChange, onAdded }: AddStationModal
           Add custom station
         </h2>
         <p className="mb-3 text-xs text-neutral-500">
-          Stream URL must use HTTP or HTTPS. The station is stored on this device and appears in Browse
-          search with a <code className="text-neutral-400">custom:</code> id.
+          Stream URL must use HTTP or HTTPS. Optional cover is an image URL (HTTP/HTTPS) shown in lists and
+          the player when stopped. The station is stored on this device and appears in Browse search with a{" "}
+          <code className="text-neutral-400">custom:</code> id.
         </p>
         <div
           className="mb-4 flex h-[72px] items-center gap-2 rounded-lg border border-neutral-700 bg-neutral-900/80 px-2 py-1.5"
           aria-hidden
         >
-          <StationFavicon favicon={undefined} />
+          <StationFavicon coverUrl={coverUrl.trim() || undefined} favicon={undefined} />
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-neutral-100" dir="auto">
               {previewTitle}
@@ -128,6 +136,17 @@ export function AddStationModal({ open, onOpenChange, onAdded }: AddStationModal
               value={streamUrl}
               onChange={(e) => setStreamUrl(e.target.value)}
               placeholder="https://…"
+              autoComplete="off"
+              disabled={busy}
+            />
+          </label>
+          <label className="text-xs text-neutral-400">
+            Cover image URL (optional)
+            <input
+              className="mt-0.5 w-full rounded-md border border-neutral-700 bg-neutral-900 px-2 py-2 text-sm text-neutral-100"
+              value={coverUrl}
+              onChange={(e) => setCoverUrl(e.target.value)}
+              placeholder="https://… (JPEG/PNG/WebP …)"
               autoComplete="off"
               disabled={busy}
             />

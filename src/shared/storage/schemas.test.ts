@@ -34,6 +34,18 @@ describe("local storage schemas", () => {
     expect(parsed[0].stationuuid).toBe("custom:1");
   });
 
+  it("LocalCustomStationsSchema accepts coverUrl", () => {
+    const parsed = LocalCustomStationsSchema.parse([
+      {
+        stationuuid: "custom:2",
+        name: "With art",
+        url: "https://s.test/a",
+        coverUrl: "https://img.test/c.png",
+      },
+    ]);
+    expect(parsed[0].coverUrl).toBe("https://img.test/c.png");
+  });
+
   it("LocalFavouriteIdsSchema rejects empty id string", () => {
     expect(() => LocalFavouriteIdsSchema.parse([""])).toThrow();
   });

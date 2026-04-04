@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import type { Station } from "../../shared/types/station";
+import { StationFavicon } from "../../popup/components/StationArtwork";
 import { loadCustomStations, removeCustomStation } from "../../popup/stationLibraryApi";
 import { sanitizeDisplayText } from "../../shared/utils/sanitize";
 
@@ -41,6 +42,7 @@ export function CustomStationsTable({ reloadToken }: CustomStationsTableProps) {
         <table className="w-full min-w-[32rem] border-collapse text-left text-sm">
           <thead>
             <tr className="border-b border-neutral-800 bg-neutral-900/60">
+              <th className="w-14 px-2 py-2 font-medium text-neutral-300">Art</th>
               <th className="px-3 py-2 font-medium text-neutral-300">Name</th>
               <th className="px-3 py-2 font-medium text-neutral-300">Stream URL</th>
               <th className="px-3 py-2 font-medium text-neutral-300">Id</th>
@@ -50,6 +52,9 @@ export function CustomStationsTable({ reloadToken }: CustomStationsTableProps) {
           <tbody>
             {rows.map((s) => (
               <tr key={s.stationuuid} className="border-b border-neutral-800/80 last:border-0">
+                <td className="px-2 py-2 align-middle">
+                  <StationFavicon coverUrl={s.coverUrl} favicon={s.favicon} sizeClass="h-8 w-8" />
+                </td>
                 <td className="max-w-[10rem] truncate px-3 py-2 text-neutral-100">
                   {sanitizeDisplayText(s.name, { maxLength: 200 })}
                 </td>

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { sanitizeHttpOrHttpsUrl } from "../../shared/utils/sanitize";
+import { useEffect, useState } from "react";
+import { stationArtworkHttpUrl } from "../../shared/utils/sanitize";
 
 export function RadioFallbackIcon({ className = "h-5 w-5" }: { className?: string }) {
   return (
@@ -16,13 +16,17 @@ export function RadioFallbackIcon({ className = "h-5 w-5" }: { className?: strin
 
 type StationFaviconProps = {
   favicon?: string;
+  coverUrl?: string;
   sizeClass?: string;
 };
 
-/** Square artwork for list rows (10 = 2.5rem). */
-export function StationFavicon({ favicon, sizeClass = "h-10 w-10" }: StationFaviconProps) {
+/** Square artwork for list rows (10 = 2.5rem). `coverUrl` (custom station) overrides `favicon`. */
+export function StationFavicon({ favicon, coverUrl, sizeClass = "h-10 w-10" }: StationFaviconProps) {
   const [failed, setFailed] = useState(false);
-  const safeSrc = sanitizeHttpOrHttpsUrl(favicon);
+  const safeSrc = stationArtworkHttpUrl({ coverUrl, favicon });
+  useEffect(() => {
+    setFailed(false);
+  }, [safeSrc]);
   if (!safeSrc || failed) {
     return (
       <div
