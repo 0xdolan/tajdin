@@ -20,6 +20,16 @@ describe("StationSchema", () => {
     expect(parsed.stationuuid).toBe("custom:my-station");
   });
 
+  it("accepts optional coverUrl on custom stations", () => {
+    const parsed = StationSchema.parse({
+      stationuuid: "custom:x",
+      name: "Mine",
+      url: "https://s.example/stream",
+      coverUrl: "https://cdn.example/cover.jpg",
+    });
+    expect(parsed.coverUrl).toBe("https://cdn.example/cover.jpg");
+  });
+
   it("parses Radio Browser–like fields and keeps unknown keys", () => {
     const parsed = StationSchema.parse({
       changeuuid: "ignored-but-kept",

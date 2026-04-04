@@ -53,6 +53,24 @@ describe("custom stations", () => {
     expect(list).toHaveLength(1);
   });
 
+  it("addCustomStation stores optional coverUrl when valid http(s)", async () => {
+    const st = await addCustomStation(
+      "Art FM",
+      "https://stream.example/live",
+      "https://cdn.example/poster.png",
+    );
+    expect(st?.coverUrl).toBe("https://cdn.example/poster.png");
+    const list = await loadCustomStations();
+    expect(list.find((s) => s.stationuuid === st!.stationuuid)?.coverUrl).toBe(
+      "https://cdn.example/poster.png",
+    );
+  });
+
+  it("addCustomStation omits coverUrl when image URL is invalid", async () => {
+    const st = await addCustomStation("No Art", "https://stream.example/live", "javascript:alert(1)");
+    expect(st?.coverUrl).toBeUndefined();
+  });
+
   it("addCustomStation returns null for invalid URL", async () => {
     expect(await addCustomStation("X", "ftp://a")).toBeNull();
   });
