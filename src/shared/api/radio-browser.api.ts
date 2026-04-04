@@ -16,7 +16,7 @@ export type StationSearchParams = {
   country?: string;
   countrycode?: string;
   codec?: string;
-  /** Page size; Radio Browser defaults vary — Zeng uses 50 (PRD). */
+  /** Page size; Radio Browser defaults vary — Tajdîn uses 50 (PRD). */
   limit?: number;
   offset?: number;
   order?: string;

@@ -74,7 +74,7 @@ function StationArt({
           {[0, 1, 2].map((i) => (
             <span
               key={i}
-              className="zeng-eq-bar block h-3 w-1 rounded-sm bg-emerald-400/95"
+              className="tajdin-eq-bar block h-3 w-1 rounded-sm bg-emerald-400/95"
               style={{ animationDelay: `${i * 120}ms` }}
             />
           ))}
@@ -181,9 +181,9 @@ export function Player() {
           setPlaying(false);
         }
       } else {
-        const pauseR = await sendPlayerCommand({ type: "zeng/player/pause" });
+        const pauseR = await sendPlayerCommand({ type: "tajdin/player/pause" });
         if (!pauseR.ok) return;
-        if (pauseR.result.type === "zeng/player/pause") {
+        if (pauseR.result.type === "tajdin/player/pause") {
           setPlaying(false);
         }
       }
@@ -196,10 +196,10 @@ export function Player() {
     const { muted: m, volumePercent: vol } = usePlayerStore.getState();
     if (m) {
       setMuted(false);
-      await sendPlayerCommand({ type: "zeng/player/set-volume", volumePercent: vol });
+      await sendPlayerCommand({ type: "tajdin/player/set-volume", volumePercent: vol });
     } else {
       setMuted(true);
-      await sendPlayerCommand({ type: "zeng/player/set-volume", volumePercent: 0 });
+      await sendPlayerCommand({ type: "tajdin/player/set-volume", volumePercent: 0 });
     }
   }, [setMuted]);
 
@@ -208,7 +208,7 @@ export function Player() {
       const v = Math.min(100, Math.max(0, Math.round(next)));
       setVolumePercent(v);
       setMuted(false);
-      void sendPlayerCommand({ type: "zeng/player/set-volume", volumePercent: v });
+      void sendPlayerCommand({ type: "tajdin/player/set-volume", volumePercent: v });
     },
     [setMuted, setVolumePercent],
   );
@@ -276,7 +276,7 @@ export function Player() {
         title={tooltip}
       >
         <p
-          className={`truncate text-sm font-medium ${titleMain} ${titleArabic ? "zeng-font-arabic" : ""}`}
+          className={`truncate text-sm font-medium ${titleMain} ${titleArabic ? "tajdin-font-arabic" : ""}`}
           dir="auto"
         >
           {station ? stationTitle : "No station selected"}

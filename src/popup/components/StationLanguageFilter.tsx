@@ -15,11 +15,11 @@ export function StationLanguageFilter({ value, onChange }: StationLanguageFilter
 
   return (
     <div className="flex min-w-0 shrink-0 items-center gap-2">
-      <label htmlFor="zeng-browse-language" className="sr-only">
+      <label htmlFor="tajdin-browse-language" className="sr-only">
         Filter by language
       </label>
       <select
-        id="zeng-browse-language"
+        id="tajdin-browse-language"
         className={selectClass}
         value={value}
         onChange={(e) => onChange(e.target.value)}

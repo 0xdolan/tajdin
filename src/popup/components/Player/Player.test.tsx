@@ -29,20 +29,20 @@ describe("Player", () => {
           error?: string;
         }) => void,
       ) => {
-        if (msg.type === "zeng/player/load") {
-          cb({ ok: true, result: { type: "zeng/player/load", data: { ok: true } } });
+        if (msg.type === "tajdin/player/load") {
+          cb({ ok: true, result: { type: "tajdin/player/load", data: { ok: true } } });
           return;
         }
-        if (msg.type === "zeng/player/play") {
-          cb({ ok: true, result: { type: "zeng/player/play", data: { ok: true } } });
+        if (msg.type === "tajdin/player/play") {
+          cb({ ok: true, result: { type: "tajdin/player/play", data: { ok: true } } });
           return;
         }
-        if (msg.type === "zeng/player/pause") {
-          cb({ ok: true, result: { type: "zeng/player/pause", data: { ok: true as const } } });
+        if (msg.type === "tajdin/player/pause") {
+          cb({ ok: true, result: { type: "tajdin/player/pause", data: { ok: true as const } } });
           return;
         }
-        if (msg.type === "zeng/player/set-volume") {
-          cb({ ok: true, result: { type: "zeng/player/set-volume", data: { ok: true } } });
+        if (msg.type === "tajdin/player/set-volume") {
+          cb({ ok: true, result: { type: "tajdin/player/set-volume", data: { ok: true } } });
           return;
         }
         cb({ ok: false, error: "unknown" });
@@ -63,7 +63,7 @@ describe("Player", () => {
     fireEvent.change(slider, { target: { value: "50" } });
     expect(usePlayerStore.getState().volumePercent).toBe(50);
     expect(sendMessage).toHaveBeenCalledWith(
-      { type: "zeng/player/set-volume", volumePercent: 50 },
+      { type: "tajdin/player/set-volume", volumePercent: 50 },
       expect.any(Function),
     );
   });
@@ -73,13 +73,13 @@ describe("Player", () => {
     render(<Player />);
     await user.click(screen.getByRole("button", { name: /^mute$/i }));
     expect(sendMessage).toHaveBeenCalledWith(
-      { type: "zeng/player/set-volume", volumePercent: 0 },
+      { type: "tajdin/player/set-volume", volumePercent: 0 },
       expect.any(Function),
     );
     expect(usePlayerStore.getState().muted).toBe(true);
     await user.click(screen.getByRole("button", { name: /^unmute$/i }));
     expect(sendMessage).toHaveBeenCalledWith(
-      { type: "zeng/player/set-volume", volumePercent: 80 },
+      { type: "tajdin/player/set-volume", volumePercent: 80 },
       expect.any(Function),
     );
     expect(usePlayerStore.getState().muted).toBe(false);

@@ -2,24 +2,24 @@
  * Commands sent from the service worker to the offscreen audio document.
  * (Popup/ other contexts should ask the SW; the SW forwards to offscreen.)
  */
-export type ZengOffscreenCommand =
-  | { type: "zeng/offscreen/ping" }
-  | { type: "zeng/offscreen/load"; url: string }
-  | { type: "zeng/offscreen/play" }
-  | { type: "zeng/offscreen/pause" }
+export type TajdinOffscreenCommand =
+  | { type: "tajdin/offscreen/ping" }
+  | { type: "tajdin/offscreen/load"; url: string }
+  | { type: "tajdin/offscreen/play" }
+  | { type: "tajdin/offscreen/pause" }
   /** 0–100, maps to HTMLMediaElement.volume (0–1). */
-  | { type: "zeng/offscreen/set-volume"; volumePercent: number }
-  | { type: "zeng/offscreen/get-state" };
+  | { type: "tajdin/offscreen/set-volume"; volumePercent: number }
+  | { type: "tajdin/offscreen/get-state" };
 
-export type ZengOffscreenPingResponse = { ok: true; paused: boolean };
+export type TajdinOffscreenPingResponse = { ok: true; paused: boolean };
 
-export type ZengOffscreenLoadResponse = { ok: true } | { ok: false; error: string };
+export type TajdinOffscreenLoadResponse = { ok: true } | { ok: false; error: string };
 
-export type ZengOffscreenPlayResponse =
+export type TajdinOffscreenPlayResponse =
   | { ok: true }
   | { ok: false; error: string };
 
-export type ZengOffscreenGetStateResponse = {
+export type TajdinOffscreenGetStateResponse = {
   paused: boolean;
   volumePercent: number;
   currentSrc: string;

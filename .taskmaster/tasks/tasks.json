@@ -732,11 +732,11 @@
               2,
               3
             ],
-            "details": "Include .github workflows if they reference the repo name. Update GitHub URLs to 0xdolan/tajdin where appropriate.",
-            "status": "pending",
+            "details": "DONE: Message protocol tajdin/player|offscreen|sw|health-check; types Tajdin*; alarm tajdin-keep-alive; CSS tajdin-font-arabic / tajdin-eq-bar; DOM ids tajdin-*; icons renamed tajdin-radio-*.png + manifest; backup TS types TajdinBackup* + LEGACY_ZENG_BACKUP_FORMAT string only; UI Tajdîn + repo github.com/0xdolan/tajdin; README + docs tables. Intentional zeng leftovers: storage migration keys, zeng-backup import literal, settings listener prefix.",
+            "status": "done",
             "testStrategy": "rg -i zeng; CI green.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-05T12:00:00.000Z"
+            "updatedAt": "2026-04-03T23:55:00.000Z"
           },
           {
             "id": 5,
@@ -847,12 +847,12 @@
             "updatedAt": "2026-04-05T12:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-03T23:50:00.000Z"
+        "updatedAt": "2026-04-03T23:55:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-03T23:50:00.000Z",
+      "lastModified": "2026-04-03T23:55:00.000Z",
       "taskCount": 22,
       "completedCount": 21,
       "tags": [

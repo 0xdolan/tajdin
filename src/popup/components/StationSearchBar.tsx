@@ -68,12 +68,12 @@ export function StationSearchBar({
 
   return (
     <div className="flex w-full shrink-0 flex-col gap-1">
-      <label className="sr-only" htmlFor="zeng-station-search">
+      <label className="sr-only" htmlFor="tajdin-station-search">
         Search stations
       </label>
       <div className={`${shell} ${borderInvalid}`}>
         <input
-          id="zeng-station-search"
+          id="tajdin-station-search"
           type="search"
           autoComplete="off"
           placeholder={
@@ -85,7 +85,7 @@ export function StationSearchBar({
           value={rawQuery}
           onChange={(e) => setRawQuery(e.target.value)}
           aria-invalid={invalid}
-          aria-describedby={invalid ? "zeng-search-regex-error" : undefined}
+          aria-describedby={invalid ? "tajdin-search-regex-error" : undefined}
         />
         <div className={toggleWrap} role="group" aria-label="Search mode">
           <button
@@ -111,7 +111,7 @@ export function StationSearchBar({
         </div>
       </div>
       {invalid ? (
-        <p id="zeng-search-regex-error" className="text-xs text-red-500" role="alert">
+        <p id="tajdin-search-regex-error" className="text-xs text-red-500" role="alert">
           Invalid regular expression
         </p>
       ) : null}

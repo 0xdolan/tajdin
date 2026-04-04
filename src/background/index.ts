@@ -22,11 +22,11 @@ async function startBackground(): Promise<void> {
     if (tryHandlePlayerMessage(message, sendResponse)) {
       return true;
     }
-    if (message?.type === "zeng/health-check") {
+    if (message?.type === "tajdin/health-check") {
       sendResponse({ ok: true });
       return true;
     }
-    if (message?.type === "zeng/sw/ensure-offscreen") {
+    if (message?.type === "tajdin/sw/ensure-offscreen") {
       void ensureOffscreenDocument()
         .then(() => sendResponse({ ok: true as const }))
         .catch((e: unknown) =>
@@ -34,7 +34,7 @@ async function startBackground(): Promise<void> {
         );
       return true;
     }
-    if (message?.type === "zeng/sw/ping-offscreen") {
+    if (message?.type === "tajdin/sw/ping-offscreen") {
       void pingOffscreenAudio()
         .then((pong) => sendResponse({ ok: true as const, pong }))
         .catch((e: unknown) =>

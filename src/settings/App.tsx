@@ -39,7 +39,7 @@ export function App() {
     <div className="flex min-h-screen bg-neutral-950 text-neutral-100 antialiased">
       <aside className="flex w-56 shrink-0 flex-col border-r border-neutral-800 bg-neutral-950 px-3 py-5">
         <div className="mb-6 px-2">
-          <h1 className="text-lg font-semibold tracking-tight text-neutral-50">Zeng</h1>
+          <h1 className="text-lg font-semibold tracking-tight text-neutral-50">Tajdîn</h1>
           <p className="text-xs text-neutral-500">Extension settings</p>
         </div>
         <nav className="flex flex-col gap-0.5" aria-label="Settings sections">

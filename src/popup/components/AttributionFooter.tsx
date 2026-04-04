@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSurface } from "../SurfaceContext";
 
-const REPO = "https://github.com/0xdolan/zeng";
+const REPO = "https://github.com/0xdolan/tajdin";
 const AUTHOR = "https://github.com/0xdolan";
 
 export function AttributionFooter() {
