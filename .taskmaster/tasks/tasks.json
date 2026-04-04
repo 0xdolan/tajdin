@@ -792,11 +792,11 @@
               2,
               8
             ],
-            "details": "Link https://en.wikipedia.org/wiki/Mem_and_Zin. Embed full user-provided copy: Why Tajdîn? — Tajdîn in Mem û Zîn as loyalty/companionship vs Mem’s path; extension as dependable radio friend; closing line on daily listening. Scannable headings; optional Radio Browser / issues links.",
-            "status": "pending",
+            "details": "DONE: `AboutSection.tsx` — tajdin-radio-100 logo, getManifest version, GitHub + issues + Radio Browser links, Wikipedia Mem and Zin, Why Tajdîn? narrative (loyalty/companion vs Mem’s path, extension as friend, closing line). Nav `about` in App.",
+            "status": "done",
             "testStrategy": "Content renders; links open; version matches manifest.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-05T12:00:00.000Z"
+            "updatedAt": "2026-04-04T00:25:00.000Z"
           },
           {
             "id": 10,
@@ -847,12 +847,12 @@
             "updatedAt": "2026-04-05T12:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-04T00:15:00.000Z"
+        "updatedAt": "2026-04-04T00:25:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T00:15:00.000Z",
+      "lastModified": "2026-04-04T00:25:00.000Z",
       "taskCount": 22,
       "completedCount": 21,
       "tags": [
