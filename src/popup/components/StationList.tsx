@@ -20,10 +20,18 @@ export const BROWSE_PAGE_SIZE = 50;
 /** Pixels from list bottom before {@link Virtuoso} fires `endReached` (task / PRD lazy-load). */
 export const BROWSE_LOAD_THRESHOLD_PX = 200;
 
-const BROWSE_QUERY = {
+/** Default ranked browse (name search, regex corpus pages, paginated continuation). */
+const BROWSE_QUERY_RANKED = {
   limit: BROWSE_PAGE_SIZE,
   order: "clickcount",
   reverse: true,
+} as const;
+
+/** Idle browse: empty query, not building a regex corpus — varied discovery each popup mount. */
+const BROWSE_QUERY_RANDOM = {
+  limit: BROWSE_PAGE_SIZE,
+  order: "random",
+  reverse: false,
 } as const;
 
 export type StationListProps = {
@@ -100,15 +108,17 @@ export function StationList({
     searchMode === "regex" && q !== "" && !regexInvalid;
   /** Server-side name filter in exact mode with a query; regex uses browse pages + client filter. */
   const fetchUsesNameFilter = searchMode === "exact" && q !== "";
+  /** Random order only when not searching by name and not paging a regex corpus (session-restored query still uses ranked or name as appropriate). */
+  const useRandomBrowseOrder = !fetchUsesNameFilter && !regexCorpusMode;
 
   const listParams = useCallback(
     (offset: number): StationSearchParams => ({
-      ...BROWSE_QUERY,
+      ...(useRandomBrowseOrder ? BROWSE_QUERY_RANDOM : BROWSE_QUERY_RANKED),
       offset,
       ...(fetchUsesNameFilter ? { name: q } : {}),
       ...(lang ? { language: lang } : {}),
     }),
-    [fetchUsesNameFilter, lang, q],
+    [fetchUsesNameFilter, lang, q, useRandomBrowseOrder],
   );
 
   // Deps use `listParams` + `fetchUsesNameFilter` (via listParams) instead of `searchMode` so toggling
