@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { startPlaybackWithPlaylistSkip } from "../../playerPlayback";
 import { sendPlayerCommand } from "../../playerBridge";
 import { usePlayerStore } from "../../store/playerStore";
 import type { Station } from "../../../shared/types/station";
@@ -133,13 +134,9 @@ export function Player() {
     try {
       if (!isPlaying) {
         if (!effectiveUrl) return;
-        const loadR = await sendPlayerCommand({ type: "zeng/player/load", url: effectiveUrl });
-        if (!loadR.ok) return;
-        if (loadR.result.type !== "zeng/player/load" || !loadR.result.data.ok) return;
-        const playR = await sendPlayerCommand({ type: "zeng/player/play" });
-        if (!playR.ok) return;
-        if (playR.result.type === "zeng/player/play" && playR.result.data.ok) {
-          setPlaying(true);
+        const ok = await startPlaybackWithPlaylistSkip();
+        if (!ok) {
+          setPlaying(false);
         }
       } else {
         const pauseR = await sendPlayerCommand({ type: "zeng/player/pause" });

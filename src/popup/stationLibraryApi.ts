@@ -38,6 +38,67 @@ export async function appendStationToPlaylist(
   return r.success;
 }
 
+export async function createPlaylist(name: string): Promise<Playlist | null> {
+  const trimmed = name.trim();
+  if (!trimmed) return null;
+  const pl: Playlist = {
+    id: crypto.randomUUID(),
+    name: trimmed,
+    stationUuids: [],
+    lastModified: nowIso(),
+  };
+  const lists = await localPlaylistsStorage.getWithDefault(STORAGE_KEYS.playlists, []);
+  const r = await localPlaylistsStorage.set(STORAGE_KEYS.playlists, [...lists, pl]);
+  return r.success ? pl : null;
+}
+
+export async function renamePlaylist(playlistId: string, name: string): Promise<boolean> {
+  const trimmed = name.trim();
+  if (!trimmed) return false;
+  const lists = await localPlaylistsStorage.getWithDefault(STORAGE_KEYS.playlists, []);
+  const idx = lists.findIndex((p) => p.id === playlistId);
+  if (idx < 0) return false;
+  const next = [...lists];
+  const pl = next[idx]!;
+  next[idx] = { ...pl, name: trimmed, lastModified: nowIso() };
+  return (await localPlaylistsStorage.set(STORAGE_KEYS.playlists, next)).success;
+}
+
+export async function deletePlaylist(playlistId: string): Promise<boolean> {
+  const lists = await localPlaylistsStorage.getWithDefault(STORAGE_KEYS.playlists, []);
+  const next = lists.filter((p) => p.id !== playlistId);
+  if (next.length === lists.length) return false;
+  return (await localPlaylistsStorage.set(STORAGE_KEYS.playlists, next)).success;
+}
+
+export async function removeStationFromPlaylist(
+  playlistId: string,
+  stationuuid: string,
+): Promise<boolean> {
+  const lists = await localPlaylistsStorage.getWithDefault(STORAGE_KEYS.playlists, []);
+  const idx = lists.findIndex((p) => p.id === playlistId);
+  if (idx < 0) return false;
+  const pl = lists[idx]!;
+  const stationUuids = pl.stationUuids.filter((u) => u !== stationuuid);
+  if (stationUuids.length === pl.stationUuids.length) return false;
+  const next = [...lists];
+  next[idx] = { ...pl, stationUuids, lastModified: nowIso() };
+  return (await localPlaylistsStorage.set(STORAGE_KEYS.playlists, next)).success;
+}
+
+export async function reorderPlaylistStations(
+  playlistId: string,
+  stationUuids: string[],
+): Promise<boolean> {
+  const lists = await localPlaylistsStorage.getWithDefault(STORAGE_KEYS.playlists, []);
+  const idx = lists.findIndex((p) => p.id === playlistId);
+  if (idx < 0) return false;
+  const pl = lists[idx]!;
+  const next = [...lists];
+  next[idx] = { ...pl, stationUuids: [...stationUuids], lastModified: nowIso() };
+  return (await localPlaylistsStorage.set(STORAGE_KEYS.playlists, next)).success;
+}
+
 export async function appendStationToGroup(
   stationuuid: string,
   groupId: string,

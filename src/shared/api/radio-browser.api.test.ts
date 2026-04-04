@@ -57,6 +57,38 @@ describe("RadioBrowserClient", () => {
     );
   });
 
+  it("fetchStationByUuid returns first parsed station", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [validRow],
+    });
+    const client = new RadioBrowserClient({
+      bases: ["https://a.test"],
+      minIntervalMs: 0,
+      fetch: fetchMock as unknown as typeof fetch,
+    });
+    const s = await client.fetchStationByUuid(validRow.stationuuid);
+    expect(s).not.toBeNull();
+    expect(s!.name).toBe("Test FM");
+    expect(fetchMock).toHaveBeenCalledWith(
+      `https://a.test/json/stations/byuuid/${encodeURIComponent(validRow.stationuuid)}`,
+      expect.objectContaining({ headers: { Accept: "application/json" } }),
+    );
+  });
+
+  it("fetchStationByUuid returns null for empty array", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [],
+    });
+    const client = new RadioBrowserClient({
+      bases: ["https://a.test"],
+      minIntervalMs: 0,
+      fetch: fetchMock as unknown as typeof fetch,
+    });
+    expect(await client.fetchStationByUuid("any")).toBeNull();
+  });
+
   it("defaults limit to 50 in query string", async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
