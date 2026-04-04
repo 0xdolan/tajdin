@@ -60,6 +60,19 @@ describe("StationCard", () => {
     );
   });
 
+  it("copy stream does not start playback", async () => {
+    const user = userEvent.setup();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("navigator", { ...navigator, clipboard: { writeText } });
+    try {
+      render(<StationCard station={sampleStation} playlists={[]} />);
+      await user.click(screen.getByTestId("station-copy-stream"));
+      expect(playStationFromList).not.toHaveBeenCalled();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
   it("toggles favourite when heart is clicked", async () => {
     const user = userEvent.setup();
     render(<StationCard station={sampleStation} playlists={[]} />);

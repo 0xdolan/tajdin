@@ -765,11 +765,11 @@
             "title": "StationCard: copy under favourite; fade in/out on row hover",
             "description": "Vertical stack for heart + copy; CSS transition for opacity (hover + focus-within).",
             "dependencies": [],
-            "details": "Replace copy-on-artwork pattern if superseded; keep keyboard focus and stopPropagation on buttons.",
-            "status": "pending",
+            "details": "DONE: Copy removed from favicon overlay; heart + copy stacked in right column; opacity-0 + transition + group-hover/focus-within + pointer:coarse always visible; copy hint under column; min-h-[72px] overflow-visible; test for copy without playback.",
+            "status": "done",
             "testStrategy": "Hover/focus shows both controls; update snapshots/tests.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-05T12:00:00.000Z"
+            "updatedAt": "2026-04-04T00:10:00.000Z"
           },
           {
             "id": 8,
@@ -847,12 +847,12 @@
             "updatedAt": "2026-04-05T12:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-04T00:05:00.000Z"
+        "updatedAt": "2026-04-04T00:10:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T00:05:00.000Z",
+      "lastModified": "2026-04-04T00:10:00.000Z",
       "taskCount": 22,
       "completedCount": 21,
       "tags": [
