@@ -11,7 +11,9 @@
   "host_permissions": [
     "https://all.api.radio-browser.info/*",
     "https://de1.api.radio-browser.info/*",
-    "https://*.radio-browser.info/*"
+    "https://*.radio-browser.info/*",
+    "http://*/*",
+    "https://*/*"
   ],
   "icons": {
     "16": "icons/tajdin-radio-50.png",
