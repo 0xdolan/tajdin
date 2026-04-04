@@ -39,4 +39,23 @@ describe("TabNav", () => {
 
     expect(useUiStore.getState().activeTab).toBe("favourites");
   });
+
+  it("switches to About tab when About is clicked", async () => {
+    await act(async () => {
+      root.render(
+        <StrictMode>
+          <TabNav />
+        </StrictMode>,
+      );
+    });
+
+    const about = host.querySelector<HTMLButtonElement>('[data-tab="about"]');
+    expect(about).toBeTruthy();
+
+    await act(async () => {
+      about!.click();
+    });
+
+    expect(useUiStore.getState().activeTab).toBe("about");
+  });
 });

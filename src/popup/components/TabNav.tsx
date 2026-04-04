@@ -5,7 +5,15 @@ const TABS = [
   { id: "browse" as const, label: "Browse", Icon: BrowseIcon },
   { id: "favourites" as const, label: "Favs", Icon: HeartOutlineIcon },
   { id: "playlists" as const, label: "Lists", Icon: QueueListIcon },
-];
+  { id: "about" as const, label: "About", Icon: InfoIcon },
+] as const;
+
+const TAB_TOOLTIP: Record<(typeof TABS)[number]["id"], string> = {
+  browse: "Browse",
+  favourites: "Favourites",
+  playlists: "Playlists",
+  about: "About Tajdîn",
+};
 
 function BrowseIcon({ className }: { className?: string }) {
   return (
@@ -38,6 +46,18 @@ function QueueListIcon({ className }: { className?: string }) {
         strokeLinecap="round"
         strokeLinejoin="round"
         d="M8.25 6.75h12M8.25 12h12m-12 4.5h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 4.5h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+      />
+    </svg>
+  );
+}
+
+function InfoIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
       />
     </svg>
   );
@@ -93,7 +113,7 @@ export function TabNav() {
                 aria-controls={`panel-${tab.id}`}
                 tabIndex={selected ? 0 : -1}
                 data-tab={tab.id}
-                title={tab.id === "favourites" ? "Favourites" : tab.id === "playlists" ? "Playlists" : "Browse"}
+                title={TAB_TOOLTIP[tab.id]}
                 className={[
                   "flex h-full min-h-[44px] min-w-[2.75rem] flex-col items-center justify-center gap-px rounded-md px-1.5 py-0.5 text-[10px] font-medium leading-tight transition-colors sm:min-w-[3rem] sm:px-2 sm:text-[11px] pointer:coarse:min-w-[3rem] pointer:coarse:px-2",
                   selected ? tabSel : tabIdle,
