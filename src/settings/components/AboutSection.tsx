@@ -73,17 +73,17 @@ export function AboutSection() {
           </a>{" "}
           is a story of love, exile, and faithfulness across impossible distance. Among its figures,{" "}
           <strong className="font-medium text-neutral-100">Tajdîn</strong> stands for loyalty and
-          companionship—the friend who stays present when paths diverge and the world grows loud.
+          companionship (the friend who stays present when paths diverge and the world grows loud).
         </p>
         <p className="text-sm leading-relaxed">
           This extension borrows that name in spirit: a small, dependable companion for listening. Mem’s
           road is long and winding; Tajdîn is the steady voice at your side. Whether you open the popup
           for a single station or leave a stream running in the background, we hope Tajdîn feels like a
-          familiar friend on your toolbar—powered by the open{" "}
+          familiar friend on your toolbar (powered by the open{" "}
           <a href={RADIO_BROWSER} target="_blank" rel="noopener noreferrer" className={linkBase}>
             Radio Browser
           </a>{" "}
-          directory and the communities who curate stations worldwide.
+          directory and the communities who curate stations worldwide).
         </p>
         <p className="text-sm font-medium leading-relaxed text-neutral-200">
           Tune in a little every day—there is always another city, another language, another song worth
