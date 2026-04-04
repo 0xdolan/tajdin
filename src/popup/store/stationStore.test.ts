@@ -19,6 +19,14 @@ describe("useStationStore", () => {
     expect(useStationStore.getState().favouriteIds).toEqual(["b"]);
   });
 
+  it("appendSearchResults dedupes by stationuuid", () => {
+    const a = { stationuuid: "a", name: "A", url: "http://a" };
+    const b = { stationuuid: "b", name: "B", url: "http://b" };
+    useStationStore.setState({ searchResults: [a], isSearchLoading: false, favouriteIds: [] });
+    useStationStore.getState().appendSearchResults([a, b]);
+    expect(useStationStore.getState().searchResults).toEqual([a, b]);
+  });
+
   it("clearSearch resets results and loading", () => {
     useStationStore.setState({
       searchResults: [{ stationuuid: "x", name: "N", url: "u" }],

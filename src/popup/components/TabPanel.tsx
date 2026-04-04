@@ -1,5 +1,6 @@
 import type { SessionUi } from "../../shared/storage/schemas";
 import { useUiStore } from "../store/uiStore";
+import { StationList } from "./StationList";
 
 type ActiveTab = NonNullable<SessionUi["activeTab"]>;
 
@@ -31,10 +32,16 @@ export function TabPanel() {
       role="tabpanel"
       id={`panel-${activeTab}`}
       aria-labelledby={`tab-${activeTab}`}
-      className="box-border flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-3"
+      className="box-border flex min-h-0 flex-1 flex-col px-3 py-3"
     >
-      <h2 className="mb-2 text-sm font-semibold text-neutral-200">{title}</h2>
-      <p className="text-sm leading-relaxed text-neutral-500">{body}</p>
+      <h2 className="mb-2 shrink-0 text-sm font-semibold text-neutral-200">{title}</h2>
+      {activeTab === "browse" ? (
+        <div className="min-h-0 flex-1" aria-label="Stations">
+          <StationList />
+        </div>
+      ) : (
+        <p className="text-sm leading-relaxed text-neutral-500">{body}</p>
+      )}
     </div>
   );
 }
