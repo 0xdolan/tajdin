@@ -19,6 +19,7 @@ describe("StationList", () => {
       searchResults: [],
       isSearchLoading: false,
       favouriteIds: [],
+      browseLanguageApiValue: "",
     });
     host = document.createElement("div");
     host.style.height = "400px";
@@ -64,6 +65,25 @@ describe("StationList", () => {
     expect(searchStations).toHaveBeenCalledWith(
       expect.objectContaining({
         name: "bbc",
+        offset: 0,
+      }),
+    );
+  });
+
+  it("passes language to the API when languageFilter is set", async () => {
+    const searchStations = vi.fn().mockResolvedValue([]);
+    const client = { searchStations } as unknown as RadioBrowserClient;
+
+    await act(async () => {
+      root.render(
+        <StationList client={client} languageFilter="german" />,
+      );
+    });
+
+    await vi.waitFor(() => expect(searchStations).toHaveBeenCalled());
+    expect(searchStations).toHaveBeenCalledWith(
+      expect.objectContaining({
+        language: "german",
         offset: 0,
       }),
     );
