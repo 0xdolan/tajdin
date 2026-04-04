@@ -3,6 +3,7 @@ import type { Station } from "../../shared/types/station";
 import { StationFavicon } from "../../popup/components/StationArtwork";
 import { loadCustomStations, removeCustomStation } from "../../popup/stationLibraryApi";
 import { sanitizeDisplayText } from "../../shared/utils/sanitize";
+import { EditCustomStationModal } from "./EditCustomStationModal";
 
 type CustomStationsTableProps = {
   reloadToken: number;
@@ -11,6 +12,7 @@ type CustomStationsTableProps = {
 export function CustomStationsTable({ reloadToken }: CustomStationsTableProps) {
   const [rows, setRows] = useState<Station[]>([]);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [editing, setEditing] = useState<Station | null>(null);
 
   const refresh = useCallback(() => {
     void loadCustomStations().then(setRows);
@@ -35,9 +37,17 @@ export function CustomStationsTable({ reloadToken }: CustomStationsTableProps) {
     <div className="mx-auto max-w-4xl">
       <h2 className="text-base font-semibold text-neutral-100">Custom stations</h2>
       <p className="mt-1 text-sm text-neutral-500">
-        Streams you added manually (<code className="text-neutral-400">custom:</code> ids). Removing a row
-        only deletes this entry—not Radio Browser metadata.
+        Streams you added manually (<code className="text-neutral-400">custom:</code> ids). Edit name, stream,
+        or cover; removing a row only deletes this entry—not Radio Browser metadata.
       </p>
+      <EditCustomStationModal
+        open={editing !== null}
+        station={editing}
+        onOpenChange={(o) => {
+          if (!o) setEditing(null);
+        }}
+        onSaved={refresh}
+      />
       <div className="mt-4 overflow-x-auto rounded-lg border border-neutral-800">
         <table className="w-full min-w-[32rem] border-collapse text-left text-sm">
           <thead>
@@ -64,7 +74,15 @@ export function CustomStationsTable({ reloadToken }: CustomStationsTableProps) {
                 <td className="max-w-[12rem] truncate px-3 py-2 font-mono text-xs text-neutral-500">
                   {s.stationuuid}
                 </td>
-                <td className="px-3 py-2 text-right">
+                <td className="whitespace-nowrap px-3 py-2 text-right">
+                  <button
+                    type="button"
+                    className="mr-2 rounded px-2 py-1 text-xs text-sky-400 hover:bg-neutral-800 disabled:opacity-40"
+                    disabled={busyId === s.stationuuid}
+                    onClick={() => setEditing(s)}
+                  >
+                    Edit
+                  </button>
                   <button
                     type="button"
                     className="rounded px-2 py-1 text-xs text-red-400 hover:bg-red-950/40 disabled:opacity-40"

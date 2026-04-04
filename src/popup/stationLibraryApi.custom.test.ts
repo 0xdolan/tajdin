@@ -31,6 +31,7 @@ import {
   loadCustomStations,
   removeCustomStation,
   resolveStationForLibrary,
+  updateCustomStation,
 } from "./stationLibraryApi";
 
 describe("custom stations", () => {
@@ -73,6 +74,37 @@ describe("custom stations", () => {
 
   it("addCustomStation returns null for invalid URL", async () => {
     expect(await addCustomStation("X", "ftp://a")).toBeNull();
+  });
+
+  it("updateCustomStation updates name, stream, and clears cover", async () => {
+    const st = await addCustomStation("A", "https://a.example/s", "https://img.test/x.png");
+    const updated = await updateCustomStation(st!.stationuuid, {
+      displayName: "Renamed",
+      streamUrl: "https://b.example/stream",
+      coverImageUrl: "",
+    });
+    expect(updated?.name).toBe("Renamed");
+    expect(updated?.url).toBe("https://b.example/stream");
+    expect(updated?.coverUrl).toBeUndefined();
+    const list = await loadCustomStations();
+    expect(list[0]?.name).toBe("Renamed");
+  });
+
+  it("updateCustomStation rejects non-custom id and unknown uuid", async () => {
+    expect(
+      await updateCustomStation("not-custom", {
+        displayName: "X",
+        streamUrl: "https://x.test/s",
+        coverImageUrl: "",
+      }),
+    ).toBeNull();
+    expect(
+      await updateCustomStation("custom:00000000-0000-4000-8000-000000000000", {
+        displayName: "X",
+        streamUrl: "https://x.test/s",
+        coverImageUrl: "",
+      }),
+    ).toBeNull();
   });
 
   it("removeCustomStation drops the row and returns false for unknown uuid", async () => {
