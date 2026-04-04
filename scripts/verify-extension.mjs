@@ -58,6 +58,11 @@ for (const rel of [popup, optionsPage, "src/offscreen/index.html"]) {
   if (!html.includes("script")) fail(`${rel} must contain a script reference.`);
 }
 
+const offHtml = readFileSync(join(dist, "src/offscreen/index.html"), "utf8");
+if (!/<audio\b/i.test(offHtml)) {
+  fail("src/offscreen/index.html must include an <audio> element for MV3 playback.");
+}
+
 const popupHtml = readFileSync(join(dist, popup), "utf8");
 if (!popupHtml.includes("assets/") && !popupHtml.includes(".js")) {
   fail(`${popup} should reference built script assets.`);
