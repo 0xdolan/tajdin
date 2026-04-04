@@ -12,6 +12,8 @@ const defaultSessionPlayer = {
   stationuuid: null as string | null,
   isPlaying: false,
   volumePercent: 100,
+  playlistId: null as string | null,
+  playlistStationIndex: null as number | null,
 };
 
 function pickPersistedPlayer(state: ReturnType<typeof usePlayerStore.getState>) {
@@ -19,6 +21,8 @@ function pickPersistedPlayer(state: ReturnType<typeof usePlayerStore.getState>) 
     stationuuid: state.stationuuid,
     isPlaying: state.isPlaying,
     volumePercent: state.volumePercent,
+    playlistId: state.playlistContext?.playlistId ?? null,
+    playlistStationIndex: state.playlistContext?.stationIndex ?? null,
   };
 }
 
@@ -55,6 +59,8 @@ export function attachPopupStorageSyncListeners(): () => void {
           stationuuid: null,
           isPlaying: false,
           volumePercent: 100,
+          playlistId: null,
+          playlistStationIndex: null,
         });
         return;
       }

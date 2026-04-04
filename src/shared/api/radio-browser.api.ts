@@ -7,6 +7,7 @@ export const DEFAULT_RADIO_BROWSER_BASES = [
 ] as const;
 
 const SEARCH_PATH = "/json/stations/search";
+const BYUUID_PATH = "/json/stations/byuuid/";
 
 export type StationSearchParams = {
   name?: string;
@@ -154,6 +155,63 @@ export class RadioBrowserClient {
             continue;
           }
           return parseStationArray(json);
+        } catch (e) {
+          if (e instanceof RadioBrowserRequestError && e.status !== undefined && !shouldRetryHttpStatus(e.status)) {
+            throw e;
+          }
+          lastError = e;
+        }
+      }
+
+      const msg =
+        lastError instanceof Error ? lastError.message : "All Radio Browser endpoints failed";
+      throw new RadioBrowserRequestError(msg, undefined, lastError);
+    });
+  }
+
+  /**
+   * Resolve a single station by `stationuuid` (Radio Browser `byuuid` endpoint).
+   */
+  async fetchStationByUuid(stationuuid: string): Promise<Station | null> {
+    const id = stationuuid.trim();
+    if (!id) return null;
+    const pathSuffix = `${BYUUID_PATH}${encodeURIComponent(id)}`;
+    let lastError: unknown;
+
+    return this.runQueued(async () => {
+      for (const base of this.bases) {
+        const url = `${base}${pathSuffix}`;
+        try {
+          const res = await this.fetchImpl(url, {
+            headers: { Accept: "application/json" },
+          });
+          if (!res.ok) {
+            if (shouldRetryHttpStatus(res.status)) {
+              lastError = new RadioBrowserRequestError(
+                `HTTP ${res.status} from ${base}`,
+                res.status,
+              );
+              continue;
+            }
+            if (res.status === 404) {
+              return null;
+            }
+            throw new RadioBrowserRequestError(
+              `HTTP ${res.status} from ${base}`,
+              res.status,
+            );
+          }
+          let json: unknown;
+          try {
+            json = await res.json();
+          } catch (e) {
+            lastError = e;
+            continue;
+          }
+          if (!Array.isArray(json) || json.length === 0) {
+            return null;
+          }
+          return mapApiStationRow(json[0]);
         } catch (e) {
           if (e instanceof RadioBrowserRequestError && e.status !== undefined && !shouldRetryHttpStatus(e.status)) {
             throw e;
