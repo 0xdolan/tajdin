@@ -1,5 +1,8 @@
-const REPO = "https://github.com/0xdolan/tajdin";
-const ISSUES = `${REPO}/issues`;
+import {
+  TAJDIN_EXTENSION_ISSUES_URL,
+  TAJDIN_EXTENSION_REPO_URL,
+} from "../../shared/constants/links";
+
 const MEM_ZIN_WIKI = "https://en.wikipedia.org/wiki/Mem_and_Zin";
 const RADIO_BROWSER = "https://www.radio-browser.info/";
 
@@ -41,12 +44,12 @@ export function AboutSection() {
           </p>
           <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
             <li>
-              <a href={REPO} target="_blank" rel="noopener noreferrer" className={linkBase}>
+              <a href={TAJDIN_EXTENSION_REPO_URL} target="_blank" rel="noopener noreferrer" className={linkBase}>
                 Source on GitHub
               </a>
             </li>
             <li>
-              <a href={ISSUES} target="_blank" rel="noopener noreferrer" className={linkBase}>
+              <a href={TAJDIN_EXTENSION_ISSUES_URL} target="_blank" rel="noopener noreferrer" className={linkBase}>
                 Report an issue
               </a>
             </li>
