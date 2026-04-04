@@ -14,6 +14,7 @@ import { appendStationToPlaylist, loadPlaylistsForLibrary } from "../../stationL
 import { usePlayerStore } from "../../store/playerStore";
 import { useStationStore } from "../../store/stationStore";
 import type { Station } from "../../../shared/types/station";
+import { AddToPlaylistIcon } from "../AddToPlaylistIcon";
 
 function buildStationSubtitle(station: Station | null, isPlaying: boolean, muted: boolean): string {
   if (!station) {
@@ -172,16 +173,6 @@ function ShuffleIcon() {
         strokeLinejoin="round"
         d="M19.5 12c-1.214 0-2.304-.504-3.09-1.318M19.5 12c0 1.214-.504 2.304-1.318 3.09M4.5 12c1.214 0 2.304.504 3.09 1.318M4.5 12c0-1.214.504-2.304 1.318-3.09M8.25 5.25 9 12l-2.25 6.75M16.5 5.25 14.25 12 16.5 18.75"
       />
-    </svg>
-  );
-}
-
-/** Queue-with-plus: add current station to a playlist. */
-function AddToPlaylistIcon() {
-  return (
-    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M8 6h12M8 12h8M8 18h5M5 6v.01M5 12v.01M5 18v.01" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M18 15v6M15 18h6" />
     </svg>
   );
 }
