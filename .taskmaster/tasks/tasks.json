@@ -1003,9 +1003,9 @@
       {
         "id": "24",
         "title": "Popup polish: tabs, player metadata & art, about, footer, scroll, modal persistence, UI details",
-        "description": "Follow-up UX and copy: stable tab layout, correct player labels, player dock fits popup, playlist add from list rows while scrolling, About punctuation, artwork vs browser chrome icons, attribution line, list scroll styling, in-popup about, add-station draft survival, copy/regex control styling.",
-        "details": "User-requested batch (Apr 2026). Prefer small PR-sized subtasks. Run `npm run lint`, `npm run typecheck`, `npm test -- --run`, `npm run verify:extension` before merge. Subtask 24.4 revisits Task 23.10 (player showed extension icon while playing): confirm product — station cover/favicon in player while playing; extension packaged icon for toolbar / `chrome://extensions` as appropriate (`manifest` action icons, theme). Subtask 24.11: player bar must fit configured popup width/height without overflow. Document choices in `docs/development.md` if manifest or layout changes.",
-        "testStrategy": "Manual: tab switch without resize flash; play → metadata matches station; player fits popup at min size; add to playlist from visible list control while scrolling; About parentheses; playing artwork; extension list/toolbar icon; footer wording; scrollbar in lists; About reachable from popup; add-station survives copy-from-other-tab; copy button matches favicon well; regex toggle reads as .* .",
+        "description": "Follow-up UX and copy: stable tab layout, correct player labels, player dock fits popup, playlist add from list rows while scrolling, Playlists tab redesign + in-tab search, About punctuation, artwork vs browser chrome icons, attribution line, list scroll styling, in-popup about, add-station draft survival, copy/regex control styling.",
+        "details": "User-requested batch (Apr 2026). Prefer small PR-sized subtasks. Run `npm run lint`, `npm run typecheck`, `npm test -- --run`, `npm run verify:extension` before merge. Subtask 24.4 revisits Task 23.10 (player showed extension icon while playing): confirm product — station cover/favicon in player while playing; extension packaged icon for toolbar / `chrome://extensions` as appropriate (`manifest` action icons, theme). Subtask 24.11: player bar must fit configured popup width/height without overflow. Subtask 24.13: redesign popup Lists/Playlists tab (may share primitives with settings `PlaylistsPage`). Document choices in `docs/development.md` if manifest or layout changes.",
+        "testStrategy": "Manual: tab switch without resize flash; play → metadata matches station; player fits popup at min size; add to playlist from visible list control while scrolling; Playlists tab: CRUD + search matches browse behaviour; About parentheses; playing artwork; extension list/toolbar icon; footer wording; scrollbar in lists; About reachable from popup; add-station survives copy-from-other-tab; copy button matches favicon well; regex toggle reads as .* .",
         "priority": "medium",
         "dependencies": [
           "23"
@@ -1143,14 +1143,25 @@
             "testStrategy": "Manual: scroll long list, add to playlist via new control; touch device; no accidental play on tap; Vitest if logic extracted.",
             "parentId": "undefined",
             "updatedAt": "2026-04-03T21:30:00.000Z"
+          },
+          {
+            "id": 13,
+            "title": "Playlists tab: redesign + exact/regex search; simple playlist CRUD; add stations from search",
+            "description": "Popup Lists/Playlists tab UX is weak; redesign with clear create/rename/delete/edit flows and the same exact vs regex station search as Browse, so users can find stations and add them to playlists without leaving the tab.",
+            "dependencies": [],
+            "details": "Audit `PlaylistsPage.tsx` (popup + settings reuse if sensible—extract shared components to avoid drift). Visual hierarchy: playlist picker or master-detail, consistent `useSurface` light/dark. **Search:** reuse `useSearch` + `StationSearchBar` behaviour (exact API name vs regex toggle, debounce, validation) and `StationList` or a thin variant wired to “add to selected playlist” actions on rows (or bulk add). **Playlists:** obvious create, inline rename, delete with confirm, reorder (keep @dnd-kit if appropriate). **Stations in playlist:** remove/edit already partially exist—polish. Coordinate with 24.12 (row add from browse) so patterns stay consistent. Vitest for any extracted helpers; manual narrow popup height.",
+            "status": "pending",
+            "testStrategy": "Manual: create playlist, search exact + regex, add from results, rename/delete playlist, remove station; settings playlists still work if shared code; `npm test -- --run` + verify:extension.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T22:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-03T21:30:00.000Z"
+        "updatedAt": "2026-04-03T22:00:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-03T21:30:00.000Z",
+      "lastModified": "2026-04-03T22:00:00.000Z",
       "taskCount": 24,
       "completedCount": 23,
       "tags": [
