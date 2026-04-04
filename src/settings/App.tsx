@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ExtensionBranding } from "../shared/components/ExtensionBranding";
 import { PlaylistsPage } from "../popup/components/PlaylistsPage";
 import { CustomStationsTable } from "./components/CustomStationsTable";
 import { GeneralSettingsSection } from "./components/GeneralSettingsSection";
@@ -39,8 +40,11 @@ export function App() {
     <div className="flex min-h-screen bg-neutral-950 text-neutral-100 antialiased">
       <aside className="flex w-56 shrink-0 flex-col border-r border-neutral-800 bg-neutral-950 px-3 py-5">
         <div className="mb-6 px-2">
-          <h1 className="text-lg font-semibold tracking-tight text-neutral-50">Tajdîn</h1>
-          <p className="text-xs text-neutral-500">Extension settings</p>
+          <ExtensionBranding
+            titleTag="h1"
+            titleClassName="text-sm font-semibold text-neutral-50"
+            subtitleClassName="text-xs text-neutral-500"
+          />
         </div>
         <nav className="flex flex-col gap-0.5" aria-label="Settings sections">
           {NAV.map((item) => {
