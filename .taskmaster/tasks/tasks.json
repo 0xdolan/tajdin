@@ -743,11 +743,11 @@
             "title": "Fix: toggling fuzzy/regex must not refresh entire station list",
             "description": "Decouple search mode change from StationList effect that replaces results / refetches unnecessarily.",
             "dependencies": [],
-            "details": "Review useSearch + StationList useEffect deps; mode-only change should update filter client-side or minimal API behavior without full skeleton reload when query/language unchanged.",
-            "status": "pending",
+            "details": "DONE: `fetchUsesNameFilter` (fuzzy && q) drives `listParams`; main fetch effect deps drop `searchMode`/`regexCorpusMode` so empty-query mode toggles reuse the same API shape (no clear/skeleton). Non-empty query still refetches when switching fuzzy↔regex. Tests: empty toggle single fetch; bbc fuzzy→regex two fetches.",
+            "status": "done",
             "testStrategy": "Toggle mode: list stays populated without full flash; regex invalid still handled.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-05T12:00:00.000Z"
+            "updatedAt": "2026-04-04T00:00:00.000Z"
           },
           {
             "id": 6,
@@ -847,12 +847,12 @@
             "updatedAt": "2026-04-05T12:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-03T23:55:00.000Z"
+        "updatedAt": "2026-04-04T00:00:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-03T23:55:00.000Z",
+      "lastModified": "2026-04-04T00:00:00.000Z",
       "taskCount": 22,
       "completedCount": 21,
       "tags": [

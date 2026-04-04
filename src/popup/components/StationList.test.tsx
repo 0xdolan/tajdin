@@ -94,6 +94,44 @@ describe("StationList", () => {
     );
   });
 
+  it("does not refetch when toggling search mode with an empty query", async () => {
+    const searchStations = vi.fn().mockResolvedValue([]);
+    const client = { searchStations } as unknown as RadioBrowserClient;
+
+    await act(async () => {
+      root.render(<StationList client={client} searchMode="fuzzy" />);
+    });
+
+    await vi.waitFor(() => expect(searchStations).toHaveBeenCalledTimes(1));
+
+    await act(async () => {
+      root.render(<StationList client={client} searchMode="regex" />);
+    });
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 0));
+    });
+
+    expect(searchStations).toHaveBeenCalledTimes(1);
+  });
+
+  it("refetches when switching from fuzzy to regex with a non-empty query", async () => {
+    const searchStations = vi.fn().mockResolvedValue([]);
+    const client = { searchStations } as unknown as RadioBrowserClient;
+
+    await act(async () => {
+      root.render(<StationList client={client} searchQuery="bbc" searchMode="fuzzy" />);
+    });
+
+    await vi.waitFor(() => expect(searchStations).toHaveBeenCalledTimes(1));
+
+    await act(async () => {
+      root.render(<StationList client={client} searchQuery="bbc" searchMode="regex" regexInvalid={false} />);
+    });
+
+    await vi.waitFor(() => expect(searchStations).toHaveBeenCalledTimes(2));
+  });
+
   it("merges custom stations into the first page", async () => {
     mockLoadCustom.mockResolvedValue([
       {
