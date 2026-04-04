@@ -52,9 +52,16 @@ export type StationCardProps = {
   station: Station;
   playlists: Playlist[];
   onLibraryMutated?: () => void;
+  /** When set, row activate (click / Enter) appends to this playlist instead of playing. */
+  appendToPlaylistOnActivate?: { playlistId: string };
 };
 
-export function StationCard({ station, playlists, onLibraryMutated }: StationCardProps) {
+export function StationCard({
+  station,
+  playlists,
+  onLibraryMutated,
+  appendToPlaylistOnActivate,
+}: StationCardProps) {
   const surface = useSurface();
   const favouriteIds = useStationStore((s) => s.favouriteIds);
   const toggleFavourite = useStationStore((s) => s.toggleFavourite);
@@ -121,6 +128,20 @@ export function StationCard({ station, playlists, onLibraryMutated }: StationCar
 
   const canCopy = Boolean(sanitizeHttpOrHttpsUrl(station.url_resolved || station.url));
 
+  const activateRow = () => {
+    if (appendToPlaylistOnActivate) {
+      void appendStationToPlaylist(station.stationuuid, appendToPlaylistOnActivate.playlistId).then((ok) => {
+        if (ok) onLibraryMutated?.();
+      });
+      return;
+    }
+    void playStationFromList(station);
+  };
+
+  const rowAriaLabel = appendToPlaylistOnActivate
+    ? `Add ${sanitizeDisplayText(station.name, { maxLength: 80 })} to playlist`
+    : `Play ${sanitizeDisplayText(station.name, { maxLength: 80 })}`;
+
   const rowBorder = surface === "light" ? "border-neutral-200/90" : "border-neutral-800/90";
   const rowHover = surface === "light" ? "hover:bg-neutral-200/70" : "hover:bg-neutral-900/60";
   const rowBg = surface === "light" ? "bg-white" : "";
@@ -164,7 +185,7 @@ export function StationCard({ station, playlists, onLibraryMutated }: StationCar
           data-testid="station-card"
           role="button"
           tabIndex={0}
-          aria-label={`Play ${sanitizeDisplayText(station.name, { maxLength: 80 })}`}
+          aria-label={rowAriaLabel}
           aria-current={isCurrent ? "true" : undefined}
           className={[
             "group/station box-border flex min-h-[72px] cursor-pointer items-center gap-2 overflow-visible border-b px-1 py-1.5 outline-none",
@@ -173,12 +194,12 @@ export function StationCard({ station, playlists, onLibraryMutated }: StationCar
             rowBg,
             isCurrent ? `ring-1 ring-inset ${currentRing}` : "",
           ].join(" ")}
-          onClick={() => void playStationFromList(station)}
+          onClick={() => void activateRow()}
           onMouseLeave={handleRowPointerLeave}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
-              void playStationFromList(station);
+              void activateRow();
             }
           }}
         >

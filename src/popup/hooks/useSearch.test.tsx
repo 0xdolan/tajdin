@@ -2,7 +2,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useUiStore } from "../store/uiStore";
-import { useSearch } from "./useSearch";
+import { useLocalSearch, useSearch } from "./useSearch";
 
 describe("useSearch", () => {
   beforeEach(() => {
@@ -100,5 +100,29 @@ describe("useSearch", () => {
       result.current.setMode("exact");
     });
     expect(result.current.regexInvalid).toBe(false);
+  });
+});
+
+describe("useLocalSearch", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("debounces independently of useUiStore browse fields", () => {
+    useUiStore.setState({ browseRawQuery: "global" });
+    const { result } = renderHook(() => useLocalSearch());
+
+    act(() => {
+      result.current.setRawQuery("local");
+    });
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+    expect(result.current.debouncedQuery).toBe("local");
+    expect(useUiStore.getState().browseRawQuery).toBe("global");
   });
 });
