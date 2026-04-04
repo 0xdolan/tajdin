@@ -4,6 +4,7 @@ import {
   LocalFavouriteIdsSchema,
   LocalPlaylistsSchema,
   LocalSettingsSchema,
+  SessionAddStationDraftSchema,
   SessionPlayerSchema,
   SessionUiSchema,
 } from "./schemas";
@@ -36,3 +37,11 @@ export const localSettingsStorage = new ChromeStorageWrapper(storageLocal, Local
 
 export const sessionPlayerStorage = new ChromeStorageWrapper(storageSession, SessionPlayerSchema);
 export const sessionUiStorage = new ChromeStorageWrapper(storageSession, SessionUiSchema);
+export const sessionAddStationDraftPopupStorage = new ChromeStorageWrapper(
+  storageSession,
+  SessionAddStationDraftSchema,
+);
+export const sessionAddStationDraftSettingsStorage = new ChromeStorageWrapper(
+  storageSession,
+  SessionAddStationDraftSchema,
+);

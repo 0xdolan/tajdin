@@ -40,7 +40,7 @@ export function CustomStationsTable({ reloadToken }: CustomStationsTableProps) {
         Streams you add here or from the popup Browse tab (<code className="text-neutral-400">custom:</code> ids).
         Edit name, stream, or cover; removing a row only deletes this entry—not Radio Browser metadata.
       </p>
-      <AddStationModal open={addOpen} onOpenChange={setAddOpen} onAdded={refresh} />
+      <AddStationModal draftScope="settings" open={addOpen} onOpenChange={setAddOpen} onAdded={refresh} />
       <EditCustomStationModal
         open={editing !== null}
         station={editing}

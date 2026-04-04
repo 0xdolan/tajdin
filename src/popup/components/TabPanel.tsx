@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AboutSection } from "../../settings/components/AboutSection";
 import { listScrollbarClass } from "../../shared/utils/list-scrollbar";
+import { readAddStationDraft } from "../addStationDraftSession";
 import { useSurface } from "../SurfaceContext";
 import { useSearch } from "../hooks/useSearch";
 import { useUiStore, type ActiveTab } from "../store/uiStore";
@@ -27,6 +28,12 @@ export function TabPanel() {
   const title = TITLES[activeTab];
   const [addStationOpen, setAddStationOpen] = useState(false);
   const [customStationsTick, setCustomStationsTick] = useState(0);
+
+  useEffect(() => {
+    void readAddStationDraft("popup").then((d) => {
+      if (d.modalOpen) setAddStationOpen(true);
+    });
+  }, []);
 
   const panelClass =
     surface === "light"
@@ -71,6 +78,7 @@ export function TabPanel() {
             </div>
           </div>
           <AddStationModal
+            draftScope="popup"
             open={addStationOpen}
             onOpenChange={setAddStationOpen}
             onAdded={() => setCustomStationsTick((n) => n + 1)}

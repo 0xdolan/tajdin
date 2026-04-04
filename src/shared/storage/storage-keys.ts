@@ -6,4 +6,6 @@ export const STORAGE_KEYS = {
   settings: "tajdin.settings.v1",
   sessionPlayer: "tajdin.session.player.v1",
   sessionUi: "tajdin.session.ui.v1",
+  sessionAddStationDraftPopup: "tajdin.session.addStationDraft.popup.v1",
+  sessionAddStationDraftSettings: "tajdin.session.addStationDraft.settings.v1",
 } as const;
