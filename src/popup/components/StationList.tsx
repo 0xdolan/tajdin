@@ -98,17 +98,21 @@ export function StationList({
   const lang = languageFilter.trim();
   const regexCorpusMode =
     searchMode === "regex" && q !== "" && !regexInvalid;
+  /** Server-side name filter is only used in fuzzy mode with a query; regex uses browse pages + client filter. */
+  const fetchUsesNameFilter = searchMode === "fuzzy" && q !== "";
 
   const listParams = useCallback(
     (offset: number): StationSearchParams => ({
       ...BROWSE_QUERY,
       offset,
-      ...(searchMode === "fuzzy" && q ? { name: q } : {}),
+      ...(fetchUsesNameFilter ? { name: q } : {}),
       ...(lang ? { language: lang } : {}),
     }),
-    [lang, q, searchMode],
+    [fetchUsesNameFilter, lang, q],
   );
 
+  // Deps use `listParams` + `fetchUsesNameFilter` (via listParams) instead of `searchMode` so toggling
+  // fuzzy ↔ regex with an empty query does not clear the list or refetch (same Radio Browser request).
   useEffect(() => {
     if (searchMode === "regex" && q !== "" && regexInvalid) {
       return;
@@ -161,11 +165,8 @@ export function StationList({
   }, [
     client,
     listParams,
-    q,
-    regexCorpusMode,
     regexInvalid,
     replaceSearchResults,
-    searchMode,
     searchQuery,
     setSearchLoading,
     customStationsTick,
