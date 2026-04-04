@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { Station } from "../../shared/types/station";
 import { loadCustomStations, removeCustomStation } from "../../popup/stationLibraryApi";
+import { sanitizeDisplayText } from "../../shared/utils/sanitize";
 
 type CustomStationsTableProps = {
   reloadToken: number;
@@ -49,7 +50,9 @@ export function CustomStationsTable({ reloadToken }: CustomStationsTableProps) {
           <tbody>
             {rows.map((s) => (
               <tr key={s.stationuuid} className="border-b border-neutral-800/80 last:border-0">
-                <td className="max-w-[10rem] truncate px-3 py-2 text-neutral-100">{s.name}</td>
+                <td className="max-w-[10rem] truncate px-3 py-2 text-neutral-100">
+                  {sanitizeDisplayText(s.name, { maxLength: 200 })}
+                </td>
                 <td className="max-w-xs truncate px-3 py-2 font-mono text-xs text-neutral-400">
                   {s.url_resolved ?? s.url}
                 </td>

@@ -1,0 +1,45 @@
+name: Release
+
+# Build, verify, and upload a Chrome Web Store–ready zip when a version tag is pushed,
+# or run manually from the Actions tab.
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package:
+    name: Build and pack extension
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify extension (build + dist checks)
+        run: npm run verify:extension
+
+      - name: Zip dist for Web Store
+        run: npm run pack:zip
+
+      - name: Upload extension zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: zeng-extension-zip
+          path: artifacts/zeng-extension-v*.zip
+          if-no-files-found: error
