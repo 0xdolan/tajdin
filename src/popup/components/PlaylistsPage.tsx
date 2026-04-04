@@ -488,7 +488,7 @@ export function PlaylistsPage({ client = defaultRadioBrowserClient }: { client?:
   }, [refresh]);
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto">
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-x-hidden overflow-y-auto">
       <form
         className="flex flex-col gap-2 sm:flex-row sm:items-end"
         onSubmit={(e) => {

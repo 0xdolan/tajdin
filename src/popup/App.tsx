@@ -77,10 +77,13 @@ export function App() {
 
   return (
     <SurfaceProvider value={surface}>
-      <div className={rootClass} style={{ width: popupSize.w, height: popupSize.h }}>
+      <div
+        className={`${rootClass} h-full min-h-0 overflow-hidden`}
+        style={{ width: popupSize.w, height: popupSize.h }}
+      >
         <PopupHeader />
         <TabNav />
-        <main className="flex min-h-0 flex-1 flex-col">
+        <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           <TabPanel />
         </main>
         <PlayerDock />

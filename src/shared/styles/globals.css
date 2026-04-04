@@ -1,5 +1,15 @@
 @import "@fontsource/vazirmatn/arabic-400.css";
 
+/* Popup only (`tajdin-popup-root` on `src/popup/index.html`): clip document scroll; flex panes own scrolling. */
+html.tajdin-popup-root,
+html.tajdin-popup-root body,
+html.tajdin-popup-root #root {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
