@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
-import { ChromeStorageWrapper, type StorageAreaAdapter } from "./chrome-storage";
+import {
+  ChromeStorageWrapper,
+  StorageValidationError,
+  type StorageAreaAdapter,
+} from "./chrome-storage";
 
 function createMemoryAdapter(initial: Record<string, unknown> = {}): StorageAreaAdapter {
   const data = { ...initial };
@@ -65,5 +69,29 @@ describe("ChromeStorageWrapper", () => {
     const w = new ChromeStorageWrapper(createMemoryAdapter({ k: { id: "x", n: 0 } }), ItemSchema);
     await w.remove("k");
     expect(await w.get("k")).toEqual({ success: true, missing: true });
+  });
+
+  describe("getWithDefault", () => {
+    const def = { id: "def", n: -1 };
+
+    it("returns default when key missing", async () => {
+      const w = new ChromeStorageWrapper(createMemoryAdapter(), ItemSchema);
+      await expect(w.getWithDefault("k", def)).resolves.toEqual(def);
+    });
+
+    it("returns stored value when valid", async () => {
+      const w = new ChromeStorageWrapper(createMemoryAdapter({ k: { id: "a", n: 2 } }), ItemSchema);
+      await expect(w.getWithDefault("k", def)).resolves.toEqual({ id: "a", n: 2 });
+    });
+
+    it("throws StorageValidationError when corrupt and onInvalidStored is throw", async () => {
+      const w = new ChromeStorageWrapper(createMemoryAdapter({ k: { bad: true } }), ItemSchema);
+      await expect(w.getWithDefault("k", def)).rejects.toBeInstanceOf(StorageValidationError);
+    });
+
+    it("returns default when corrupt and onInvalidStored is default", async () => {
+      const w = new ChromeStorageWrapper(createMemoryAdapter({ k: { bad: true } }), ItemSchema);
+      await expect(w.getWithDefault("k", def, { onInvalidStored: "default" })).resolves.toEqual(def);
+    });
   });
 });
