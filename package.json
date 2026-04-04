@@ -2,7 +2,7 @@
   "name": "tajdin",
   "private": true,
   "version": "0.0.1",
-  "description": "Tajdîn — Chrome extension for worldwide radio (Radio Browser API).",
+  "description": "Tajdîn — always by your side; worldwide radio via the Radio Browser API.",
   "type": "module",
   "scripts": {
     "dev": "vite",

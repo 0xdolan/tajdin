@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Tajdîn",
   "version": "0.0.1",
-  "description": "Tajdîn — worldwide radio in your browser (Radio Browser).",
+  "description": "Tajdîn — always by your side; worldwide radio via Radio Browser.",
   "minimum_chrome_version": "116",
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; base-uri 'self'; frame-ancestors 'none';"
