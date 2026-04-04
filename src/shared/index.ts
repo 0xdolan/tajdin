@@ -1,5 +1,4 @@
 /**
- * Shared module root (subtask 1.1 scaffold).
- * Domain code lands in later tasks.
+ * Shared types, schemas, and validation helpers.
  */
-export {};
+export * from "./types";
