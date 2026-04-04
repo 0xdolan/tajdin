@@ -61,6 +61,13 @@ export async function resolveStationForLibrary(
   return client.fetchStationByUuid(stationuuid);
 }
 
+export async function removeCustomStation(stationuuid: string): Promise<boolean> {
+  const list = await loadCustomStations();
+  const next = list.filter((s) => s.stationuuid !== stationuuid);
+  if (next.length === list.length) return false;
+  return (await localCustomStationsStorage.set(STORAGE_KEYS.customStations, next)).success;
+}
+
 function nowIso(): string {
   return new Date().toISOString();
 }
