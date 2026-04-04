@@ -819,11 +819,11 @@
               2,
               4
             ],
-            "details": "Align profile vs repo links with product preference.",
-            "status": "pending",
+            "details": "DONE: URLs already pointed at `0xdolan/tajdin`; added `shared/constants/links.ts` (repo, issues, author profile) for About + `AttributionFooter`; `AttributionFooter.test.tsx` + About issues href assertion; `docs/development.md` shared layout row. `PopupHeader` uses `ExtensionBranding` only (no raw URLs).",
+            "status": "done",
             "testStrategy": "Click-through to correct repo.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-05T12:00:00.000Z"
+            "updatedAt": "2026-04-05T01:05:00.000Z"
           },
           {
             "id": 12,
@@ -847,12 +847,12 @@
             "updatedAt": "2026-04-05T12:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-05T00:35:00.000Z"
+        "updatedAt": "2026-04-05T01:05:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-05T00:35:00.000Z",
+      "lastModified": "2026-04-05T01:05:00.000Z",
       "taskCount": 22,
       "completedCount": 21,
       "tags": [
