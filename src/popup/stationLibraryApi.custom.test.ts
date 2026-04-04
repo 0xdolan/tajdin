@@ -43,6 +43,12 @@ describe("custom stations", () => {
     store.custom = [];
   });
 
+  it("addCustomStation strips markup from display name", async () => {
+    const st = await addCustomStation('Safe<script>alert(1)</script>', "https://stream.example/live");
+    expect(st).not.toBeNull();
+    expect(st!.name).toBe("Safe");
+  });
+
   it("addCustomStation uses custom: uuid prefix and https", async () => {
     const st = await addCustomStation("My Stream", "https://stream.example/live");
     expect(st).not.toBeNull();

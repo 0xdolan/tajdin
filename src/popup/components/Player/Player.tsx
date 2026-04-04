@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { sanitizeDisplayText, sanitizeHttpOrHttpsUrl } from "../../../shared/utils/sanitize";
 import { useSurface } from "../../SurfaceContext";
 import { startPlaybackWithPlaylistSkip } from "../../playerPlayback";
 import { sendPlayerCommand } from "../../playerBridge";
@@ -8,12 +9,16 @@ import type { Station } from "../../../shared/types/station";
 function buildStationTooltip(station: Station | null): string | undefined {
   if (!station) return undefined;
   const pieces = [
-    station.name,
-    station.tags?.trim(),
-    station.codec,
+    sanitizeDisplayText(station.name, { maxLength: 200 }),
+    station.tags?.trim() ? sanitizeDisplayText(station.tags.trim(), { maxLength: 200 }) : null,
+    station.codec ? sanitizeDisplayText(String(station.codec), { maxLength: 80 }) : null,
     station.bitrate != null && station.bitrate > 0 ? `${station.bitrate} kbps` : null,
-    station.country ?? station.countrycode,
-    station.language ?? station.languagecodes,
+    station.country ?? station.countrycode
+      ? sanitizeDisplayText(String(station.country ?? station.countrycode), { maxLength: 120 })
+      : null,
+    station.language ?? station.languagecodes
+      ? sanitizeDisplayText(String(station.language ?? station.languagecodes), { maxLength: 120 })
+      : null,
   ].filter((x): x is string => Boolean(x && String(x).length));
   return pieces.join(" · ");
 }
@@ -38,7 +43,7 @@ function StationArt({
   isPlaying: boolean;
 }) {
   const [imgFailed, setImgFailed] = useState(false);
-  const favicon = station?.favicon;
+  const favicon = sanitizeHttpOrHttpsUrl(station?.favicon);
 
   return (
     <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-md bg-neutral-800 text-neutral-500">
@@ -196,7 +201,7 @@ export function Player() {
         title={tooltip}
       >
         <p className={`truncate text-sm font-medium ${titleMain}`}>
-          {station?.name ?? "No station selected"}
+          {station ? sanitizeDisplayText(station.name, { maxLength: 200 }) : "No station selected"}
         </p>
         <p className={`truncate text-xs ${titleSub}`}>
           {isPlaying ? "Playing" : "Stopped"}
