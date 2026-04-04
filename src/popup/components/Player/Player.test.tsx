@@ -5,11 +5,34 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { usePlayerStore } from "../../store/playerStore";
 import { Player } from "./Player";
 
+const TEST_PLAYLIST_ID = "550e8400-e29b-41d4-a716-446655440000";
+
+const playlistLibMocks = vi.hoisted(() => ({
+  loadPlaylistsForLibrary: vi.fn(),
+  appendStationToPlaylist: vi.fn(),
+}));
+
+vi.mock("../../stationLibraryApi", () => ({
+  loadPlaylistsForLibrary: playlistLibMocks.loadPlaylistsForLibrary,
+  appendStationToPlaylist: playlistLibMocks.appendStationToPlaylist,
+}));
+
 describe("Player", () => {
   const sendMessage = vi.fn();
 
   beforeEach(() => {
     sendMessage.mockReset();
+    playlistLibMocks.loadPlaylistsForLibrary.mockResolvedValue({
+      playlists: [
+        {
+          id: TEST_PLAYLIST_ID,
+          name: "Test playlist",
+          stationUuids: [],
+          lastModified: "2026-01-01T00:00:00.000Z",
+        },
+      ],
+    });
+    playlistLibMocks.appendStationToPlaylist.mockResolvedValue(true);
     usePlayerStore.getState().resetPlayer();
     usePlayerStore.getState().setStation({
       stationuuid: "s1",
@@ -112,5 +135,19 @@ describe("Player", () => {
       expect.any(Function),
     );
     expect(usePlayerStore.getState().muted).toBe(false);
+  });
+
+  it("disables add-to-playlist when no station is selected", () => {
+    usePlayerStore.getState().resetPlayer();
+    render(<Player />);
+    expect(screen.getByRole("button", { name: /add current station to playlist/i })).toBeDisabled();
+  });
+
+  it("appends the current station to the chosen playlist from the player menu", async () => {
+    const user = userEvent.setup();
+    render(<Player />);
+    await user.click(screen.getByRole("button", { name: /add current station to playlist/i }));
+    await user.click(screen.getByRole("menuitem", { name: /test playlist/i }));
+    expect(playlistLibMocks.appendStationToPlaylist).toHaveBeenCalledWith("s1", TEST_PLAYLIST_ID);
   });
 });
