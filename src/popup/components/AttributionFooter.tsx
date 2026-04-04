@@ -26,11 +26,7 @@ export function AttributionFooter() {
   return (
     <footer className={bar}>
       <span>
-        Developed with{" "}
-        <span className="text-rose-500" aria-hidden>
-          ♥
-        </span>{" "}
-        by{" "}
+        Made by{" "}
         <a
           href={EXTENSION_AUTHOR_GITHUB_URL}
           target="_blank"

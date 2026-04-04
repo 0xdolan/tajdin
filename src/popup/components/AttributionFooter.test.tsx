@@ -22,6 +22,7 @@ describe("AttributionFooter", () => {
 
   it("links maintainer profile and Tajdîn source repo", () => {
     render(<AttributionFooter />);
+    expect(screen.getByText(/made by/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /^0xdolan$/i })).toHaveAttribute(
       "href",
       EXTENSION_AUTHOR_GITHUB_URL,
