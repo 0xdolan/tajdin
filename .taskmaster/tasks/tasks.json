@@ -1003,9 +1003,9 @@
       {
         "id": "24",
         "title": "Popup polish: tabs, player metadata & art, about, footer, scroll, modal persistence, UI details",
-        "description": "Follow-up UX and copy: stable tab layout, correct player labels, player dock fits popup, About punctuation, artwork vs browser chrome icons, attribution line, list scroll styling, in-popup about, add-station draft survival, copy/regex control styling.",
+        "description": "Follow-up UX and copy: stable tab layout, correct player labels, player dock fits popup, playlist add from list rows while scrolling, About punctuation, artwork vs browser chrome icons, attribution line, list scroll styling, in-popup about, add-station draft survival, copy/regex control styling.",
         "details": "User-requested batch (Apr 2026). Prefer small PR-sized subtasks. Run `npm run lint`, `npm run typecheck`, `npm test -- --run`, `npm run verify:extension` before merge. Subtask 24.4 revisits Task 23.10 (player showed extension icon while playing): confirm product — station cover/favicon in player while playing; extension packaged icon for toolbar / `chrome://extensions` as appropriate (`manifest` action icons, theme). Subtask 24.11: player bar must fit configured popup width/height without overflow. Document choices in `docs/development.md` if manifest or layout changes.",
-        "testStrategy": "Manual: tab switch without resize flash; play → metadata matches station; player fits popup at min size; About parentheses; playing artwork; extension list/toolbar icon; footer wording; scrollbar in lists; About reachable from popup; add-station survives copy-from-other-tab; copy button matches favicon well; regex toggle reads as .* .",
+        "testStrategy": "Manual: tab switch without resize flash; play → metadata matches station; player fits popup at min size; add to playlist from visible list control while scrolling; About parentheses; playing artwork; extension list/toolbar icon; footer wording; scrollbar in lists; About reachable from popup; add-station survives copy-from-other-tab; copy button matches favicon well; regex toggle reads as .* .",
         "priority": "medium",
         "dependencies": [
           "23"
@@ -1132,14 +1132,25 @@
             "testStrategy": "Manual: min/max popup sizes from settings; long Arabic/Latin titles; no horizontal scrollbar on player; no clipped controls.",
             "parentId": "undefined",
             "updatedAt": "2026-04-03T20:00:00.000Z"
+          },
+          {
+            "id": 12,
+            "title": "Station lists: visible add-to-playlist while scrolling (not only context menu)",
+            "description": "While scrolling browse/favourites station lists, users need a direct way to add a station to a playlist without relying only on right-click / context menu.",
+            "dependencies": [],
+            "details": "Today `StationCard` supports Add via context menu. Add an always-available or hover/focus-visible control (e.g. list-plus icon with `DropdownMenu` / nested buttons, or reuse Radix pattern) next to heart/copy, respecting `useSurface` and coarse pointer (touch) visibility rules. Apply to browse (`StationList`) and favourites (`FavouritesStationList`) via shared `StationCard` or row chrome. Reuse `appendStationToPlaylist` + playlist list from `loadPlaylistsForLibrary`; empty-playlist state. Avoid duplicate UX with player bar add-to-playlist; keep row-level discoverability.",
+            "status": "pending",
+            "testStrategy": "Manual: scroll long list, add to playlist via new control; touch device; no accidental play on tap; Vitest if logic extracted.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T21:30:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-03T21:00:00.000Z"
+        "updatedAt": "2026-04-03T21:30:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-03T21:00:00.000Z",
+      "lastModified": "2026-04-03T21:30:00.000Z",
       "taskCount": 24,
       "completedCount": 23,
       "tags": [
