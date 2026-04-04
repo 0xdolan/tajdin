@@ -1050,11 +1050,11 @@
             "title": "Playing: station artwork in player; extension icon in browser chrome",
             "description": "While playing, player should show the station cover/favicon; browser extension row/toolbar should use the packaged extension icon.",
             "dependencies": [],
-            "details": "Adjust `Player` / `StationArt` so **playing** state shows station artwork (cover/favicon), not the interim extension icon from 23.10. Separately ensure **manifest** `action.default_icon` / theme icons (and any declarative net request) match Tajdîn assets for `chrome://extensions` and toolbar. Confirm CSP and MV3 rules.",
-            "status": "pending",
+            "details": "DONE: `StationArt` uses `stationArtworkHttpUrl` whenever a station is set (playing or stopped); EQ overlay unchanged when playing; radio glyph fallback if no URL / load error. Removed `packagedPlayerIconUrl` from player UI. `manifest.json` `icons` + `action.default_icon` already Tajdîn assets (no change). `docs/development.md` popup row; `Player.test.tsx` asserts favicon while playing and no packaged icon in art slot.",
+            "status": "done",
             "testStrategy": "Manual: play station → art in popup; `chrome://extensions` shows correct icon; toolbar badge/icon.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-03T20:00:00.000Z"
+            "updatedAt": "2026-04-06T00:00:00.000Z"
           },
           {
             "id": 5,
@@ -1156,12 +1156,12 @@
             "updatedAt": "2026-04-03T22:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-04T09:59:54.053Z"
+        "updatedAt": "2026-04-04T10:03:13.082Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T09:59:54.054Z",
+      "lastModified": "2026-04-04T10:03:13.082Z",
       "taskCount": 24,
       "completedCount": 23,
       "tags": [
