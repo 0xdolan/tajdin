@@ -12,3 +12,12 @@ When the user asks to **start** or **continue** a task:
 3. If there are **no subtasks**, run `task-master expand --id=<taskId>` first (unless the user forbids AI expansion), then start **only subtask `<id>.1`**.
 4. Set status with `task-master set-status <taskId>.<subId> in-progress` (and parent task `in-progress` if not already).
 5. Do **not** implement multiple subtasks in the same turn unless the user explicitly asks to batch them.
+
+## When finishing a task or subtask (closure)
+
+Before considering the work done:
+
+1. **Run checks** (adjust if the project adds more scripts): `npm run lint` (if present), `npm run typecheck`, `npm test`, and `npm run verify:extension` (or the closest equivalent build + extension smoke test).
+2. **Fix** any failures before committing.
+3. **Git (Zeng git-flow)**: branch from `develop` as `feat/<topic>`, `fix/<topic>`, or `chore/<topic>`, **commit** with a clear message, then **merge** the branch into `develop` (merge commit or squash per team habit). Do **not** merge `develop` → `main` unless the user explicitly approved a release.
+4. Mark the Task Master task or subtask **done** in `.taskmaster/tasks/tasks.json` when the scope is complete.

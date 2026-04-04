@@ -96,7 +96,7 @@ This is the most reliable workflow for **Manifest V3** + **Vite** until a dedica
 npm run typecheck
 ```
 
-Run this before commits and when refactoring shared types.
+Run **`npm run lint`** and this before commits and when refactoring shared types.
 
 ### Tests
 
@@ -123,9 +123,14 @@ For real extension behavior (storage, service worker, host permissions), use **`
 | `npm run build:watch` | Same as `build`, rebuilds when sources change     |
 | `npm run verify:dist` | Assert `dist/` manifest, entries, and key files exist |
 | `npm run verify:extension` | `build` then `verify:dist` (local smoke)      |
+| `npm run lint`        | ESLint on `src/**/*.ts(x)` and `scripts/**/*.mjs`    |
+| `npm run pack:zip`    | Zip `dist/` → `artifacts/zeng-extension-v{version}.zip` (needs `zip` CLI) |
+| `npm run pack:extension` | `build` then `pack:zip` (Web Store bundle)     |
 | `npm run test`        | `vitest run` (unit tests)                          |
 | `npm run typecheck`   | `tsc --noEmit` across `src/`                      |
 | `npm run dev`     | Vite dev server (see limitations above)                |
+
+GitHub Actions (`.github/workflows/`): **CI** (Task Master JSON, `npm ci`, audit, lint, typecheck, test, build, `verify:dist`), **Security audit** (scheduled + PR `npm audit`), **Dependency review** (PRs), **CodeQL** (JS/TS on push/PR + weekly), **Release** (tag `v*` or manual: verify + pack + upload artifact).
 
 ## Where things live
 
@@ -137,7 +142,7 @@ For real extension behavior (storage, service worker, host permissions), use **`
 | `src/popup/`         | `SurfaceContext.tsx` (`SurfaceProvider` / `useSurface`) resolves **light** vs **dark** chrome (tabs, panels, player dock, `Player` labels/buttons) from settings + system preference. `components/`: `TabNav` (gear → options), `Player`, `PlaylistsPage`, `GroupsPage`, `AddStationModal` (`custom:` stations), `StationSearchBar`, `StationLanguageFilter`, `StationCard`, `StationList`; `playerPlayback.ts`; `playerBridge.ts`; `stationLibraryApi.ts` (`loadCustomStations`, `addCustomStation`, `removeCustomStation`, `resolveStationForLibrary`); `store/` + sync |
 | `src/settings/`      | Full-tab options UI: sidebar + `GeneralSettingsSection`, `CustomStationsTable`, reused `PlaylistsPage` / `GroupsPage`; listens to `chrome.storage.local` changes for `zeng.*` to stay in sync with the popup |
 | `src/offscreen/`     | Offscreen doc: `<audio id="player">`, `index.ts` handles `zeng/offscreen/*` (load, play, pause, volume, state). SW: `offscreen-document.ts` + `zeng/sw/ensure-offscreen` / `zeng/sw/ping-offscreen` |
-| `src/shared/`        | `types/`, `storage/`, `import-export/` (`backup-schema.ts`, `backup-io.ts` — Zod `zeng-backup` v1 JSON, merge vs replace), `utils/fuzzy-search.ts`, `utils/language-mapper.ts`, `utils/group-icon-keys.ts`, `utils/validate-stream-url.ts`, `utils/station-merge.ts`, `api/radio-browser.api.ts` (`RadioBrowserClient`, primary + fallback hosts, rate-spaced queue) |
+| `src/shared/`        | `types/`, `storage/`, `import-export/` (`backup-schema.ts`, `backup-io.ts` — Zod `zeng-backup` v1 JSON, merge vs replace), `utils/sanitize.ts` (display text + http(s) URLs for UI), `utils/fuzzy-search.ts`, `utils/language-mapper.ts`, `utils/group-icon-keys.ts`, `utils/validate-stream-url.ts`, `utils/station-merge.ts`, `api/radio-browser.api.ts` (`RadioBrowserClient`, primary + fallback hosts, rate-spaced queue) |
 | `vite.config.ts`     | Multi-entry build, `base: './'` for extension-relative assets |
 | `dist/`              | **Output only** — gitignored; load this folder in Chrome |
 

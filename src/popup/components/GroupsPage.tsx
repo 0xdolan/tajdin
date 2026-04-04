@@ -5,6 +5,7 @@ import {
 } from "../../shared/api/radio-browser.api";
 import type { Group } from "../../shared/types/group";
 import type { Station } from "../../shared/types/station";
+import { sanitizeDisplayText } from "../../shared/utils/sanitize";
 import {
   DEFAULT_GROUP_ICON_KEY,
   GROUP_ICON_KEYS,
@@ -49,7 +50,7 @@ function GroupStationRow({
     };
   }, [client, uuid]);
 
-  const title = station?.name ?? uuid;
+  const title = station ? sanitizeDisplayText(station.name, { maxLength: 200 }) : uuid;
   const canPlay = Boolean(station && (station.url_resolved || station.url));
 
   return (
@@ -114,7 +115,9 @@ function GroupSection({
           ▸
         </span>
         <GroupIcon iconKey={group.iconKey} className="h-5 w-5 text-amber-400/90" />
-        <span className="min-w-0 truncate">{group.name}</span>
+        <span className="min-w-0 truncate">
+          {sanitizeDisplayText(group.name, { maxLength: 200 })}
+        </span>
         <span className="ml-auto shrink-0 text-xs font-normal text-neutral-500">
           ({group.stationUuids.length} stations)
         </span>
@@ -176,7 +179,10 @@ function GroupSection({
             No stations yet. Add some from Browse via the station menu.
           </p>
         ) : (
-          <ul className="flex flex-col gap-2" aria-label={`Stations in ${group.name}`}>
+          <ul
+            className="flex flex-col gap-2"
+            aria-label={`Stations in ${sanitizeDisplayText(group.name, { maxLength: 200 })}`}
+          >
             {group.stationUuids.map((uuid) => (
               <li key={uuid}>
                 <GroupStationRow

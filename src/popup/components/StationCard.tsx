@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { Group } from "../../shared/types/group";
 import type { Playlist } from "../../shared/types/playlist";
 import type { Station } from "../../shared/types/station";
+import { sanitizeDisplayText, sanitizeHttpOrHttpsUrl } from "../../shared/utils/sanitize";
 import {
   appendStationToGroup,
   appendStationToPlaylist,
@@ -30,7 +31,8 @@ function RadioFallbackIcon() {
 
 function StationFavicon({ favicon }: { favicon?: string }) {
   const [failed, setFailed] = useState(false);
-  if (!favicon || failed) {
+  const safeSrc = sanitizeHttpOrHttpsUrl(favicon);
+  if (!safeSrc || failed) {
     return (
       <div
         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-neutral-800 text-neutral-500"
@@ -42,7 +44,7 @@ function StationFavicon({ favicon }: { favicon?: string }) {
   }
   return (
     <img
-      src={favicon}
+      src={safeSrc}
       alt=""
       className="h-10 w-10 shrink-0 rounded-md bg-neutral-800 object-cover"
       loading="lazy"
@@ -82,8 +84,8 @@ export function StationCard({ station, playlists, groups, onLibraryMutated }: St
   const toggleFavourite = useStationStore((s) => s.toggleFavourite);
   const isFav = favouriteIds.includes(station.stationuuid);
 
-  const country = station.country ?? station.countrycode ?? "—";
-  const lang = station.language ?? station.languagecodes ?? "—";
+  const country = sanitizeDisplayText(String(station.country ?? station.countrycode ?? "—"), { maxLength: 120 });
+  const lang = sanitizeDisplayText(String(station.language ?? station.languagecodes ?? "—"), { maxLength: 120 });
   const bitrate =
     station.bitrate != null && station.bitrate > 0 ? `${station.bitrate} kbps` : "—";
 
@@ -108,7 +110,9 @@ export function StationCard({ station, playlists, groups, onLibraryMutated }: St
         >
           <StationFavicon favicon={station.favicon} />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-neutral-100">{station.name}</p>
+            <p className="truncate text-sm font-medium text-neutral-100">
+              {sanitizeDisplayText(station.name, { maxLength: 200 })}
+            </p>
             <p className="truncate text-xs text-neutral-500">
               {country} · {lang}
             </p>
@@ -165,7 +169,7 @@ export function StationCard({ station, playlists, groups, onLibraryMutated }: St
                       className={menuItem}
                       onSelect={() => handlePlaylist(p.id)}
                     >
-                      {p.name}
+                      {sanitizeDisplayText(p.name, { maxLength: 200 })}
                     </ContextMenu.Item>
                   ))
                 )}
@@ -193,7 +197,7 @@ export function StationCard({ station, playlists, groups, onLibraryMutated }: St
                       className={menuItem}
                       onSelect={() => handleGroup(g.id)}
                     >
-                      {g.name}
+                      {sanitizeDisplayText(g.name, { maxLength: 200 })}
                     </ContextMenu.Item>
                   ))
                 )}
