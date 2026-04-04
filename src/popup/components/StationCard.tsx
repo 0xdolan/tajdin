@@ -114,6 +114,9 @@ export function StationCard({ station, playlists, onLibraryMutated }: StationCar
       ? "border-neutral-200 bg-white/95 text-neutral-600 hover:bg-neutral-100 hover:text-amber-700"
       : "border-neutral-700 bg-neutral-900/95 text-neutral-300 hover:bg-neutral-800 hover:text-amber-300";
   const hintC = surface === "light" ? "text-amber-700" : "text-amber-400";
+  /** Fade in on row hover/focus; stay visible on touch (no hover). */
+  const actionsColOpacity =
+    "opacity-0 transition-opacity duration-200 ease-out group-hover/station:opacity-100 group-focus-within/station:opacity-100 [@media(pointer:coarse)]:opacity-100";
 
   const menuSurface =
     surface === "light"
@@ -137,7 +140,7 @@ export function StationCard({ station, playlists, onLibraryMutated }: StationCar
           aria-label={`Play ${sanitizeDisplayText(station.name, { maxLength: 80 })}`}
           aria-current={isCurrent ? "true" : undefined}
           className={[
-            "group/station box-border flex h-[72px] cursor-pointer items-center gap-2 border-b px-1 py-1.5 outline-none",
+            "group/station box-border flex min-h-[72px] cursor-pointer items-center gap-2 overflow-visible border-b px-1 py-1.5 outline-none",
             rowBorder,
             rowHover,
             rowBg,
@@ -151,27 +154,8 @@ export function StationCard({ station, playlists, onLibraryMutated }: StationCar
             }
           }}
         >
-          <div className="relative shrink-0">
+          <div className="shrink-0">
             <StationFavicon favicon={station.favicon} />
-            {canCopy ? (
-              <button
-                type="button"
-                className={[
-                  "absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-md border opacity-0 shadow-md transition-opacity hover:z-10 focus-visible:opacity-100 group-hover/station:opacity-100 group-focus-within/station:opacity-100",
-                  copyBtn,
-                ].join(" ")}
-                aria-label="Copy stream URL"
-                title="Copy stream link"
-                onClick={copyStreamLink}
-              >
-                <CopyLinkIcon />
-              </button>
-            ) : null}
-            {copyHint ? (
-              <span className={`absolute -bottom-5 left-0 z-10 whitespace-nowrap text-[10px] ${hintC}`}>
-                {copyHint}
-              </span>
-            ) : null}
           </div>
           <div className="min-w-0 flex-1">
             <p className={`truncate text-sm font-medium ${titleC} ${nameAr ? "tajdin-font-arabic" : ""}`} dir="auto">
@@ -182,22 +166,49 @@ export function StationCard({ station, playlists, onLibraryMutated }: StationCar
             </p>
             <p className={`truncate text-xs ${sub2C}`}>{bitrate}</p>
           </div>
-          <button
-            type="button"
-            data-testid="station-favourite-heart"
-            className={`shrink-0 rounded-md p-1.5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500/80 ${
-              surface === "light" ? "hover:bg-neutral-200" : "hover:bg-neutral-800"
-            } ${isFav ? "text-rose-400" : heartIdle}`}
-            aria-label={isFav ? "Remove from favourites" : "Add to favourites"}
-            aria-pressed={isFav}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              toggleFavourite(station.stationuuid);
-            }}
-          >
-            <HeartIcon filled={isFav} />
-          </button>
+          <div className={`relative shrink-0 ${actionsColOpacity}`}>
+            <div className="flex flex-col items-center gap-1">
+              <button
+                type="button"
+                data-testid="station-favourite-heart"
+                className={`rounded-md p-1.5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500/80 ${
+                  surface === "light" ? "hover:bg-neutral-200" : "hover:bg-neutral-800"
+                } ${isFav ? "text-rose-400" : heartIdle}`}
+                aria-label={isFav ? "Remove from favourites" : "Add to favourites"}
+                aria-pressed={isFav}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleFavourite(station.stationuuid);
+                }}
+              >
+                <HeartIcon filled={isFav} />
+              </button>
+              {canCopy ? (
+                <button
+                  type="button"
+                  data-testid="station-copy-stream"
+                  className={[
+                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-md border shadow-sm transition-colors",
+                    copyBtn,
+                  ].join(" ")}
+                  aria-label="Copy stream URL"
+                  title="Copy stream link"
+                  onClick={copyStreamLink}
+                >
+                  <CopyLinkIcon />
+                </button>
+              ) : null}
+            </div>
+            {copyHint ? (
+              <span
+                className={`pointer-events-none absolute left-1/2 top-full z-10 mt-0.5 -translate-x-1/2 whitespace-nowrap text-[10px] ${hintC}`}
+                role="status"
+              >
+                {copyHint}
+              </span>
+            ) : null}
+          </div>
         </div>
       </ContextMenu.Trigger>
       <ContextMenu.Portal>
