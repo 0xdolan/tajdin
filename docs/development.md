@@ -135,7 +135,7 @@ For real extension behavior (storage, service worker, host permissions), use **`
 | `src/popup/`         | Extension popup (React + Tailwind)                     |
 | `src/settings/`      | Full-tab options UI (React + Tailwind)                 |
 | `src/offscreen/`     | Offscreen document for audio (loaded via `chrome.offscreen` later) |
-| `src/shared/`        | Shared styles and future shared modules                 |
+| `src/shared/`        | Shared code; `types/` Zod schemas + `index.ts` barrel; `parseWithSchema` helper |
 | `vite.config.ts`     | Multi-entry build, `base: './'` for extension-relative assets |
 | `dist/`              | **Output only** — gitignored; load this folder in Chrome |
 
