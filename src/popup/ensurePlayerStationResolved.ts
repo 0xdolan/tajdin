@@ -20,9 +20,17 @@ export async function ensurePlayerStationResolved(
   if (station?.stationuuid === stationuuid && hasPlayableUrl(station)) {
     return true;
   }
-  const resolved = await resolveStationForLibrary(client, stationuuid);
+  const targetUuid = stationuuid;
+  const resolved = await resolveStationForLibrary(client, targetUuid);
   if (!resolved || !hasPlayableUrl(resolved)) {
     return false;
+  }
+  const latest = usePlayerStore.getState();
+  if (latest.stationuuid !== targetUuid) {
+    return false;
+  }
+  if (latest.station?.stationuuid === targetUuid && hasPlayableUrl(latest.station)) {
+    return true;
   }
   usePlayerStore.getState().restoreResolvedStation(resolved);
   return true;

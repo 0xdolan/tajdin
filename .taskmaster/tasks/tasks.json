@@ -1010,7 +1010,7 @@
         "dependencies": [
           "23"
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -1028,11 +1028,11 @@
             "title": "Player: show correct station name and metadata after click-to-play",
             "description": "Selecting a station to play does not show name/metadata correctly in the player bar.",
             "dependencies": [],
-            "details": "Trace `playStationFromList`, `usePlayerStore.setStation`, `ensurePlayerStationResolved`, and `Player.tsx` title/subtitle (`buildStationSubtitle`, `sanitizeDisplayText`, Arabic `dir`). Reproduce browse vs favourites vs playlist. Fix stale state, wrong station object, or trim/sanitize edge cases; add Vitest where isolated.",
-            "status": "pending",
+            "details": "DONE: `ensurePlayerStationResolved` now re-reads the store after `await resolveStationForLibrary` and skips `restoreResolvedStation` when `stationuuid` changed in flight or the same uuid already has a playable `station` (keeps list row metadata). Prevents stale session/hydration resolves from overwriting `setStation` after click-to-play. Vitest: `ensurePlayerStationResolved.test.ts`.",
+            "status": "done",
             "testStrategy": "Manual: several stations; Vitest for subtitle/title helpers or store if added.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-03T20:00:00.000Z"
+            "updatedAt": "2026-04-06T00:00:00.000Z"
           },
           {
             "id": 3,
@@ -1156,12 +1156,12 @@
             "updatedAt": "2026-04-03T22:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-03T22:00:00.000Z"
+        "updatedAt": "2026-04-04T09:51:11.253Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-03T22:00:00.000Z",
+      "lastModified": "2026-04-04T09:51:11.253Z",
       "taskCount": 24,
       "completedCount": 23,
       "tags": [
