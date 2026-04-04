@@ -1138,11 +1138,11 @@
             "title": "Station lists: visible add-to-playlist while scrolling (not only context menu)",
             "description": "While scrolling browse/favourites station lists, users need a direct way to add a station to a playlist without relying only on right-click / context menu.",
             "dependencies": [],
-            "details": "Today `StationCard` supports Add via context menu. Add an always-available or hover/focus-visible control (e.g. list-plus icon with `DropdownMenu` / nested buttons, or reuse Radix pattern) next to heart/copy, respecting `useSurface` and coarse pointer (touch) visibility rules. Apply to browse (`StationList`) and favourites (`FavouritesStationList`) via shared `StationCard` or row chrome. Reuse `appendStationToPlaylist` + playlist list from `loadPlaylistsForLibrary`; empty-playlist state. Avoid duplicate UX with player bar add-to-playlist; keep row-level discoverability.",
-            "status": "pending",
+            "details": "DONE: `@radix-ui/react-dropdown-menu` on `StationCard` — list-plus control (same action column as heart/copy; `stopPropagation`); portaled `Content` (`side=\"left\"`, `modal={false}`) so Virtuoso doesn’t clip; refresh playlists on open via `loadPlaylistsForLibrary`; empty copy matches player bar. `AddToPlaylistIcon.tsx` shared with `Player`. Vitest: picker click does not play; snapshot. `docs/development.md` + `package.json` dep.",
+            "status": "done",
             "testStrategy": "Manual: scroll long list, add to playlist via new control; touch device; no accidental play on tap; Vitest if logic extracted.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-03T21:30:00.000Z"
+            "updatedAt": "2026-04-04T21:04:01.719Z"
           },
           {
             "id": 13,
@@ -1156,12 +1156,12 @@
             "updatedAt": "2026-04-03T22:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-04T20:12:45.481Z"
+        "updatedAt": "2026-04-04T21:04:01.719Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T20:12:45.481Z",
+      "lastModified": "2026-04-04T21:04:01.719Z",
       "taskCount": 24,
       "completedCount": 23,
       "tags": [

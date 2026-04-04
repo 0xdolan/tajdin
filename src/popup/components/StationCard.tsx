@@ -1,14 +1,16 @@
 import * as ContextMenu from "@radix-ui/react-context-menu";
-import { useState, type MouseEvent } from "react";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { useEffect, useState, type MouseEvent } from "react";
 import type { Playlist } from "../../shared/types/playlist";
 import type { Station } from "../../shared/types/station";
 import { textContainsArabicScript } from "../../shared/utils/arabic-text";
 import { sanitizeDisplayText, sanitizeHttpOrHttpsUrl } from "../../shared/utils/sanitize";
 import { playStationFromList } from "../browseNavigation";
-import { appendStationToPlaylist } from "../stationLibraryApi";
+import { appendStationToPlaylist, loadPlaylistsForLibrary } from "../stationLibraryApi";
 import { useSurface } from "../SurfaceContext";
 import { usePlayerStore } from "../store/playerStore";
 import { useStationStore } from "../store/stationStore";
+import { AddToPlaylistIcon } from "./AddToPlaylistIcon";
 import { StationFavicon } from "./StationArtwork";
 
 function streamUrlForCopy(station: Station): string {
@@ -60,6 +62,11 @@ export function StationCard({ station, playlists, onLibraryMutated }: StationCar
   const isFav = favouriteIds.includes(station.stationuuid);
   const isCurrent = currentUuid === station.stationuuid;
   const [copyHint, setCopyHint] = useState<string | null>(null);
+  const [pickerPlaylists, setPickerPlaylists] = useState<Playlist[]>(playlists);
+
+  useEffect(() => {
+    setPickerPlaylists(playlists);
+  }, [playlists]);
 
   const country = sanitizeDisplayText(String(station.country ?? station.countrycode ?? "—"), { maxLength: 120 });
   const lang = sanitizeDisplayText(String(station.language ?? station.languagecodes ?? "—"), { maxLength: 120 });
@@ -145,6 +152,10 @@ export function StationCard({ station, playlists, onLibraryMutated }: StationCar
   const subTrigger = `${menuItem} justify-between gap-2`;
   const sep = surface === "light" ? "my-1 h-px bg-neutral-200" : "my-1 h-px bg-neutral-800";
   const chev = surface === "light" ? "text-neutral-400" : "text-neutral-500";
+  const dropdownSurface =
+    surface === "light"
+      ? "z-[110] max-h-52 min-w-[11rem] overflow-y-auto rounded-md border border-neutral-200 bg-white p-1 text-sm text-neutral-900 shadow-xl"
+      : "z-[110] max-h-52 min-w-[11rem] overflow-y-auto rounded-md border border-neutral-700 bg-neutral-900 p-1 text-sm text-neutral-100 shadow-xl";
 
   return (
     <ContextMenu.Root>
@@ -201,6 +212,60 @@ export function StationCard({ station, playlists, onLibraryMutated }: StationCar
               >
                 <HeartIcon filled={isFav} />
               </button>
+              <DropdownMenu.Root
+                modal={false}
+                onOpenChange={(open) => {
+                  if (open) {
+                    void loadPlaylistsForLibrary().then((r) => setPickerPlaylists(r.playlists));
+                  }
+                }}
+              >
+                <DropdownMenu.Trigger asChild>
+                  <button
+                    type="button"
+                    data-testid="station-add-to-playlist"
+                    className={[
+                      "flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition-colors",
+                      copyBtn,
+                    ].join(" ")}
+                    aria-label="Add station to playlist"
+                    title="Add to playlist"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    onPointerDown={(e) => e.stopPropagation()}
+                  >
+                    <AddToPlaylistIcon className="h-4 w-4" />
+                  </button>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Portal>
+                  <DropdownMenu.Content
+                    className={dropdownSurface}
+                    side="left"
+                    align="start"
+                    sideOffset={6}
+                    collisionPadding={8}
+                    onCloseAutoFocus={(e) => e.preventDefault()}
+                  >
+                    {pickerPlaylists.length === 0 ? (
+                      <p className="px-2 py-1.5 text-xs text-neutral-500">
+                        No playlists yet. Create one under Lists or in Settings → Playlists.
+                      </p>
+                    ) : (
+                      pickerPlaylists.map((p) => (
+                        <DropdownMenu.Item
+                          key={p.id}
+                          className={menuItem}
+                          onSelect={() => handlePlaylist(p.id)}
+                        >
+                          {sanitizeDisplayText(p.name, { maxLength: 200 })}
+                        </DropdownMenu.Item>
+                      ))
+                    )}
+                  </DropdownMenu.Content>
+                </DropdownMenu.Portal>
+              </DropdownMenu.Root>
               {canCopy ? (
                 <button
                   type="button"
