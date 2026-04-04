@@ -8,13 +8,12 @@ type StationSearchBarProps = Pick<
 
 function RegexModeIcon() {
   return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M4.5 12h15m-6.75-6.75l3 3m-3-3l-3 3m3 12l3-3m-3 3l-3-3"
-      />
-    </svg>
+    <span
+      className="select-none font-mono text-[13px] font-semibold leading-none tracking-tight"
+      aria-hidden
+    >
+      .*
+    </span>
   );
 }
 
@@ -90,7 +89,6 @@ export function StationSearchBar({
             onClick={() => setMode(regexOn ? "exact" : "regex")}
           >
             <RegexModeIcon />
-            <span className="sr-only">Regex</span>
           </button>
         </div>
       </div>

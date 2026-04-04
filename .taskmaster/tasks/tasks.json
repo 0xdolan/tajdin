@@ -1116,11 +1116,11 @@
             "title": "Regex toggle: editor-style icon (e.g. .* )",
             "description": "Replace current regex glyph with a clearer “regex” affordance like editor patterns.",
             "dependencies": [],
-            "details": "`StationSearchBar.tsx`: inline SVG or monospace `.*` treatment; keep touch target and a11y `aria-label`/`title` accurate.",
-            "status": "pending",
+            "details": "DONE: `StationSearchBar.tsx` — monospace `.*` (aria-hidden), `aria-label`/`title` unchanged; removed duplicate sr-only “Regex”.",
+            "status": "done",
             "testStrategy": "Visual; screen reader label unchanged in meaning.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-03T20:00:00.000Z"
+            "updatedAt": "2026-04-04T19:35:07.598Z"
           },
           {
             "id": 11,
@@ -1156,12 +1156,12 @@
             "updatedAt": "2026-04-03T22:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-04T18:05:04.661Z"
+        "updatedAt": "2026-04-04T19:35:07.598Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T18:05:04.662Z",
+      "lastModified": "2026-04-04T19:35:07.599Z",
       "taskCount": 24,
       "completedCount": 23,
       "tags": [
