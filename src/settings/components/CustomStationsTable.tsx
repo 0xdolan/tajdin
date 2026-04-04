@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import type { Station } from "../../shared/types/station";
+import { AddStationModal } from "../../popup/components/AddStationModal";
 import { StationFavicon } from "../../popup/components/StationArtwork";
 import { loadCustomStations, removeCustomStation } from "../../popup/stationLibraryApi";
 import { sanitizeDisplayText } from "../../shared/utils/sanitize";
@@ -13,6 +14,7 @@ export function CustomStationsTable({ reloadToken }: CustomStationsTableProps) {
   const [rows, setRows] = useState<Station[]>([]);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [editing, setEditing] = useState<Station | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
 
   const refresh = useCallback(() => {
     void loadCustomStations().then(setRows);
@@ -22,24 +24,23 @@ export function CustomStationsTable({ reloadToken }: CustomStationsTableProps) {
     refresh();
   }, [refresh, reloadToken]);
 
-  if (rows.length === 0) {
-    return (
-      <div className="mx-auto max-w-4xl">
-        <h2 className="text-base font-semibold text-neutral-100">Custom stations</h2>
-        <p className="mt-2 text-sm text-neutral-500">
-          No custom stations yet. Add one from the popup Browse tab (“Add station”).
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="mx-auto max-w-4xl">
-      <h2 className="text-base font-semibold text-neutral-100">Custom stations</h2>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-base font-semibold text-neutral-100">Custom stations</h2>
+        <button
+          type="button"
+          className="rounded-md bg-sky-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-sky-600"
+          onClick={() => setAddOpen(true)}
+        >
+          Add custom station
+        </button>
+      </div>
       <p className="mt-1 text-sm text-neutral-500">
-        Streams you added manually (<code className="text-neutral-400">custom:</code> ids). Edit name, stream,
-        or cover; removing a row only deletes this entry—not Radio Browser metadata.
+        Streams you add here or from the popup Browse tab (<code className="text-neutral-400">custom:</code> ids).
+        Edit name, stream, or cover; removing a row only deletes this entry—not Radio Browser metadata.
       </p>
+      <AddStationModal open={addOpen} onOpenChange={setAddOpen} onAdded={refresh} />
       <EditCustomStationModal
         open={editing !== null}
         station={editing}
@@ -48,61 +49,66 @@ export function CustomStationsTable({ reloadToken }: CustomStationsTableProps) {
         }}
         onSaved={refresh}
       />
-      <div className="mt-4 overflow-x-auto rounded-lg border border-neutral-800">
-        <table className="w-full min-w-[32rem] border-collapse text-left text-sm">
-          <thead>
-            <tr className="border-b border-neutral-800 bg-neutral-900/60">
-              <th className="w-14 px-2 py-2 font-medium text-neutral-300">Art</th>
-              <th className="px-3 py-2 font-medium text-neutral-300">Name</th>
-              <th className="px-3 py-2 font-medium text-neutral-300">Stream URL</th>
-              <th className="px-3 py-2 font-medium text-neutral-300">Id</th>
-              <th className="px-3 py-2 font-medium text-neutral-300" />
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((s) => (
-              <tr key={s.stationuuid} className="border-b border-neutral-800/80 last:border-0">
-                <td className="px-2 py-2 align-middle">
-                  <StationFavicon coverUrl={s.coverUrl} favicon={s.favicon} sizeClass="h-8 w-8" />
-                </td>
-                <td className="max-w-[10rem] truncate px-3 py-2 text-neutral-100">
-                  {sanitizeDisplayText(s.name, { maxLength: 200 })}
-                </td>
-                <td className="max-w-xs truncate px-3 py-2 font-mono text-xs text-neutral-400">
-                  {s.url_resolved ?? s.url}
-                </td>
-                <td className="max-w-[12rem] truncate px-3 py-2 font-mono text-xs text-neutral-500">
-                  {s.stationuuid}
-                </td>
-                <td className="whitespace-nowrap px-3 py-2 text-right">
-                  <button
-                    type="button"
-                    className="mr-2 rounded px-2 py-1 text-xs text-sky-400 hover:bg-neutral-800 disabled:opacity-40"
-                    disabled={busyId === s.stationuuid}
-                    onClick={() => setEditing(s)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    className="rounded px-2 py-1 text-xs text-red-400 hover:bg-red-950/40 disabled:opacity-40"
-                    disabled={busyId === s.stationuuid}
-                    onClick={() => {
-                      setBusyId(s.stationuuid);
-                      void removeCustomStation(s.stationuuid).then((ok) => {
-                        setBusyId(null);
-                        if (ok) refresh();
-                      });
-                    }}
-                  >
-                    Remove
-                  </button>
-                </td>
+      {rows.length === 0 ? (
+        <p className="mt-4 text-sm text-neutral-500">No custom stations yet. Use Add custom station above.</p>
+      ) : null}
+      {rows.length > 0 ? (
+        <div className="mt-4 overflow-x-auto rounded-lg border border-neutral-800">
+          <table className="w-full min-w-[32rem] border-collapse text-left text-sm">
+            <thead>
+              <tr className="border-b border-neutral-800 bg-neutral-900/60">
+                <th className="w-14 px-2 py-2 font-medium text-neutral-300">Art</th>
+                <th className="px-3 py-2 font-medium text-neutral-300">Name</th>
+                <th className="px-3 py-2 font-medium text-neutral-300">Stream URL</th>
+                <th className="px-3 py-2 font-medium text-neutral-300">Id</th>
+                <th className="px-3 py-2 font-medium text-neutral-300" />
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {rows.map((s) => (
+                <tr key={s.stationuuid} className="border-b border-neutral-800/80 last:border-0">
+                  <td className="px-2 py-2 align-middle">
+                    <StationFavicon coverUrl={s.coverUrl} favicon={s.favicon} sizeClass="h-8 w-8" />
+                  </td>
+                  <td className="max-w-[10rem] truncate px-3 py-2 text-neutral-100">
+                    {sanitizeDisplayText(s.name, { maxLength: 200 })}
+                  </td>
+                  <td className="max-w-xs truncate px-3 py-2 font-mono text-xs text-neutral-400">
+                    {s.url_resolved ?? s.url}
+                  </td>
+                  <td className="max-w-[12rem] truncate px-3 py-2 font-mono text-xs text-neutral-500">
+                    {s.stationuuid}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-2 text-right">
+                    <button
+                      type="button"
+                      className="mr-2 rounded px-2 py-1 text-xs text-sky-400 hover:bg-neutral-800 disabled:opacity-40"
+                      disabled={busyId === s.stationuuid}
+                      onClick={() => setEditing(s)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      className="rounded px-2 py-1 text-xs text-red-400 hover:bg-red-950/40 disabled:opacity-40"
+                      disabled={busyId === s.stationuuid}
+                      onClick={() => {
+                        setBusyId(s.stationuuid);
+                        void removeCustomStation(s.stationuuid).then((ok) => {
+                          setBusyId(null);
+                          if (ok) refresh();
+                        });
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
     </div>
   );
 }
