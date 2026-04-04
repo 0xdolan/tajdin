@@ -859,18 +859,18 @@
         "dependencies": [
           "22"
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
             "title": "Fix: clicking a station must start playback",
             "description": "User report: play does not start when selecting a station from the list (same as top-level “playing still not working”).",
             "dependencies": [],
-            "details": "Trace popup click → `browseNavigation` / `playerPlayback` → `tajdin/player/load` + `play` through service worker and offscreen `<audio>`. Reproduce in unpacked `dist/`, check MV3 offscreen lifecycle, CSP, stream URL resolution, and errors in service worker console. Fix root cause; add or extend tests/mocks where feasible.",
-            "status": "pending",
+            "details": "DONE: Root cause was missing MV3 **host_permissions** for arbitrary stream origins. Manifest only allowed `*.radio-browser.info` (API); offscreen `<audio src>` loads station streams from other http(s) hosts and was blocked. Added `http://*/*` and `https://*/*` to `manifest.json`; documented in `docs/development.md` (layout table + troubleshooting). Reload extension after rebuild.",
+            "status": "done",
             "testStrategy": "Manual: several Radio Browser + custom stations play. Optional: integration-style test for message wiring if stubbable.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-05T02:00:00.000Z"
+            "updatedAt": "2026-04-05T02:30:00.000Z"
           },
           {
             "id": 2,
@@ -998,12 +998,12 @@
             "updatedAt": "2026-04-05T02:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-05T02:00:00.000Z"
+        "updatedAt": "2026-04-05T02:30:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-05T02:00:00.000Z",
+      "lastModified": "2026-04-05T02:30:00.000Z",
       "taskCount": 23,
       "completedCount": 22,
       "tags": [
