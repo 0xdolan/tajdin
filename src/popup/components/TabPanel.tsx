@@ -2,6 +2,7 @@ import type { SessionUi } from "../../shared/storage/schemas";
 import { useSearch } from "../hooks/useSearch";
 import { useStationStore } from "../store/stationStore";
 import { useUiStore } from "../store/uiStore";
+import { GroupsPage } from "./GroupsPage";
 import { PlaylistsPage } from "./PlaylistsPage";
 import { StationLanguageFilter } from "./StationLanguageFilter";
 import { StationList } from "./StationList";
@@ -68,6 +69,8 @@ export function TabPanel() {
         </div>
       ) : activeTab === "playlists" ? (
         <PlaylistsPage />
+      ) : activeTab === "groups" ? (
+        <GroupsPage />
       ) : (
         <p className="text-sm leading-relaxed text-neutral-500">{body}</p>
       )}
