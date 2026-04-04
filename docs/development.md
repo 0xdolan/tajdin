@@ -136,7 +136,7 @@ GitHub Actions (`.github/workflows/`): **CI** (Task Master JSON, `npm ci`, audit
 
 | Path                 | Role |
 |----------------------|------|
-| `manifest.json`      | Source manifest; copied into `dist/` on build          |
+| `manifest.json`      | Source manifest; copied into `dist/` on build. **`host_permissions`** include Radio Browser API hosts plus **`http://*/*`** and **`https://*/*`** so the offscreen `<audio>` element may load arbitrary station stream URLs (API metadata alone is not enough).          |
 | `public/icons/`      | Toolbar / store icons (`tajdin-radio-50.png`, `tajdin-radio-100.png`); copied to `dist/icons/` by Vite |
 | `src/background/`    | Service worker: `index.ts`, `audio-engine.ts` (`tajdin/player/*` → offscreen + ~20s `chrome.alarms` keep-alive), `offscreen-document.ts` |
 | `src/popup/`         | `SurfaceContext.tsx` (`SurfaceProvider` / `useSurface`) resolves **light** vs **dark** chrome (tabs, panels, player dock, `Player` labels/buttons) from settings + system preference. `components/`: `TabNav` (gear → options), `Player` + `PlayerDock` (fixed footer, ~88px min height, metadata above transport), `PlaylistsPage`, `GroupsPage`, `AddStationModal` (`custom:` stations), `StationSearchBar`, `StationLanguageFilter`, `StationCard`, `StationList`; `playerPlayback.ts`; `playerBridge.ts`; `stationLibraryApi.ts` (`loadCustomStations`, `addCustomStation`, `removeCustomStation`, `resolveStationForLibrary`); `store/` + sync |
@@ -152,6 +152,7 @@ GitHub Actions (`.github/workflows/`): **CI** (Task Master JSON, `npm ci`, audit
 - **Changes not visible** — Run a build (or watch), then **Reload** the extension on `chrome://extensions`.
 - **`npm ci` fails** — Ensure `package-lock.json` is present and committed; otherwise run `npm install` once and commit the lockfile.
 - **Type errors after moving files** — Run `npm run typecheck`. Prefer **relative** imports in `src/` so `tsc` stays simple; use Vite’s `@` alias in `vite.config.ts` only if you add matching `paths` in `tsconfig.json` (with `./` prefixes, never `baseUrl`).
+- **Click a station but nothing plays** — Ensure the built `dist/manifest.json` includes broad **`http://*/*`** and **`https://*/*`** `host_permissions` (see source `manifest.json`). Without them, Chromium blocks the offscreen player from loading most stream URLs even though the Radio Browser API works.
 
 ## Security note for local work
 
