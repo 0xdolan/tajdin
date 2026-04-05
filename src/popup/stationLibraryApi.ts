@@ -8,6 +8,7 @@ import {
 import type { Playlist } from "../shared/types/playlist";
 import type { Station } from "../shared/types/station";
 import { sanitizeDisplayText, sanitizeHttpOrHttpsUrl } from "../shared/utils/sanitize";
+import { getKurdishCuratedStationByUuid } from "../shared/data/kurdishCuratedStations";
 import { isValidHttpOrHttpsStreamUrl } from "../shared/utils/validate-stream-url";
 
 export async function loadPlaylistsForLibrary(): Promise<{ playlists: Playlist[] }> {
@@ -57,6 +58,8 @@ export async function resolveStationForLibrary(
     const list = await loadCustomStations();
     return list.find((s) => s.stationuuid === stationuuid) ?? null;
   }
+  const kurdish = getKurdishCuratedStationByUuid(stationuuid);
+  if (kurdish) return kurdish;
   return client.fetchStationByUuid(stationuuid);
 }
 
@@ -76,7 +79,7 @@ export async function resolveFavouriteStationsForLibrary(
 
   const radioUuids: string[] = [];
   for (const id of favouriteIds) {
-    if (!id.startsWith("custom:")) {
+    if (!id.startsWith("custom:") && !getKurdishCuratedStationByUuid(id.trim())) {
       const t = id.trim();
       if (t) radioUuids.push(t);
     }
@@ -94,6 +97,11 @@ export async function resolveFavouriteStationsForLibrary(
     }
     const t = id.trim();
     if (!t) continue;
+    const kur = getKurdishCuratedStationByUuid(t);
+    if (kur) {
+      out.push(kur);
+      continue;
+    }
     const s = radioMap.get(t);
     if (s) out.push(s);
   }
