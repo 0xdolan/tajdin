@@ -5,7 +5,7 @@ import type { Playlist } from "../../shared/types/playlist";
 import type { Station } from "../../shared/types/station";
 import { STATION_LIST_ROW_HEIGHT_PX } from "../constants/stationListLayout";
 import { useSurface } from "../SurfaceContext";
-import { loadPlaylistsForLibrary, resolveStationForLibrary } from "../stationLibraryApi";
+import { loadPlaylistsForLibrary, resolveFavouriteStationsForLibrary } from "../stationLibraryApi";
 import { useStationStore } from "../store/stationStore";
 import { StationCard } from "./StationCard";
 import { TajdinVirtuosoScroller } from "./TajdinVirtuosoScroller";
@@ -37,10 +37,7 @@ export function FavouritesStationList() {
     let cancelled = false;
     setLoading(true);
     void (async () => {
-      const rows = await Promise.all(
-        favouriteIds.map((id) => resolveStationForLibrary(defaultRadioBrowserClient, id)),
-      );
-      const list = rows.filter((x): x is Station => x != null);
+      const list = await resolveFavouriteStationsForLibrary(defaultRadioBrowserClient, favouriteIds);
       if (!cancelled) {
         setStations(list);
         replaceSearchResults(list);
