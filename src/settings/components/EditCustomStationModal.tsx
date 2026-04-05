@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { StationFavicon } from "../../popup/components/StationArtwork";
+import { STATION_LIST_ROW_HEIGHT_PX } from "../../popup/constants/stationListLayout";
 import { updateCustomStation } from "../../popup/stationLibraryApi";
 import type { Station } from "../../shared/types/station";
 import { sanitizeDisplayText, stationArtworkHttpUrl } from "../../shared/utils/sanitize";
@@ -113,7 +114,8 @@ export function EditCustomStationModal({ open, station, onOpenChange, onSaved }:
           Stream and cover must use HTTP or HTTPS. Clear the cover field to remove artwork.
         </p>
         <div
-          className="mb-4 flex h-[72px] items-center gap-2 rounded-lg border border-neutral-700 bg-neutral-900/80 px-2 py-1.5"
+          className="mb-4 flex items-center gap-1.5 rounded-lg border border-neutral-700 bg-neutral-900/80 px-2 py-1"
+          style={{ minHeight: STATION_LIST_ROW_HEIGHT_PX }}
           aria-hidden
         >
           <StationFavicon coverUrl={coverUrl.trim() || undefined} favicon={undefined} />

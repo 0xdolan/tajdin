@@ -7,6 +7,7 @@ import {
   type AddStationDraftScope,
 } from "../addStationDraftSession";
 import { isValidHttpOrHttpsStreamUrl } from "../../shared/utils/validate-stream-url";
+import { STATION_LIST_ROW_HEIGHT_PX } from "../constants/stationListLayout";
 import { addCustomStation } from "../stationLibraryApi";
 import { StationFavicon } from "./StationArtwork";
 
@@ -159,7 +160,8 @@ export function AddStationModal({ open, onOpenChange, onAdded, draftScope }: Add
           <code className="text-neutral-400">custom:</code> id.
         </p>
         <div
-          className="mb-4 flex h-[72px] items-center gap-2 rounded-lg border border-neutral-700 bg-neutral-900/80 px-2 py-1.5"
+          className="mb-4 flex items-center gap-1.5 rounded-lg border border-neutral-700 bg-neutral-900/80 px-2 py-1"
+          style={{ minHeight: STATION_LIST_ROW_HEIGHT_PX }}
           aria-hidden
         >
           <StationFavicon coverUrl={coverUrl.trim() || undefined} favicon={undefined} />

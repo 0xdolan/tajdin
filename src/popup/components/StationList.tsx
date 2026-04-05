@@ -11,6 +11,7 @@ import type { Playlist } from "../../shared/types/playlist";
 import type { Station } from "../../shared/types/station";
 import type { SearchMode } from "../hooks/useSearch";
 import { useSurface } from "../SurfaceContext";
+import { STATION_LIST_ROW_HEIGHT_PX } from "../constants/stationListLayout";
 import { loadCustomStations, loadPlaylistsForLibrary } from "../stationLibraryApi";
 import { useStationStore } from "../store/stationStore";
 import { StationCard } from "./StationCard";
@@ -64,11 +65,13 @@ export type StationListContext = {
 function StationListSkeleton() {
   const surface = useSurface();
   const bar =
-    surface === "light" ? "h-[72px] shrink-0 animate-pulse rounded-md bg-neutral-200/90" : "h-[72px] shrink-0 animate-pulse rounded-md bg-neutral-800/80";
+    surface === "light"
+      ? "shrink-0 animate-pulse rounded-md bg-neutral-200/90"
+      : "shrink-0 animate-pulse rounded-md bg-neutral-800/80";
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2 py-1" aria-busy="true" aria-label="Loading stations">
       {Array.from({ length: 8 }, (_, i) => (
-        <div key={i} className={bar} />
+        <div key={i} className={bar} style={{ height: STATION_LIST_ROW_HEIGHT_PX }} />
       ))}
     </div>
   );
@@ -276,7 +279,7 @@ export function StationList({
       style={{ height: "100%" }}
       context={listContext}
       data={searchResults}
-      defaultItemHeight={72}
+      defaultItemHeight={STATION_LIST_ROW_HEIGHT_PX}
       atBottomThreshold={BROWSE_LOAD_THRESHOLD_PX}
       endReached={handleEndReached}
       computeItemKey={(_index, station) => station.stationuuid}
@@ -296,9 +299,10 @@ export function StationList({
               <div
                 className={
                   surface === "light"
-                    ? "h-[72px] animate-pulse rounded-md bg-neutral-200/80"
-                    : "h-[72px] animate-pulse rounded-md bg-neutral-800/60"
+                    ? "animate-pulse rounded-md bg-neutral-200/80"
+                    : "animate-pulse rounded-md bg-neutral-800/60"
                 }
+                style={{ height: STATION_LIST_ROW_HEIGHT_PX }}
               />
             </div>
           ) : null,
