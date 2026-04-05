@@ -3,6 +3,7 @@ import { Virtuoso } from "react-virtuoso";
 import { defaultRadioBrowserClient } from "../../shared/api/radio-browser.api";
 import type { Playlist } from "../../shared/types/playlist";
 import type { Station } from "../../shared/types/station";
+import { STATION_LIST_ROW_HEIGHT_PX } from "../constants/stationListLayout";
 import { useSurface } from "../SurfaceContext";
 import { loadPlaylistsForLibrary, resolveStationForLibrary } from "../stationLibraryApi";
 import { useStationStore } from "../store/stationStore";
@@ -71,9 +72,10 @@ export function FavouritesStationList() {
             key={i}
             className={
               surface === "light"
-                ? "h-[72px] shrink-0 animate-pulse rounded-md bg-neutral-200/90"
-                : "h-[72px] shrink-0 animate-pulse rounded-md bg-neutral-800/80"
+                ? "shrink-0 animate-pulse rounded-md bg-neutral-200/90"
+                : "shrink-0 animate-pulse rounded-md bg-neutral-800/80"
             }
+            style={{ height: STATION_LIST_ROW_HEIGHT_PX }}
           />
         ))}
       </div>
@@ -91,7 +93,7 @@ export function FavouritesStationList() {
       components={{ Scroller: TajdinVirtuosoScroller }}
       context={listContext}
       data={stations}
-      defaultItemHeight={72}
+      defaultItemHeight={STATION_LIST_ROW_HEIGHT_PX}
       computeItemKey={(_index, station) => station.stationuuid}
       itemContent={(_index, station, ctx) => (
         <StationCard station={station} playlists={ctx.playlists} onLibraryMutated={ctx.refreshLibrary} />

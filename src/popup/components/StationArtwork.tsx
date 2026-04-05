@@ -22,11 +22,11 @@ type StationFaviconProps = {
   surface?: "dark" | "light";
 };
 
-/** Square artwork for list rows (10 = 2.5rem). `coverUrl` (custom station) overrides `favicon`. */
+/** Square artwork for list rows (9 = 2.25rem). `coverUrl` (custom station) overrides `favicon`. */
 export function StationFavicon({
   favicon,
   coverUrl,
-  sizeClass = "h-10 w-10",
+  sizeClass = "h-9 w-9",
   surface = "dark",
 }: StationFaviconProps) {
   const [failed, setFailed] = useState(false);

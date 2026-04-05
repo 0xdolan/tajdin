@@ -3,10 +3,11 @@
 exports[`StationCard > matches snapshot for core layout 1`] = `
 <div
   aria-label="Play Test Radio"
-  class="group/station box-border flex min-h-[72px] cursor-pointer items-center gap-2 overflow-visible border-b px-1 py-1.5 outline-none border-neutral-800/90 hover:bg-neutral-900/60  "
+  class="group/station box-border flex cursor-pointer items-center gap-1.5 overflow-visible border-b px-1 py-1 outline-none border-neutral-800/90 hover:bg-neutral-900/60  "
   data-state="closed"
   data-testid="station-card"
   role="button"
+  style="min-height: 60px;"
   tabindex="0"
 >
   <div
@@ -14,7 +15,7 @@ exports[`StationCard > matches snapshot for core layout 1`] = `
   >
     <div
       aria-hidden="true"
-      class="flex shrink-0 items-center justify-center rounded-md bg-neutral-800 text-neutral-500 h-10 w-10"
+      class="flex shrink-0 items-center justify-center rounded-md bg-neutral-800 text-neutral-500 h-9 w-9"
     >
       <svg
         class="h-5 w-5"
@@ -38,13 +39,13 @@ exports[`StationCard > matches snapshot for core layout 1`] = `
     class="min-w-0 flex-1"
   >
     <p
-      class="truncate text-sm font-medium text-neutral-100 "
+      class="truncate text-sm font-medium leading-tight text-neutral-100 "
       dir="auto"
     >
       Test Radio
     </p>
     <p
-      class="truncate text-xs text-neutral-500 "
+      class="truncate text-xs leading-tight text-neutral-500 "
       dir="auto"
     >
       Testland
@@ -52,7 +53,7 @@ exports[`StationCard > matches snapshot for core layout 1`] = `
       English
     </p>
     <p
-      class="truncate text-xs text-neutral-600"
+      class="truncate text-xs leading-tight text-neutral-600"
     >
       128 kbps
     </p>

@@ -11,6 +11,7 @@ import { useSurface } from "../SurfaceContext";
 import { usePlayerStore } from "../store/playerStore";
 import { useStationStore } from "../store/stationStore";
 import { stationRowHeartIconButtonClass, stationRowIconButtonClass } from "../utils/stationRowIconButton";
+import { STATION_LIST_ROW_HEIGHT_PX } from "../constants/stationListLayout";
 import { AddToPlaylistIcon } from "./AddToPlaylistIcon";
 import { StationFavicon } from "./StationArtwork";
 
@@ -185,8 +186,9 @@ export function StationCard({
           tabIndex={0}
           aria-label={rowAriaLabel}
           aria-current={isCurrent ? "true" : undefined}
+          style={{ minHeight: STATION_LIST_ROW_HEIGHT_PX }}
           className={[
-            "group/station box-border flex min-h-[72px] cursor-pointer items-center gap-2 overflow-visible border-b px-1 py-1.5 outline-none",
+            "group/station box-border flex cursor-pointer items-center gap-1.5 overflow-visible border-b px-1 py-1 outline-none",
             rowBorder,
             rowHover,
             rowBg,
@@ -205,13 +207,19 @@ export function StationCard({
             <StationFavicon coverUrl={station.coverUrl} favicon={station.favicon} surface={surface} />
           </div>
           <div className="min-w-0 flex-1">
-            <p className={`truncate text-sm font-medium ${titleC} ${nameAr ? "tajdin-font-arabic" : ""}`} dir="auto">
+            <p
+              className={`truncate text-sm font-medium leading-tight ${titleC} ${nameAr ? "tajdin-font-arabic" : ""}`}
+              dir="auto"
+            >
               {nameLine}
             </p>
-            <p className={`truncate text-xs ${subC} ${metaAr ? "tajdin-font-arabic" : ""}`} dir="auto">
+            <p
+              className={`truncate text-xs leading-tight ${subC} ${metaAr ? "tajdin-font-arabic" : ""}`}
+              dir="auto"
+            >
               {country} · {lang}
             </p>
-            <p className={`truncate text-xs ${sub2C}`}>{bitrate}</p>
+            <p className={`truncate text-xs leading-tight ${sub2C}`}>{bitrate}</p>
           </div>
           <div className={`relative shrink-0 ${actionsColOpacity}`}>
             <div className="flex flex-row items-center justify-end gap-0.5">
