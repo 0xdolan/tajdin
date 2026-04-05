@@ -16,6 +16,7 @@ import { useStationStore } from "../../store/stationStore";
 import type { Station } from "../../../shared/types/station";
 import { AddToPlaylistIcon } from "../AddToPlaylistIcon";
 import { HeartIcon } from "../HeartIcon";
+import { RadioFallbackIcon } from "../StationArtwork";
 
 function buildStationSubtitle(station: Station | null, isPlaying: boolean, muted: boolean): string {
   if (!station) {
@@ -54,26 +55,6 @@ function buildStationTooltip(station: Station | null): string | undefined {
   return pieces.join(" · ");
 }
 
-/** Heroicons outline `radio` — default artwork when no favicon/cover (clear “receiver” metaphor). */
-function StationArtPlaceholderGlyph() {
-  return (
-    <svg
-      className="h-[1.125rem] w-[1.125rem] shrink-0"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.5}
-      aria-hidden
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="m3.75 7.5 16.5-4.125M12 6.75c-2.708 0-5.363.224-7.948.655C2.999 7.58 2.25 8.507 2.25 9.574v9.176A2.25 2.25 0 0 0 4.5 21h15a2.25 2.25 0 0 0 2.25-2.25V9.574c0-1.067-.75-1.994-1.802-2.169A48.329 48.329 0 0 0 12 6.75Zm-1.683 6.443-.005.005-.006-.005.006-.005.005.005Zm-.005 2.127-.005-.006.005-.005.005.005-.005.005Zm-2.116-.006-.005.006-.006-.006.005-.005.006.005Zm-.005-2.116-.006-.005.006-.005.005.005-.005.005ZM9.255 10.5v.008h-.008V10.5h.008Zm3.249 1.88-.007.004-.003-.007.006-.003.004.006Zm-1.38 5.126-.003-.006.006-.004.004.007-.006.003Zm.007-6.501-.003.006-.007-.003.004-.007.006.004Zm1.37 5.129-.007-.004.004-.006.006.003-.004.007Zm.504-1.877h-.008v-.007h.008v.007ZM9.255 18v.008h-.008V18h.008Zm-3.246-1.87-.007.004L6 16.127l.006-.003.004.006Zm1.366-5.119-.004-.006.006-.004.004.007-.006.003ZM7.38 17.5l-.003.006-.007-.003.004-.007.006.004Zm-1.376-5.116L6 12.38l.003-.007.007.004-.004.007Zm-.5 1.873h-.008v-.007h.008v.007ZM17.25 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Zm0 4.5a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-      />
-    </svg>
-  );
-}
-
 function StationArt({
   station,
   isPlaying,
@@ -109,7 +90,7 @@ function StationArt({
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center" aria-hidden>
-          <StationArtPlaceholderGlyph />
+          <RadioFallbackIcon className="h-[1.125rem] w-[1.125rem] shrink-0" />
         </div>
       )}
       {isPlaying ? (
@@ -384,18 +365,12 @@ export function Player() {
 
   const listNavDisabled = searchResultsLen === 0 || busy;
   const isFavourite = Boolean(stationuuid && favouriteIds.includes(stationuuid));
-  const favBtnPlain =
-    surface === "light"
-      ? `flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${
-          isFavourite
-            ? "text-rose-500"
-            : "text-neutral-500 hover:bg-neutral-200/80 hover:text-rose-500"
-        }`
-      : `flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${
-          isFavourite
-            ? "text-rose-400"
-            : "text-neutral-500 hover:bg-neutral-800/80 hover:text-rose-300"
-        }`;
+  /** Same chrome as nav / random buttons; rose when saved (no extra frame). */
+  const favNavBtn = isFavourite
+    ? surface === "light"
+      ? "flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-rose-500 hover:bg-neutral-200/90"
+      : "flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-rose-400 hover:bg-neutral-800/90"
+    : navBtn;
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-1">
@@ -410,7 +385,7 @@ export function Player() {
       </div>
 
       <div className="flex w-full min-w-0 items-center gap-1">
-        <div className="flex min-w-0 min-h-0 shrink-0 items-center gap-0.5">
+        <div className="flex min-h-0 min-w-0 shrink-0 items-center gap-0.5">
           <StationArt station={station} isPlaying={isPlaying} />
           <div className="flex shrink-0 items-center gap-0.5">
             <div
@@ -461,7 +436,7 @@ export function Player() {
             {stationuuid ? (
               <button
                 type="button"
-                className={favBtnPlain}
+                className={favNavBtn}
                 aria-label={isFavourite ? "Remove from favourites" : "Add to favourites"}
                 aria-pressed={isFavourite}
                 title={isFavourite ? "Remove from favourites" : "Add to favourites"}
@@ -474,7 +449,7 @@ export function Player() {
           </div>
         </div>
 
-        <div className="flex min-h-0 min-w-0 flex-1 items-center justify-end gap-0.5 ps-0.5">
+        <div className="ms-auto flex min-h-0 shrink-0 items-center gap-0.5">
           <button
             type="button"
             aria-label={effectivelySilent ? "Unmute" : "Mute"}
@@ -484,7 +459,7 @@ export function Player() {
           >
             {effectivelySilent ? <SpeakerOffIcon /> : <SpeakerOnIcon />}
           </button>
-          <label className="flex h-7 min-h-0 min-w-0 flex-1 basis-0 items-center">
+          <label className="flex h-7 w-[3.25rem] shrink-0 items-center sm:w-14">
             <span className="sr-only">Volume</span>
             <input
               type="range"
