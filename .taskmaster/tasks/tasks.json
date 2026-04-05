@@ -1168,18 +1168,18 @@
         "dependencies": [
           "24"
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
             "title": "StationCard: horizontal action icons (favourite, add-to-playlist, copy)",
             "description": "Replace vertical stack of heart / list-plus / copy with a single horizontal group so the action column is shorter and more list rows fit on screen.",
             "dependencies": [],
-            "details": "`StationCard.tsx`: `flex-row` (or inline flex) for the three controls; preserve touch targets, `stopPropagation`, hover/focus opacity rules, coarse pointer visibility, and Radix dropdown/context behaviour. Adjust spacing so the row does not widen past the popup; `min-w-0` on text column unchanged. Update `StationCard` snapshot / tests if present.",
-            "status": "pending",
+            "details": "DONE: `StationCard` action strip `flex-row items-center justify-end gap-0.5`; heart `h-8 w-8` to match add/copy; copy hint `absolute right-0 top-full`. Snapshot updated.",
+            "status": "done",
             "testStrategy": "Visual Browse + Favourites light/dark; narrow popup width; no accidental play; Vitest unchanged behaviour on control clicks.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-06T12:00:00.000Z"
+            "updatedAt": "2026-04-05T00:47:09.386Z"
           },
           {
             "id": 2,
@@ -1228,7 +1228,7 @@
             "updatedAt": "2026-04-06T12:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-06T12:00:00.000Z"
+        "updatedAt": "2026-04-05T00:47:09.386Z"
       },
       {
         "id": "26",
@@ -1272,7 +1272,7 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-06T12:00:00.142Z",
+      "lastModified": "2026-04-05T00:47:09.386Z",
       "taskCount": 26,
       "completedCount": 24,
       "tags": [
