@@ -53,13 +53,14 @@ function buildStationTooltip(station: Station | null): string | undefined {
   return pieces.join(" · ");
 }
 
-function RadioGlyph() {
+/** Heroicons solid `signal` — reads as broadcast / on-air when no artwork. */
+function StationArtPlaceholderGlyph() {
   return (
-    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+    <svg className="h-[1.125rem] w-[1.125rem]" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
       <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.5m0 0v4.125c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18m-9.75-2.25h9.75"
+        fillRule="evenodd"
+        d="M5.636 4.575a.75.75 0 0 1 0 1.061 9 9 0 0 0 0 12.728.75.75 0 1 1-1.06 1.06c-4.101-4.1-4.101-10.748 0-14.849a.75.75 0 0 1 1.06 0Zm12.728 0a.75.75 0 0 1 1.06 0c4.101 4.1 4.101 10.75 0 14.85a.75.75 0 1 1-1.06-1.061 9 9 0 0 0 0-12.728.75.75 0 0 1 0-1.06ZM7.757 6.697a.75.75 0 0 1 0 1.06 6 6 0 0 0 0 8.486.75.75 0 0 1-1.06 1.06 7.5 7.5 0 0 1 0-10.606.75.75 0 0 1 1.06 0Zm8.486 0a.75.75 0 0 1 1.06 0 7.5 7.5 0 0 1 0 10.606.75.75 0 0 1-1.06-1.06 6 6 0 0 0 0-8.486.75.75 0 0 1 0-1.06ZM9.879 8.818a.75.75 0 0 1 0 1.06 3 3 0 0 0 0 4.243.75.75 0 1 1-1.061 1.061 4.5 4.5 0 0 1 0-6.364.75.75 0 0 1 1.06 0Zm4.242 0a.75.75 0 0 1 1.061 0 4.5 4.5 0 0 1 0 6.364.75.75 0 0 1-1.06-1.06 3 3 0 0 0 0-4.243.75.75 0 0 1 0-1.061ZM10.875 12a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z"
+        clipRule="evenodd"
       />
     </svg>
   );
@@ -100,7 +101,7 @@ function StationArt({
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center" aria-hidden>
-          <RadioGlyph />
+          <StationArtPlaceholderGlyph />
         </div>
       )}
       {isPlaying ? (
@@ -137,13 +138,14 @@ function PauseIcon() {
   );
 }
 
+/** Heroicons outline `speaker-wave`. */
 function SpeakerOnIcon() {
   return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l-3-2.25v12l3-2.25M9 6.75h.008v10.5H9V6.75z"
+        d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z"
       />
     </svg>
   );
@@ -165,16 +167,15 @@ function SkipForwardIcon() {
   );
 }
 
-/** Dice face — reads as “pick at random” vs generic shuffle arrows. */
+/** Heroicons outline `arrow-path` — random / reshuffle from list. */
 function RandomStationIcon() {
   return (
     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
-      <rect x="4.75" y="4.75" width="14.5" height="14.5" rx="2.25" ry="2.25" />
-      <circle cx="9.25" cy="9.25" r="1.35" fill="currentColor" stroke="none" />
-      <circle cx="14.75" cy="9.25" r="1.35" fill="currentColor" stroke="none" />
-      <circle cx="12" cy="12" r="1.35" fill="currentColor" stroke="none" />
-      <circle cx="9.25" cy="14.75" r="1.35" fill="currentColor" stroke="none" />
-      <circle cx="14.75" cy="14.75" r="1.35" fill="currentColor" stroke="none" />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+      />
     </svg>
   );
 }
@@ -271,13 +272,14 @@ function AddCurrentToPlaylistMenu({
   );
 }
 
+/** Heroicons outline `speaker-x-mark`. */
 function SpeakerOffIcon() {
   return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        d="M17.25 9.75L19.5 12m0 0l2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6L9 6.75v10.5l3.75-2.25M6.75 8.25H4.5v7.5h2.25"
+        d="M17.25 9.75 19.5 12m0 0 2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6 4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z"
       />
     </svg>
   );
@@ -444,17 +446,20 @@ export function Player() {
           >
             {muted ? <SpeakerOffIcon /> : <SpeakerOnIcon />}
           </button>
-          <label className="flex h-8 min-w-[64px] max-w-[100px] shrink-0 items-center gap-1">
+          <label className="flex h-8 min-w-[72px] max-w-[108px] shrink-0 items-center gap-1">
             <span className="sr-only">Volume</span>
             <input
               type="range"
               min={0}
               max={100}
+              step={1}
               value={volumePercent}
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={volumePercent}
-              className="h-1 w-full min-w-0 cursor-pointer accent-amber-500"
+              className={`tajdin-volume-range h-2 w-full min-w-0 cursor-pointer accent-amber-500 ${
+                surface === "light" ? "tajdin-volume-range--light" : "tajdin-volume-range--dark"
+              }`}
               onChange={(e) => onVolumeChange(Number(e.target.value))}
             />
           </label>

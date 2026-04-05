@@ -1,9 +1,15 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { usePlayerStore } from "./playerStore";
+import { DEFAULT_PLAYER_VOLUME_PERCENT, usePlayerStore } from "./playerStore";
 
 describe("usePlayerStore", () => {
   beforeEach(() => {
     usePlayerStore.getState().resetPlayer();
+  });
+
+  it("resetPlayer uses default volume for first-run UX", () => {
+    usePlayerStore.getState().setVolumePercent(12);
+    usePlayerStore.getState().resetPlayer();
+    expect(usePlayerStore.getState().volumePercent).toBe(DEFAULT_PLAYER_VOLUME_PERCENT);
   });
 
   it("setVolumePercent clamps to 0–100", () => {

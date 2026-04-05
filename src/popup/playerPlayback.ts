@@ -9,6 +9,9 @@ export async function loadUrlAndPlay(url: string): Promise<LoadPlayResult> {
   if (!loadR.ok || loadR.result.type !== "tajdin/player/load" || !loadR.result.data.ok) {
     return "load-failed";
   }
+  const { muted, volumePercent } = usePlayerStore.getState();
+  const effectiveVol = muted ? 0 : volumePercent;
+  await sendPlayerCommand({ type: "tajdin/player/set-volume", volumePercent: effectiveVol });
   const playR = await sendPlayerCommand({ type: "tajdin/player/play" });
   if (!playR.ok || playR.result.type !== "tajdin/player/play" || !playR.result.data.ok) {
     return "play-failed";
