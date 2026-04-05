@@ -1268,13 +1268,92 @@
           }
         ],
         "updatedAt": "2026-04-03T19:10:00.000Z"
+      },
+      {
+        "id": "27",
+        "title": "Playlists UI/UX refactor: clear flows + reusable components",
+        "description": "Redesign popup/settings Playlists experience so create, select, rename, delete, reorder, and add stations are obvious. Extract reusable building blocks; simplify surface-aware styling; document layout in development.md.",
+        "details": "Target: `src/popup/components/playlists/*` (surface tokens, picker list replacing opaque `<select>`, create form, editor card with rename/delete/DnD, add-station pickers). Page order: intro → create → choose playlist → edit current playlist (stations + extra add) → browse/search to add. Shared by `PlaylistsPage` from popup Lists tab and settings Playlists section.",
+        "testStrategy": "`npm run lint`, `npm run typecheck`, `npm test -- --run`, `npm run verify:extension`; manual Lists tab: create, switch playlists, rename, delete, drag reorder, search add.",
+        "priority": "medium",
+        "dependencies": [
+          "26"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Shared playlist surface classes + folder scaffold",
+            "description": "Add `playlistSurfaceClasses.ts` (or equivalent) to centralize light/dark Tailwind tokens used across playlist subcomponents.",
+            "dependencies": [],
+            "details": "DONE: `playlistSurfaceClasses.ts` + `components/playlists/` module.",
+            "status": "done",
+            "testStrategy": "Typecheck; visual parity in both surfaces.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T22:30:00.000Z"
+          },
+          {
+            "id": 2,
+            "title": "PlaylistPickerList + PlaylistCreateForm components",
+            "description": "Replace native select with a visible list of playlists (name + station count); prominent create name + button.",
+            "dependencies": [
+              1
+            ],
+            "details": "DONE: `PlaylistPickerList` (`role=\"listbox\"` / `aria-selected`), `PlaylistCreateForm` card.",
+            "status": "done",
+            "testStrategy": "Manual: many playlists scroll; screen reader label on list.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T22:30:00.000Z"
+          },
+          {
+            "id": 3,
+            "title": "PlaylistEditorCard + add pickers + sortable rows (extracted)",
+            "description": "Move rename/delete, DnD list, and collapsible ‘more ways to add’ into focused modules using shared classes.",
+            "dependencies": [
+              1
+            ],
+            "details": "DONE: `PlaylistEditorCard`, `PlaylistSortableStationRow`, `PlaylistAddPickers` (`PlaylistMoreWaysToAdd`).",
+            "status": "done",
+            "testStrategy": "Regression: reorder, remove, play from playlist, append by id/favourites/custom.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T22:30:00.000Z"
+          },
+          {
+            "id": 4,
+            "title": "PlaylistsPage orchestration: reorder sections + wire imports",
+            "description": "Edit selected playlist above ‘Add from search’; thin page component; update TabPanel/settings import paths if file moves.",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "DONE: `playlists/PlaylistsPage.tsx`; `components/PlaylistsPage.tsx` re-export; TabPanel/settings imports unchanged.",
+            "status": "done",
+            "testStrategy": "Popup Lists + settings Playlists both load.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T22:30:00.000Z"
+          },
+          {
+            "id": 5,
+            "title": "docs/development.md + quality gate",
+            "description": "Document playlists component layout path; run lint, typecheck, tests, verify:extension.",
+            "dependencies": [
+              4
+            ],
+            "details": "DONE: `docs/development.md` popup row; lint, typecheck, test, verify:extension green.",
+            "status": "done",
+            "testStrategy": "All npm scripts green.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T22:30:00.000Z"
+          }
+        ],
+        "updatedAt": "2026-04-03T22:30:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
       "lastModified": "2026-04-05T01:54:02.221Z",
-      "taskCount": 26,
-      "completedCount": 25,
+      "taskCount": 27,
+      "completedCount": 26,
       "tags": [
         "master"
       ]
