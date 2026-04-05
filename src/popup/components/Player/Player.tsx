@@ -309,10 +309,7 @@ export function Player() {
     setBusy(true);
     try {
       if (!isPlaying) {
-        if (!hasPlayableUrl) {
-          const resolved = await ensurePlayerStationResolved();
-          if (!resolved) return;
-        }
+        await ensurePlayerStationResolved();
         const ok = await startPlaybackWithPlaylistSkip();
         if (!ok) {
           setPlaying(false);
@@ -327,7 +324,7 @@ export function Player() {
     } finally {
       setBusy(false);
     }
-  }, [busy, hasPlayableUrl, isPlaying, setPlaying]);
+  }, [busy, isPlaying, setPlaying]);
 
   const toggleMute = useCallback(async () => {
     const { muted: m, volumePercent: vol } = usePlayerStore.getState();
