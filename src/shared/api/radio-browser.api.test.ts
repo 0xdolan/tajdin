@@ -89,6 +89,50 @@ describe("RadioBrowserClient", () => {
     expect(await client.fetchStationByUuid("any")).toBeNull();
   });
 
+  it("fetchStationsByUuids POSTs deduped uuids and returns a map", async () => {
+    const rowB = { ...validRow, stationuuid: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb", name: "B FM" };
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [validRow, rowB],
+    });
+    const client = new RadioBrowserClient({
+      bases: ["https://a.test"],
+      minIntervalMs: 0,
+      fetch: fetchMock as unknown as typeof fetch,
+    });
+    const map = await client.fetchStationsByUuids([
+      `  ${validRow.stationuuid} `,
+      validRow.stationuuid,
+      rowB.stationuuid,
+    ]);
+    expect(map.size).toBe(2);
+    expect(map.get(validRow.stationuuid)?.name).toBe("Test FM");
+    expect(map.get(rowB.stationuuid)?.name).toBe("B FM");
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://a.test/json/stations/byuuid",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        }),
+        body: JSON.stringify({ uuids: [validRow.stationuuid, rowB.stationuuid] }),
+      }),
+    );
+  });
+
+  it("fetchStationsByUuids returns empty map for empty input without fetch", async () => {
+    const fetchMock = vi.fn();
+    const client = new RadioBrowserClient({
+      bases: ["https://a.test"],
+      minIntervalMs: 0,
+      fetch: fetchMock as unknown as typeof fetch,
+    });
+    const map = await client.fetchStationsByUuids([]);
+    expect(map.size).toBe(0);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it("defaults limit to 50 in query string", async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
