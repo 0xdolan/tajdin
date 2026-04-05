@@ -7,27 +7,29 @@
   <sub>Vector: <code>tajdin-logo-black.svg</code> / <code>tajdin-logo-white.svg</code> · Raster: <code>tajdin-logo-white.png</code> · Also <code>.jpg</code>, <code>.pdf</code> under <code>public/logo/</code> for print or other tools.</sub>
 </p>
 
-**Tajdîn** - always by your side; Radio Browser. A Chrome extension (Manifest V3) for discovering and playing stations via the [Radio Browser](https://www.radio-browser.info/) public API. Compact popup UI, background playback through an offscreen audio document, playlists, favourites, and settings you can tune over time.
+**Tajdîn** — always by your side; Radio Browser. A Chrome extension (**Manifest V3**, **Chrome 116+**) for discovering and playing stations via the [Radio Browser](https://www.radio-browser.info/) public API. Compact **popup** (Browse, Favs, Lists, About), **background playback** through an offscreen document, and a full-tab **options** page.
 
 ## What it does
 
-- **Browse and search** — Find stations by name, language, country, tags, and more (API integration with primary + fallback hosts).
-- **Play in the background** — Audio runs in an offscreen document so playback can continue when the popup closes (service worker + `chrome.offscreen`, alarms for keep-alive — see Task Master / PRD for the full roadmap).
-- **Your library** — Favourites, playlists, and custom stations (persisted in `chrome.storage`).
-- **Settings** — Full-tab options page for theme, defaults, and data export/import.
+- **Browse and search** — Stations by name with exact or regex mode, language filter (default includes a **curated Kurdish** list bundled in the extension), random discovery when idle, optional **custom stations only** mode.
+- **Play in the background** — Audio in an offscreen page; **service worker** + `chrome.offscreen` + **alarms** keep playback alive. **Session state** (current station, playlist position, volume) lives in `chrome.storage.session` so shortcuts work with the popup closed.
+- **Controls** — **Keyboard shortcuts** (defaults: media play/pause, next, previous, mute; **open popup** has no default—add it at `chrome://extensions/shortcuts`; all commands are remappable there) and **OS media keys** / lock screen where Chromium exposes **Media Session** for the offscreen player.
+- **Feedback** — Short **playback error** messages (toast + `aria-live`) when a stream fails; playlist-aware copy when skips apply. **Welcome tips** strip (dismissible, stored in settings).
+- **Your library** — **Favourites**, **playlists** (ordered lists, drag-and-drop edit, optional skip-on-failed-stream), and **custom stations** in `chrome.storage.local`. **Playlist delete** offers a short **Undo** window.
+- **Settings & data** — Theme, popup size, search defaults, backup **export/import** JSON (**merge** unions favourites and updates matching IDs; **replace** overwrites per section). **Copy** actions use the **clipboardWrite** permission.
 
-Work in progress: features land incrementally; task order lives in `.taskmaster/tasks/tasks.json`.
+Planning and history also live in **Task Master** (`.taskmaster/tasks/tasks.json`) and the **PRD** (`.taskmaster/docs/zeng-prd-v1.txt`).
 
 ## Quick links
 
-- **Setup, build, load unpacked, tests:** [docs/development.md](docs/development.md)
+- **Setup, build, load unpacked, tests, layout:** [docs/development.md](docs/development.md)
 - **Product / UX spec:** [.taskmaster/docs/zeng-prd-v1.txt](.taskmaster/docs/zeng-prd-v1.txt)
 - **Branching:** integrate on `develop`; `main` only with explicit maintainer approval (see `.cursor/rules/git-flow.mdc`)
 - **Security:** [SECURITY.md](SECURITY.md)
 
 ## Logo and icons
 
-- **`public/logo/`** — Full set for references: **SVG** (scalable, used in the extension UI), **PNG** and **JPG** (previews, README, stores), **PDF** (print/share). Black variants for light backgrounds; white for dark.
-- **README** — Uses **`tajdin-logo-black.png`** above (broad GitHub/client compatibility). You can switch the `<img>` to `.svg` if you prefer vector in the repo view.
-- **Extension UI** (popup header, settings, About) — Loads packaged **`logo/*.svg`** via `chrome.runtime.getURL` and `tajdinMarkSvgUrl()` so the mark stays sharp at any size.
-- **Chrome toolbar / `manifest.json`** — **`public/logo/tajdin-logo-black.png`** for extension and action icons (Chromium needs raster; same asset at 16/32/48/128). Vite copies `public/` into `dist/` on build.
+- **`public/logo/`** — **SVG** (UI via `tajdinMarkSvgUrl()`), **PNG** / **JPG** / **PDF** for README, stores, print. Black for light backgrounds; white for dark.
+- **README** — Uses **`tajdin-logo-black.png`** for broad client compatibility.
+- **Extension UI** — Packaged **`logo/*.svg`** via `chrome.runtime.getURL` for a sharp mark in the popup and settings.
+- **Toolbar / manifest** — **`logo/tajdin-logo-black.png`** at 16/32/48/128 (Chromium needs raster). Vite copies **`public/`** into **`dist/`** on build.

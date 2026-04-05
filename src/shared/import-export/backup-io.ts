@@ -30,7 +30,6 @@ export type ImportPreview = {
   sections: {
     settings: SectionLine;
     playlists: SectionLine;
-    groups: SectionLine;
     customStations: SectionLine;
     favourites: SectionLine;
   };
@@ -173,6 +172,7 @@ function settingsKeysChanged(cur: Settings, imp: Settings | undefined): string[]
     "searchMode",
     "preferredBitrateKbps",
     "playbackAutostart",
+    "welcomePanelDismissed",
   ];
   const out: string[] = [];
   for (const k of keys) {
@@ -228,7 +228,6 @@ export function buildImportPreview(local: LocalDataSnapshot, data: TajdinBackupD
   const sections = {
     settings: buildSettingsLine(local.settings, data.settings, mode),
     playlists: buildPlaylistsLine(local.playlists, data.playlists, mode),
-    groups: buildGroupsLegacyLine(data),
     customStations: buildStationsLine(local.customStations, data.customStations, mode),
     favourites: buildFavouritesLine(local.favouriteIds, data.favouriteIds, mode),
   };
@@ -290,17 +289,6 @@ function buildPlaylistsLine(
     added,
     updated,
     localOnly,
-  };
-}
-
-function buildGroupsLegacyLine(data: TajdinBackupData): SectionLine {
-  const n = data.groups?.length ?? 0;
-  if (n === 0) {
-    return { state: "absent", detail: "No legacy groups section in backup." };
-  }
-  return {
-    state: "absent",
-    detail: `Backup lists ${n} group(s); groups are no longer supported and will not be imported.`,
   };
 }
 

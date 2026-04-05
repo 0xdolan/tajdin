@@ -57,8 +57,8 @@
     "tajdin-previous-station": {
       "description": "Previous station (playlist or favourites)",
       "suggested_key": {
-        "default": "MediaPreviousTrack",
-        "mac": "MediaPreviousTrack"
+        "default": "MediaPrevTrack",
+        "mac": "MediaPrevTrack"
       }
     },
     "tajdin-toggle-mute": {
@@ -69,11 +69,7 @@
       }
     },
     "tajdin-open-popup": {
-      "description": "Open the Tajdîn popup",
-      "suggested_key": {
-        "default": "Ctrl+Shift+Y",
-        "mac": "Command+Shift+Y"
-      }
+      "description": "Open the Tajdîn popup"
     }
   }
 }

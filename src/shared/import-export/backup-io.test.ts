@@ -157,10 +157,11 @@ describe("buildImportPreview", () => {
     }
   });
 
-  it("notes legacy groups in backup as ignored", () => {
+  it("merge preview ignores legacy groups key when present in backup data", () => {
     const p = buildImportPreview(
       local,
       {
+        favouriteIds: ["s1", "s2"],
         groups: [
           {
             id: "bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb",
@@ -173,7 +174,7 @@ describe("buildImportPreview", () => {
       },
       "merge",
     );
-    expect(p.sections.groups.detail).toMatch(/no longer supported/i);
+    expect(p.sections.favourites.detail).toMatch(/\+1/);
   });
 });
 

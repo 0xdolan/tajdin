@@ -4,9 +4,8 @@ How to run the project from scratch, produce a loadable Chrome extension, and it
 
 ## Prerequisites
 
-- **Node.js** 22.x (LTS) and **npm** 10+  
-  - Check: `node -v` and `npm -v`
-- **Google Chrome** (or another Chromium browser) with developer mode for extensions
+- **Node.js** 22.x (LTS) and **npm** 10+ (matches CI `setup-node`) — check `node -v` and `npm -v`
+- **Google Chrome** **116+** (matches `minimum_chrome_version` in `manifest.json`) with developer mode for extensions
 - **Git** (to clone the repository)
 
 In **VS Code / Cursor**, use the workspace TypeScript version when prompted (`.vscode/settings.json` points at `node_modules/typescript/lib`) so the editor matches `npm run typecheck`.
@@ -38,7 +37,7 @@ Optional:
    npm run build
    ```
 
-4. **Sanity-check the build** (optional but recommended; same checks run in CI after `build`):
+4. **Sanity-check the build** (optional but recommended; CI runs this after `build`):
 
    ```bash
    npm run verify:dist
@@ -57,7 +56,7 @@ Optional:
    - Click **Load unpacked**
    - Select the **`dist/`** directory inside the repo (not the repository root)
 
-The popup, options page, and service worker paths in `manifest.json` match the files Vite emits under `dist/` (for example `src/popup/index.html` inside `dist/`).
+The popup, options page, offscreen page, and service worker paths in `manifest.json` match what Vite emits under `dist/` (for example `dist/src/popup/index.html`).
 
 ## Manual checklist (Chrome)
 
@@ -65,12 +64,13 @@ After `npm run build` (or `build:watch`), load **`dist/`** as unpacked and confi
 
 - [ ] **No manifest errors** on the extension card on `chrome://extensions`.
 - [ ] **Service worker** is active (click “Service worker” / inspect; no crash on startup).
-- [ ] **Popup** opens from the toolbar icon and shows the basic Tajdîn UI (dark shell, title, main tabs including **About**, bottom **Player** bar: station line above controls, one row (no horizontal scroll): compact `h-7`/`h-8` controls, artwork uses shared **`RadioFallbackIcon`** when no favicon/cover (same as list rows), prev/play/next, random, **favourite heart** with same button chrome as random (rose when saved), add-to-playlist, mute icon matches **volume 0 or muted** (else speaker-wave), shorter fixed-width volume slider).
-- [ ] **Options** open from the toolbar **gear** in the popup (`chrome.runtime.openOptionsPage()`), from “Extension options” on the extension card, or the manifest options URL, and render the settings shell (General, Stations, Playlists, Groups).
+- [ ] **Popup** — toolbar icon opens the popup: **Browse** / **Favs** / **Lists** / **About**; optional **welcome** strip until dismissed; **player** at the bottom (prev / play / next, random, favourite, add to playlist, mute, volume); **playback feedback** strip above the player when a stream fails.
+- [ ] **Shortcuts** (optional) — `chrome://extensions/shortcuts`: try play/pause or open popup while the popup is closed, if you have already started playback once.
+- [ ] **Options** — gear in the popup (`chrome.runtime.openOptionsPage()`), “Extension options” on the card, or manifest options URL: **General**, **Stations**, **Playlists**, **Backup**, **About**.
 - [ ] **Storage sync** — change a setting on the options page (for example theme) and confirm the popup updates without a full reload (`chrome.storage.onChanged` on `tajdin.*` keys; legacy `zeng.*` is migrated to `tajdin.*` on startup).
-- [ ] **Permissions** listed on the card include **storage**, **alarms**, **offscreen**, and Radio Browser **host** access.
+- [ ] **Permissions** on the card include **storage**, **alarms**, **offscreen**, **clipboardWrite**, and Radio Browser + broad **host** access for streams.
 
-Automated checks in `npm run verify:dist` do **not** replace this pass; they only validate `dist/` layout and manifest fields.
+Automated checks in `npm run verify:dist` do **not** replace this pass; they validate `dist/` layout, manifest fields, CSP (no `unsafe-eval`, `script-src 'self'`), and that popup/options/offscreen HTML reference built scripts.
 
 ## Day-to-day development
 
@@ -82,21 +82,22 @@ Chrome loads a **static folder** (`dist/`). After code changes, rebuild and refr
 npm run build:watch
 ```
 
-Leave that process running. After each successful rebuild:
+After each successful rebuild:
 
 1. Go to `chrome://extensions`
 2. Click **Reload** on Tajdîn
-3. Open the popup or options page again to see changes
+3. Open the popup or options page again
 
-This is the most reliable workflow for **Manifest V3** + **Vite** until a dedicated extension HMR setup (for example a CRXJS-based pipeline) is added.
+This is the reliable workflow for **Manifest V3** + **Vite** until a dedicated extension HMR pipeline (for example CRXJS) is added.
 
-### Typechecking
+### Typechecking and lint
 
 ```bash
 npm run typecheck
+npm run lint
 ```
 
-Run **`npm run lint`** and this before commits and when refactoring shared types.
+Run both before commits and when refactoring shared types.
 
 ### Tests
 
@@ -104,64 +105,109 @@ Run **`npm run lint`** and this before commits and when refactoring shared types
 npm test
 ```
 
-Runs **Vitest** in Node (`vitest run`). Watch mode: `npx vitest`.
+Runs **Vitest** (`vitest run`). Watch mode: `npx vitest`.
 
 ### `npm run dev` (Vite dev server)
 
-`vite` starts a local dev server (default port **5173**). The **unpacked extension does not use that server**; it only serves files from `dist/`. You can still use `npm run dev` to:
+`vite` starts a local dev server (default port **5173**). The **unpacked extension does not use that server**; it only serves files from `dist/`. You can still use `npm run dev` for quick non-extension previews ( **`chrome.*` APIs are unavailable** in a normal tab).
 
-- Quickly preview **non-extension** behavior in a normal browser tab (limited: `chrome.*` APIs are unavailable), or
-- Experiment with UI-only components if you open built HTML manually
-
-For real extension behavior (storage, service worker, host permissions), use **`build:watch`** and reload the extension as above.
+For real extension behavior, use **`build:watch`** and reload the extension as above.
 
 ## npm scripts
 
-| Script            | Purpose                                                |
-|-------------------|--------------------------------------------------------|
-| `npm run build`   | Production build to `dist/` + copy `manifest.json`     |
-| `npm run build:watch` | Same as `build`, rebuilds when sources change     |
-| `npm run verify:dist` | Assert `dist/` manifest, entries, and key files exist |
-| `npm run verify:extension` | `build` then `verify:dist` (local smoke)      |
-| `npm run lint`        | ESLint on `src/**/*.ts(x)` and `scripts/**/*.mjs`    |
-| `npm run pack:zip`    | Zip `dist/` → `artifacts/tajdin-extension-v{version}.zip` (needs `zip` CLI) |
-| `npm run pack:extension` | `build` then `pack:zip` (Web Store bundle)     |
-| `npm run test`        | `vitest run` (unit tests)                          |
-| `npm run typecheck`   | `tsc --noEmit` across `src/`                      |
-| `npm run dev`     | Vite dev server (see limitations above)                |
+| Script | Purpose |
+|--------|---------|
+| `npm run build` | Production build to `dist/` + copy `manifest.json` |
+| `npm run build:watch` | Same as `build`, rebuilds when sources change |
+| `npm run verify:dist` | Assert `dist/` manifest, entries, CSP, icons, HTML, offscreen `<audio>` |
+| `npm run verify:extension` | `build` then `verify:dist` |
+| `npm run lint` | ESLint on `src/**/*.{ts,tsx}` and `scripts/**/*.mjs` |
+| `npm run pack:zip` | Zip `dist/` → `artifacts/tajdin-extension-v{version}.zip` (needs `zip` CLI) |
+| `npm run pack:extension` | `build` then `pack:zip` (Web Store bundle) |
+| `npm run test` | `vitest run` |
+| `npm run typecheck` | `tsc --noEmit` across `src/` |
+| `npm run dev` | Vite dev server (see limitations above) |
 
 ### Keyboard shortcuts and OS media controls
 
-- **`manifest.json` `commands`** — Global shortcuts (customizable in **`chrome://extensions/shortcuts`**): play/pause (default **media Play/Pause**), next / previous track (**media Next/Previous**), mute (**Ctrl+Shift+9** / **⌘⇧9**), open popup (**Ctrl+Shift+Y** / **⌘⇧Y**). The service worker runs `session-playback.ts` so these work when the popup is closed, using the last station and playlist/favourites context in `chrome.storage.session`.
-- **Media Session API** — The offscreen document sets `navigator.mediaSession` metadata when playback starts and registers **play / pause / nexttrack / previoustrack** handlers that message the service worker (`tajdin/sw/media-session-action`). OS media keys and lock-screen controls apply where Chromium exposes them for the active media session.
-- **Playback feedback** — `PlaybackFeedbackToast` (above `PlayerDock`, `aria-live="polite"`) shows short messages from `playerPlayback` when a stream fails to load or play (including playlist skip hints).
-- **Welcome strip** — First-run tips live in `WelcomeOnboardingBanner` (below `TabNav`). Dismissal sets **`welcomePanelDismissed`** in `tajdin.settings.v1` (merged via `parseSettingsWithDefaults`).
-- **Playlist delete** — After delete, an **Undo** bar appears on the Lists tab for ~12s (`restorePlaylist`); confirm copy explains removal + undo.
+- **`manifest.json` `commands`** — Chromium allows **at most four** default shortcuts per extension. Defaults here: play/pause (**`MediaPlayPause`**), next (**`MediaNextTrack`**), previous (**`MediaPrevTrack`** — not `MediaPreviousTrack`; that string is rejected at install), mute (**Ctrl+Shift+9** / **⌘⇧9**). **Open popup** is declared with **no** default binding; assign it under **`chrome://extensions/shortcuts`**. Remap any command there. The service worker uses **`session-playback.ts`** with **`chrome.storage.session`** so these work when the popup is closed (playlist or favourites context).
+- **Media Session API** — Offscreen sets **`navigator.mediaSession`** metadata and **play / pause / nexttrack / previoustrack** handlers that post **`tajdin/sw/media-session-action`** to the service worker.
+- **Playback feedback** — **`PlaybackFeedbackToast`** (`aria-live="polite"`) above **`PlayerDock`**; messages from **`playerPlayback`** on load/play failure (including playlist skip hints).
+- **Welcome strip** — **`WelcomeOnboardingBanner`** below **`TabNav`**; dismiss sets **`welcomePanelDismissed`** in settings (`tajdin.settings.v1`).
+- **Playlist delete** — **Undo** bar on the Lists tab for ~12 seconds via **`restorePlaylist`**.
 
-GitHub Actions (`.github/workflows/`): **CI** (Task Master JSON, `npm ci`, audit, lint, typecheck, test, build, `verify:dist`), **Security audit** (scheduled + PR `npm audit`), **Dependency review** (PRs), **CodeQL** (JS/TS on push/PR + weekly), **Release** (tag `v*` or manual: verify + pack + upload artifact).
+## CI (GitHub Actions)
 
-## Where things live
+Workflows under **`.github/workflows/`**:
 
-| Path                 | Role |
-|----------------------|------|
-| `manifest.json`      | Source manifest; copied into `dist/` on build. **`host_permissions`** include Radio Browser API hosts plus **`http://*/*`** and **`https://*/*`** so the offscreen `<audio>` element may load arbitrary station stream URLs (API metadata alone is not enough).          |
-| `public/logo/`       | Tajdîn marks: **SVG** (UI via `tajdinMarkSvgUrl()`), **PNG/JPG/PDF** (README, exports, print). `manifest.json` `icons` + `action.default_icon` use **`logo/tajdin-logo-black.png`** (raster required by Chromium). Copied to `dist/logo/` |
-| `src/background/`    | Service worker: `index.ts` (`chrome.commands` → `session-playback.ts`; `tajdin/sw/media-session-action` from offscreen), `session-playback.ts` (session mirror + next/prev/mute/play), `audio-engine.ts` (`tajdin/player/*` → offscreen + ~20s `chrome.alarms` keep-alive), `offscreen-document.ts` |
-| `src/popup/`         | `index.html` sets `class="… tajdin-popup-root"`; `globals.css` clips **document** overflow (`html`/`body`/`#root` `overflow:hidden` only — no `height:100%` on that chain so the popup document sizes from `App`’s configured `popupWidthPx`/`popupHeightPx` and the header is not clipped). Lists scroll inside `StationList` / `PlaylistsPage` / Virtuoso. `App.tsx`: `PopupHeader` → `TabNav` → optional **`WelcomeOnboardingBanner`** → `main` + `TabPanel` (`min-h-0`, `overflow-hidden` chain; About tab: scrollable reused `AboutSection` with popup `surface`) → **`PlaybackFeedbackToast`** → **`PlayerDock`** (footer `min-h-0`, compact `py-1.5`; `Player`: metadata row then one controls row (fits default popup width; `ms-auto` mute + compact volume) — artwork `h-8`, `RadioFallbackIcon` when no art, `h-7` nav / `h-8` play, random · heart (`navBtn` + rose) · add-to-playlist, mute / volume icons from level + mute) → **`AttributionFooter`** (Made by… / Source / version). `SurfaceContext` for light/dark. `components/`: `Player` (session `stationuuid` rehydrates full station via `ensurePlayerStationResolved` on popup load + on Play if needed; **Favourite heart** between random and add-to-playlist (`toggleFavourite`, borderless in player); `StationArt` uses station favicon/cover whenever available while playing or stopped, signal-style placeholder when not, EQ overlay when playing; Heroicons-style speaker-wave / speaker-x-mark + shuffle arrow for random; default volume **75%** on first run via `DEFAULT_PLAYER_VOLUME_PERCENT`, persisted in `chrome.storage.session` with other session player fields; `loadUrlAndPlay` applies muted/volume to offscreen before play; toolbar / `chrome://extensions` use packaged icons from `manifest.json` only), `PlaylistsPage` re-exports from `components/playlists/PlaylistsPage.tsx` (popup Lists + settings: intro copy; **Create playlist** card; **Your playlists** button list with counts (replaces `<select>`); **Edit playlist** card — rename, delete with confirm, DnD reorder, Play/Remove per row, collapsible favourites/custom/id importers; then **Add stations from search** with `useLocalSearch` + `StationSearchBar` + Browse language filter; `StationList` `isolated` + row tap appends to selected playlist; shared tokens in `playlists/playlistSurfaceClasses.ts`), `AddStationModal` (required `draftScope`: `popup` vs `settings`; form + `modalOpen` persisted in `chrome.storage.session` via `addStationDraftSession.ts` / `SessionAddStationDraftSchema` so closing the popup or dismissing the overlay keeps draft until **Cancel** or successful **Save**), `StationSearchBar` (exact API name vs single regex toggle), `StationLanguageFilter`, `StationCard` (Radix context menu + **`@radix-ui/react-dropdown-menu`** row “add to playlist”, portaled; horizontal heart / add / copy via `utils/stationRowIconButton.ts` matching `StationFavicon` frame tokens; compact row height via `constants/stationListLayout.ts`), `StationList` (optional `isolated` keeps results off global `useStationStore` for in-tab search; default browse does **not** merge custom stations — use **Custom only** toggle for `custom:*` list + client-side exact/regex filter; idle browse: Radio Browser `order=random` for discovery; name search / regex corpus use ranked `clickcount`; empty-query mode toggles avoid redundant refetch); `hooks/useSearch` (`useSearch` session + `useLocalSearch` for Playlists tab); `BrowseCustomStationsToggle`; `uiStore` / `popupStorageSync` session UI (`SessionUiSchema` includes optional `browseCustomStationsOnly`); `playerPlayback.ts`; `playerBridge.ts`; `stationLibraryApi.ts` (`resolveFavouriteStationsForLibrary` loads custom stations once and resolves radio favourites via a single Radio Browser POST `byuuid` batch); `store/` + sync |
-| `src/settings/`      | Full-tab options UI: sidebar branding (`ExtensionBranding`, `titleTag="h1"`) + nav + `GeneralSettingsSection`, `CustomStationsTable` (add via reused popup `AddStationModal`, edit via `EditCustomStationModal`), `AboutSection` (default dark surface; popup About tab passes `surface` from `SurfaceContext`), reused `PlaylistsPage` / `GroupsPage`; listens to `chrome.storage.local` changes for `tajdin.*` (and legacy `zeng.*` during migration) to stay in sync with the popup |
-| `src/offscreen/`     | Offscreen doc: `<audio id="player">`, `index.ts` handles `tajdin/offscreen/*` (load, play, pause, volume, state, **set/clear media metadata**, Media Session action handlers → SW). SW: `offscreen-document.ts` + `tajdin/sw/ensure-offscreen` / `tajdin/sw/ping-offscreen` |
-| `src/shared/`        | `data/kurdishCuratedStations.json` + `kurdishCuratedStations.ts` (bundled Kurdish streams, `tajdin:kurdish:*` uuids; Browse language **Kurdish** uses this list, not Radio Browser); `constants/links.ts` (canonical GitHub URLs: `0xdolan/tajdin` repo, issues, author profile), `components/ExtensionBranding.tsx` + `constants/branding.ts` (icon + Tajdîn wordmark + tagline `always by your side; Radio Browser.`; full line in `manifest.json` / `package.json`), `types/` (`Station.coverUrl` optional for custom artwork; `Settings.defaultLanguageCode` default `ku` → Kurdish list on first session), `storage/` (`storage-migration.ts` copies legacy `zeng.*` keys to `tajdin.*`), `import-export/` (`backup-schema.ts`, `backup-io.ts` — Zod `tajdin-backup` v1 JSON on export, import also accepts legacy `zeng-backup`, merge vs replace), `utils/sanitize.ts` (display text + http(s) URLs + `stationArtworkHttpUrl` for list/player artwork), `utils/list-scrollbar.ts` + `globals.css` `.tajdin-scrollbar-{light,dark}` (Firefox `scrollbar-color` + WebKit pseudo-elements for `StationList` / `FavouritesStationList` via `TajdinVirtuosoScroller`, and `PlaylistsPage` overflow), `.tajdin-volume-range` / `--light` / `--dark` (player volume slider track + thumb), `utils/fuzzy-search.ts`, `utils/language-mapper.ts` (`TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE`, `defaultLanguageCodeToBrowseApiValue`), `utils/group-icon-keys.ts`, `utils/validate-stream-url.ts`, `utils/station-merge.ts`, `api/radio-browser.api.ts` (`RadioBrowserClient`, primary + fallback hosts, rate-spaced queue; `fetchStationsByUuids` POST `{ uuids }` for multi-station resolve) |
-| `vite.config.ts`     | Multi-entry build, `base: './'` for extension-relative assets |
-| `dist/`              | **Output only** — gitignored; load this folder in Chrome |
+- **CI** (`ci.yml`) — On push/PR to `main` / `develop` / `release/**`: validate Task Master JSON with `jq` (if present), **Node 22**, `npm ci`, **`npm audit --audit-level=high`**, `lint`, `typecheck`, `test`, `build`, `verify:dist`.
+- **Security audit** — Scheduled / PR `npm audit`.
+- **Dependency review** — PR dependency diffs.
+- **CodeQL** — JS/TS analysis.
+- **Release** — Tag or manual: verify + pack + artifact upload.
+
+## Project layout
+
+### `manifest.json`
+
+Copied to **`dist/manifest.json`** on build. Declares **MV3**, **CSP** for extension pages, **permissions** (`storage`, `alarms`, `offscreen`, `clipboardWrite`), **host_permissions** (Radio Browser hosts + `http://*/*` + `https://*/*` for streams), **action** (popup), **options_ui**, **background** service worker, and **`commands`** (keyboard shortcuts).
+
+### `public/logo/`
+
+Marks for UI (**SVG** via `tajdinMarkSvgUrl()`), README, and **raster icons** referenced by `manifest.json` (copied into `dist/logo/`).
+
+### `src/background/`
+
+- **`index.ts`** — Startup, **`chrome.commands`**, **`chrome.runtime.onMessage`** (player commands, offscreen ping/ensure, **`tajdin/sw/media-session-action`**), migration hook.
+- **`session-playback.ts`** — Reads/writes session player blob; play/pause, next/prev (playlist or favourites), mute; coordinates with **`audio-engine`**.
+- **`audio-engine.ts`** — **`tajdin/player/*`** → offscreen; keep-alive **`chrome.alarms`** (~20 minutes) while playing.
+- **`audio-engine.test.ts`** — Vitest for engine behavior.
+- **`offscreen-document.ts`** — Create/close **`chrome.offscreen`** **AUDIO_PLAYBACK** document.
+
+### `src/offscreen/`
+
+**`index.html`** + **`index.ts`**: `<audio id="player">`, message handlers for load/play/pause/volume/state, **media metadata** and **Media Session** action handlers posting to the service worker.
+
+### `src/popup/`
+
+- **`index.html`**, **`index.tsx`**, **`App.tsx`** — Root layout: **`PopupHeader`** → **`TabNav`** → **`WelcomeOnboardingBanner`** (conditional) → **`TabPanel`** → **`PlaybackFeedbackToast`** → **`PlayerDock`** → **`AttributionFooter`**; **`SurfaceProvider`**; size/theme from **`chrome.storage.local`** settings.
+- **Tabs** — **Browse** (`StationList`, `StationSearchBar`, **`StationLanguageFilter`**, **`BrowseCustomStationsToggle`**), **Favs** (`FavouritesStationList`), **Lists** (`PlaylistsPage` re-exported from **`components/playlists/PlaylistsPage.tsx`**), **About** (reused **`AboutSection`** from settings).
+- **Player** — **`Player`**, **`playerStore`**, **`playerBridge`**, **`playerPlayback`**, **`mediaMetadataSync`**, **`feedbackStore`**; session sync via **`popupStorageSync`** / **`chrome.storage.session`**.
+- **Library** — **`stationLibraryApi`** (playlists, favourites, custom stations, resolve-by-uuid), **`playlistAdvance`** (next/previous playable in playlist).
+- **Styling** — **`globals.css`**, Tailwind, list scrollbars, volume range tokens; popup root classes avoid clipping the header.
+
+### `src/settings/`
+
+Full-tab **options** app: **`App.tsx`** sidebar (**`ExtensionBranding`**) and sections **General** (`GeneralSettingsSection`), **Stations** (`CustomStationsTable`, modals), **Playlists** (same **`PlaylistsPage`** as popup), **Backup** (`ImportExportSection` — export/import JSON, merge vs replace preview), **About** (`AboutSection`). Listens to **`chrome.storage.local`** for `tajdin.*` / legacy `zeng.*`.
+
+### `src/shared/`
+
+- **`api/radio-browser.api.ts`** — Client with primary + fallback hosts, rate-spaced queue, **`fetchStationsByUuids`**.
+- **`data/`** — **`kurdishCuratedStations`** (+ JSON): bundled list when Browse language is Kurdish (`tajdin:kurdish:*` UUIDs).
+- **`constants/`** — **`links.ts`** (repo/issues URLs), **`branding.ts`**, etc.
+- **`components/ExtensionBranding.tsx`** — Shared header branding.
+- **`import-export/`** — **`backup-schema.ts`**, **`backup-io.ts`** (`tajdin-backup` v1, legacy `zeng-backup`, merge/replace).
+- **`messages/`** — **`player.ts`**, **`offscreen.ts`**, **`sw-bridge.ts`** (media session → SW).
+- **`storage/`** — Wrappers, **`STORAGE_KEYS`**, Zod schemas, **`storage-migration.ts`** (`zeng.*` → `tajdin.*`).
+- **`types/`** — Settings (including **`welcomePanelDismissed`**), station, playlist, etc.
+- **`utils/`** — Sanitize, language mapper, stream URL validation, list scrollbar helpers, etc.
+
+### Build and output
+
+| Path | Role |
+|------|------|
+| `vite.config.ts` | Multi-entry build (`popup`, `settings`, `offscreen`, `background`), `base: './'` |
+| `dist/` | **Output only** (gitignored) — load this folder in Chrome |
 
 ## Troubleshooting
 
-- **Blank popup or broken styles** — Confirm you loaded **`dist/`**, not the repo root. Asset URLs in HTML are **relative** (`../../assets/...`); loading the wrong root breaks them.
+- **Blank popup or broken styles** — Load **`dist/`**, not the repo root. Asset URLs in HTML are relative (`../../assets/...`).
 - **Changes not visible** — Run a build (or watch), then **Reload** the extension on `chrome://extensions`.
-- **`npm ci` fails** — Ensure `package-lock.json` is present and committed; otherwise run `npm install` once and commit the lockfile.
-- **Type errors after moving files** — Run `npm run typecheck`. Prefer **relative** imports in `src/` so `tsc` stays simple; use Vite’s `@` alias in `vite.config.ts` only if you add matching `paths` in `tsconfig.json` (with `./` prefixes, never `baseUrl`).
-- **Click a station but nothing plays** — Ensure the built `dist/manifest.json` includes broad **`http://*/*`** and **`https://*/*`** `host_permissions` (see source `manifest.json`). Without them, Chromium blocks the offscreen player from loading most stream URLs even though the Radio Browser API works.
+- **`npm ci` fails** — Ensure `package-lock.json` is committed; otherwise `npm install` once and commit the lockfile.
+- **Type errors after moving files** — `npm run typecheck`. Prefer **relative** imports in `src/`; Vite **`@`** alias needs matching **`tsconfig.json` `paths`** if you use it outside Vite-resolved files.
+- **Station does not play** — Confirm **`dist/manifest.json`** includes **`http://*/*`** and **`https://*/*`** `host_permissions` so the offscreen player can load stream URLs.
+- **Shortcuts do nothing** — Assign keys at **`chrome://extensions/shortcuts`**; playback shortcuts need a **current station** in session (start once from the popup).
 
 ## Security note for local work
 
-Do not commit **`.env`**, API keys, or **`.cursor/mcp.json`** if it contains secrets. See `SECURITY.md` and `.env.example`.
+Do not commit **`.env`**, API keys, or **`.cursor/mcp.json`** if it contains secrets. See **`SECURITY.md`**. The extension build does not require `.env`; **`.env.example`** is for optional Task Master / tooling keys.

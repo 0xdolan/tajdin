@@ -119,7 +119,8 @@ export function ImportExportSection({ reloadToken }: ImportExportSectionProps) {
         <h2 className="text-base font-semibold text-neutral-100">Backup &amp; restore</h2>
         <p className="mt-1 text-sm text-neutral-500">
           Export all local Tajdîn data (settings, playlists, custom stations, favourites) as JSON. Import validates
-          with the same schemas used for storage. Older backups may list groups; those entries are ignored.
+          with the same schemas used for storage. Very old backup files may contain extra keys that Tajdîn no longer
+          uses; those entries are ignored.
         </p>
       </div>
 
@@ -154,8 +155,8 @@ export function ImportExportSection({ reloadToken }: ImportExportSectionProps) {
             <span>
               <span className="font-medium text-neutral-100">Merge</span>
               <span className="mt-0.5 block text-neutral-500">
-                Add new playlists, groups, and stations; same IDs are updated from the file. Favourites are unioned.
-                Settings fields from the file override current values.
+                Add new playlists and custom stations; matching IDs are updated from the file. Favourites are unioned.
+                Any settings fields present in the file override your current values.
               </span>
             </span>
           </label>
@@ -201,9 +202,6 @@ export function ImportExportSection({ reloadToken }: ImportExportSectionProps) {
               </li>
               <li>
                 <span className="text-neutral-300">Playlists:</span> {preview.sections.playlists.detail}
-              </li>
-              <li>
-                <span className="text-neutral-300">Legacy groups:</span> {preview.sections.groups.detail}
               </li>
               <li>
                 <span className="text-neutral-300">Custom stations:</span> {preview.sections.customStations.detail}
