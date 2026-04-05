@@ -16,10 +16,10 @@
     "https://*/*"
   ],
   "icons": {
-    "16": "icons/tajdin-radio-50.png",
-    "32": "icons/tajdin-radio-50.png",
-    "48": "icons/tajdin-radio-50.png",
-    "128": "icons/tajdin-radio-100.png"
+    "16": "logo/tajdin-logo-black.png",
+    "32": "logo/tajdin-logo-black.png",
+    "48": "logo/tajdin-logo-black.png",
+    "128": "logo/tajdin-logo-black.png"
   },
   "background": {
     "service_worker": "background.js",
@@ -29,10 +29,10 @@
     "default_title": "Tajdîn",
     "default_popup": "src/popup/index.html",
     "default_icon": {
-      "16": "icons/tajdin-radio-50.png",
-      "32": "icons/tajdin-radio-50.png",
-      "48": "icons/tajdin-radio-50.png",
-      "128": "icons/tajdin-radio-100.png"
+      "16": "logo/tajdin-logo-black.png",
+      "32": "logo/tajdin-logo-black.png",
+      "48": "logo/tajdin-logo-black.png",
+      "128": "logo/tajdin-logo-black.png"
     }
   },
   "options_ui": {
