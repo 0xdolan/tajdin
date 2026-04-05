@@ -65,7 +65,7 @@ After `npm run build` (or `build:watch`), load **`dist/`** as unpacked and confi
 
 - [ ] **No manifest errors** on the extension card on `chrome://extensions`.
 - [ ] **Service worker** is active (click “Service worker” / inspect; no crash on startup).
-- [ ] **Popup** opens from the toolbar icon and shows the basic Tajdîn UI (dark shell, title, main tabs including **About**, bottom **Player** bar: station line above artwork, prev/play/next, shuffle, mute, volume).
+- [ ] **Popup** opens from the toolbar icon and shows the basic Tajdîn UI (dark shell, title, main tabs including **About**, bottom **Player** bar: station line above controls, prev/play/next, random-from-list (dice icon), mute, volume).
 - [ ] **Options** open from the toolbar **gear** in the popup (`chrome.runtime.openOptionsPage()`), from “Extension options” on the extension card, or the manifest options URL, and render the settings shell (General, Stations, Playlists, Groups).
 - [ ] **Storage sync** — change a setting on the options page (for example theme) and confirm the popup updates without a full reload (`chrome.storage.onChanged` on `tajdin.*` keys; legacy `zeng.*` is migrated to `tajdin.*` on startup).
 - [ ] **Permissions** listed on the card include **storage**, **alarms**, **offscreen**, and Radio Browser **host** access.
