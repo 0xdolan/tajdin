@@ -32,4 +32,4 @@ Planning and history also live in **Task Master** (`.taskmaster/tasks/tasks.json
 - **`public/logo/`** — **SVG** (UI via `tajdinMarkSvgUrl()`), **PNG** / **JPG** / **PDF** for README, stores, print. Black for light backgrounds; white for dark.
 - **README** — Uses **`tajdin-logo-black.png`** for broad client compatibility.
 - **Extension UI** — Packaged **`logo/*.svg`** via `chrome.runtime.getURL` for a sharp mark in the popup and settings.
-- **Toolbar / manifest** — **`logo/tajdin-logo-black.png`** at 16/32/48/128 (Chromium needs raster). Vite copies **`public/`** into **`dist/`** on build.
+- **Toolbar / manifest** — **`logo/tajdin-logo-black.png`** at 16/32/48; **128** uses **`logo/tajdin-extension-icon-128.png`** (96×96 mark + 16px transparent padding per Chrome Web Store icon rules; regenerate with `npm run generate:icon-128`). Vite copies **`public/logo/`** into **`dist/logo/`** on build.

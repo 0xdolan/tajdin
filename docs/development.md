@@ -127,6 +127,7 @@ For real extension behavior, use **`build:watch`** and reload the extension as a
 | `npm run test` | `vitest run` |
 | `npm run typecheck` | `tsc --noEmit` across `src/` |
 | `npm run dev` | Vite dev server (see limitations above) |
+| `npm run generate:icon-128` | Regenerate **`public/logo/tajdin-extension-icon-128.png`** (needs **`magick`**) — 128×128 Web Store icon: 96×96 mark + 16px transparent padding + subtle white glow |
 
 ### Keyboard shortcuts and OS media controls
 
@@ -150,11 +151,11 @@ Workflows under **`.github/workflows/`**:
 
 ### `manifest.json`
 
-Copied to **`dist/manifest.json`** on build. Declares **MV3**, **CSP** for extension pages, **permissions** (`storage`, `alarms`, `offscreen`, `clipboardWrite`), **host_permissions** (Radio Browser hosts + `http://*/*` + `https://*/*` for streams), **action** (popup), **options_ui**, **background** service worker, and **`commands`** (keyboard shortcuts).
+Copied to **`dist/manifest.json`** on build. Declares **MV3**, **CSP** for extension pages, **permissions** (`storage`, `alarms`, `offscreen`, `clipboardWrite`), **host_permissions** (Radio Browser hosts + `http://*/*` + `https://*/*` for streams), **action** (popup), **options_ui**, **icons** (128 uses padded store icon), **background** service worker, and **`commands`** (keyboard shortcuts).
 
 ### `public/logo/`
 
-Marks for UI (**SVG** via `tajdinMarkSvgUrl()`), README, and **raster icons** referenced by `manifest.json` (copied into `dist/logo/`).
+Marks for UI (**SVG** via `tajdinMarkSvgUrl()`), README, and **raster icons** referenced by `manifest.json` (copied into `dist/logo/`). The **128×128** icon **`tajdin-extension-icon-128.png`** follows Chrome Web Store guidance: artwork fits **96×96** centered with **16px transparent padding** per side, **PNG** with alpha, subtle **white outer glow** on the black mark for dark UI. Toolbar sizes **16 / 32 / 48** still use **`tajdin-logo-black.png`**. Regenerate with **`npm run generate:icon-128`** (ImageMagick **`magick`** required).
 
 ### `src/background/`
 

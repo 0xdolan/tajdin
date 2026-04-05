@@ -19,7 +19,7 @@
     "16": "logo/tajdin-logo-black.png",
     "32": "logo/tajdin-logo-black.png",
     "48": "logo/tajdin-logo-black.png",
-    "128": "logo/tajdin-logo-black.png"
+    "128": "logo/tajdin-extension-icon-128.png"
   },
   "background": {
     "service_worker": "background.js",
@@ -32,7 +32,7 @@
       "16": "logo/tajdin-logo-black.png",
       "32": "logo/tajdin-logo-black.png",
       "48": "logo/tajdin-logo-black.png",
-      "128": "logo/tajdin-logo-black.png"
+      "128": "logo/tajdin-extension-icon-128.png"
     }
   },
   "options_ui": {
