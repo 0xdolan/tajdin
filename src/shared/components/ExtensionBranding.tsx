@@ -1,3 +1,5 @@
+import { TAJDIN_TAGLINE_SUBTITLE } from "../constants/branding";
+
 /**
  * Packaged icon + Tajdîn wordmark + tagline. Used in popup header and options sidebar.
  */
@@ -29,7 +31,7 @@ export function ExtensionBranding({
       />
       <div className="min-w-0">
         <TitleTag className={titleClassName}>Tajdîn</TitleTag>
-        <p className={subtitleClassName}>Always by your side · Radio Browser</p>
+        <p className={subtitleClassName}>{TAJDIN_TAGLINE_SUBTITLE}</p>
       </div>
     </div>
   );

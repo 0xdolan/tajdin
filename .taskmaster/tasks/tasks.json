@@ -1168,7 +1168,7 @@
         "dependencies": [
           "24"
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -1221,14 +1221,14 @@
             "title": "Tagline: Tajdîn - always by your side; Radio Browser.",
             "description": "Replace long description/subtitle using em dash and “worldwide radio via” with: Tajdîn - always by your side; Radio Browser.",
             "dependencies": [],
-            "details": "Update `ExtensionBranding` subtitle, `manifest.json` description (and `short` if any), `package.json` description, README/store copy if duplicated; fix `ExtensionBranding.test.tsx` and any snapshot strings. Use hyphen-minus as specified (not em dash).",
-            "status": "pending",
+            "details": "DONE: `src/shared/constants/branding.ts` — `TAJDIN_TAGLINE_FULL` / `TAJDIN_TAGLINE_SUBTITLE`; `ExtensionBranding` uses subtitle under wordmark; `manifest.json` + `package.json` full line with hyphen-minus; `README.md` opening; `ExtensionBranding.test.tsx`; `docs/development.md` shared row.",
+            "status": "done",
             "testStrategy": "Grep old string; Vitest branding test; load popup/settings headers.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-06T12:00:00.000Z"
+            "updatedAt": "2026-04-03T18:50:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-05T01:36:21.221Z"
+        "updatedAt": "2026-04-03T18:50:00.000Z"
       },
       {
         "id": "26",
@@ -1272,7 +1272,7 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-05T01:36:21.222Z",
+      "lastModified": "2026-04-05T01:43:50.143Z",
       "taskCount": 26,
       "completedCount": 24,
       "tags": [
