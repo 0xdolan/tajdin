@@ -211,4 +211,4 @@ Full-tab **options** app: **`App.tsx`** sidebar (**`ExtensionBranding`**) and se
 
 ## Security note for local work
 
-Do not commit **`.env`**, API keys, or **`.cursor/mcp.json`** if it contains secrets. See **`SECURITY.md`**. The extension build does not require `.env`; **`.env.example`** is for optional Task Master / tooling keys.
+Do not commit **`.env`**, API keys, or **`.cursor/mcp.json`** if it contains secrets. See **`SECURITY.md`**. The extension build does not require `.env`; **`.env.example`** is for optional Task Master / tooling keys. For **Chrome Web Store** privacy disclosure, use **`docs/privacy-policy.md`** (link the GitHub `blob` URL for that file after you push).
