@@ -38,5 +38,42 @@
   "options_ui": {
     "page": "src/settings/index.html",
     "open_in_tab": true
+  },
+  "commands": {
+    "tajdin-toggle-playback": {
+      "description": "Play or pause the current station",
+      "suggested_key": {
+        "default": "MediaPlayPause",
+        "mac": "MediaPlayPause"
+      }
+    },
+    "tajdin-next-station": {
+      "description": "Next station (playlist or favourites)",
+      "suggested_key": {
+        "default": "MediaNextTrack",
+        "mac": "MediaNextTrack"
+      }
+    },
+    "tajdin-previous-station": {
+      "description": "Previous station (playlist or favourites)",
+      "suggested_key": {
+        "default": "MediaPreviousTrack",
+        "mac": "MediaPreviousTrack"
+      }
+    },
+    "tajdin-toggle-mute": {
+      "description": "Mute or unmute",
+      "suggested_key": {
+        "default": "Ctrl+Shift+9",
+        "mac": "Command+Shift+9"
+      }
+    },
+    "tajdin-open-popup": {
+      "description": "Open the Tajdîn popup",
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      }
+    }
   }
 }

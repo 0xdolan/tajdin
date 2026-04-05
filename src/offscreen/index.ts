@@ -38,6 +38,28 @@ function isCommand(msg: unknown): msg is TajdinOffscreenCommand {
   );
 }
 
+let mediaSessionBridgeInstalled = false;
+
+function installMediaSessionBridge(): void {
+  if (mediaSessionBridgeInstalled || !("mediaSession" in navigator)) return;
+  mediaSessionBridgeInstalled = true;
+  const send = (action: "play" | "pause" | "next" | "previous") => {
+    try {
+      void chrome.runtime.sendMessage({ type: "tajdin/sw/media-session-action", action });
+    } catch {
+      /* extension context invalid */
+    }
+  };
+  try {
+    navigator.mediaSession.setActionHandler("play", () => send("play"));
+    navigator.mediaSession.setActionHandler("pause", () => send("pause"));
+    navigator.mediaSession.setActionHandler("previoustrack", () => send("previous"));
+    navigator.mediaSession.setActionHandler("nexttrack", () => send("next"));
+  } catch {
+    /* older Chromium */
+  }
+}
+
 chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) => {
   if (!isCommand(message)) {
     return false;
@@ -66,6 +88,9 @@ chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) =
     case "tajdin/offscreen/play": {
       void player.play().then(
         () => {
+          if ("mediaSession" in navigator) {
+            navigator.mediaSession.playbackState = "playing";
+          }
           const res: TajdinOffscreenPlayResponse = { ok: true };
           sendResponse(res);
         },
@@ -81,6 +106,9 @@ chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) =
     }
     case "tajdin/offscreen/pause": {
       player.pause();
+      if ("mediaSession" in navigator) {
+        navigator.mediaSession.playbackState = "paused";
+      }
       sendResponse({ ok: true });
       return false;
     }
@@ -91,6 +119,29 @@ chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) =
     }
     case "tajdin/offscreen/get-state": {
       sendResponse(getState());
+      return false;
+    }
+    case "tajdin/offscreen/set-media-metadata": {
+      installMediaSessionBridge();
+      if ("mediaSession" in navigator && "MediaMetadata" in window) {
+        try {
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: message.title,
+            artist: message.artist ?? "Tajdîn",
+          });
+          navigator.mediaSession.playbackState = player.paused ? "paused" : "playing";
+        } catch {
+          /* ignore */
+        }
+      }
+      sendResponse({ ok: true });
+      return false;
+    }
+    case "tajdin/offscreen/clear-media-metadata": {
+      if ("mediaSession" in navigator) {
+        navigator.mediaSession.metadata = null;
+      }
+      sendResponse({ ok: true });
       return false;
     }
     default: {

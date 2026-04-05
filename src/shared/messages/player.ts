@@ -12,14 +12,18 @@ export type TajdinPlayerCommand =
   | { type: "tajdin/player/play" }
   | { type: "tajdin/player/pause" }
   | { type: "tajdin/player/set-volume"; volumePercent: number }
-  | { type: "tajdin/player/get-state" };
+  | { type: "tajdin/player/get-state" }
+  | { type: "tajdin/player/set-media-metadata"; title: string; artist?: string }
+  | { type: "tajdin/player/clear-media-metadata" };
 
 export type TajdinPlayerCommandResult =
   | { type: "tajdin/player/load"; data: TajdinOffscreenLoadResponse }
   | { type: "tajdin/player/play"; data: TajdinOffscreenPlayResponse }
   | { type: "tajdin/player/pause"; data: { ok: true } }
   | { type: "tajdin/player/set-volume"; data: { ok: true } }
-  | { type: "tajdin/player/get-state"; data: TajdinOffscreenGetStateResponse };
+  | { type: "tajdin/player/get-state"; data: TajdinOffscreenGetStateResponse }
+  | { type: "tajdin/player/set-media-metadata"; data: { ok: true } }
+  | { type: "tajdin/player/clear-media-metadata"; data: { ok: true } };
 
 export function isPlayerCommand(msg: unknown): msg is TajdinPlayerCommand {
   if (typeof msg !== "object" || msg === null || !("type" in msg)) {
@@ -41,6 +45,10 @@ export function isPlayerCommand(msg: unknown): msg is TajdinPlayerCommand {
       return (
         "volumePercent" in msg && typeof (msg as { volumePercent: unknown }).volumePercent === "number"
       );
+    case "tajdin/player/set-media-metadata":
+      return "title" in msg && typeof (msg as { title: unknown }).title === "string";
+    case "tajdin/player/clear-media-metadata":
+      return true;
     default:
       return false;
   }

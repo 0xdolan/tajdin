@@ -94,6 +94,18 @@ export async function executePlayerCommand(cmd: TajdinPlayerCommand): Promise<Ta
       });
       return { type: "tajdin/player/get-state", data };
     }
+    case "tajdin/player/set-media-metadata": {
+      await dispatchToOffscreen<{ ok: true }>({
+        type: "tajdin/offscreen/set-media-metadata",
+        title: cmd.title,
+        artist: cmd.artist,
+      });
+      return { type: "tajdin/player/set-media-metadata", data: { ok: true } };
+    }
+    case "tajdin/player/clear-media-metadata": {
+      await dispatchToOffscreen<{ ok: true }>({ type: "tajdin/offscreen/clear-media-metadata" });
+      return { type: "tajdin/player/clear-media-metadata", data: { ok: true } };
+    }
     default: {
       const _never: never = cmd;
       return _never;
