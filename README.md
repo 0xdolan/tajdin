@@ -4,7 +4,7 @@
   <img src="public/icons/tajdin-radio-100.png" alt="Tajdîn — radio broadcast icon" width="100" height="100" />
 </p>
 
-**Tajdîn** is a Chrome extension (Manifest V3) for discovering and playing **worldwide radio stations** via the [Radio Browser](https://www.radio-browser.info/) public API. It is designed for a compact popup UI, background playback through an offscreen audio document, playlists, favourites, and settings you can tune over time.
+**Tajdîn** - always by your side; Radio Browser. A Chrome extension (Manifest V3) for discovering and playing stations via the [Radio Browser](https://www.radio-browser.info/) public API. Compact popup UI, background playback through an offscreen audio document, playlists, favourites, and settings you can tune over time.
 
 ## What it does
 
