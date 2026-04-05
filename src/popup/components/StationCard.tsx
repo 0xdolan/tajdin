@@ -10,6 +10,7 @@ import { appendStationToPlaylist, loadPlaylistsForLibrary } from "../stationLibr
 import { useSurface } from "../SurfaceContext";
 import { usePlayerStore } from "../store/playerStore";
 import { useStationStore } from "../store/stationStore";
+import { stationRowHeartIconButtonClass, stationRowIconButtonClass } from "../utils/stationRowIconButton";
 import { AddToPlaylistIcon } from "./AddToPlaylistIcon";
 import { StationFavicon } from "./StationArtwork";
 
@@ -32,7 +33,7 @@ function CopyLinkIcon() {
 function HeartIcon({ filled }: { filled: boolean }) {
   return (
     <svg
-      className="h-5 w-5"
+      className="h-4 w-4"
       viewBox="0 0 24 24"
       fill={filled ? "currentColor" : "none"}
       stroke="currentColor"
@@ -152,11 +153,8 @@ export function StationCard({
     surface === "light"
       ? "bg-amber-500/15 ring-1 ring-inset ring-amber-600/35"
       : "bg-amber-500/10 ring-1 ring-inset ring-amber-500/30";
-  const heartIdle = surface === "light" ? "text-neutral-500 hover:text-rose-500" : "text-neutral-500 hover:text-rose-300";
-  const copyBtn =
-    surface === "light"
-      ? "border-neutral-300/80 bg-neutral-200/90 text-neutral-600 hover:bg-neutral-200 hover:text-amber-700"
-      : "border-neutral-700 bg-neutral-800 text-neutral-300 hover:bg-neutral-700 hover:text-amber-300";
+  const rowIconBtn = stationRowIconButtonClass(surface);
+  const rowHeartBtn = stationRowHeartIconButtonClass(surface, isFav);
   const hintC = surface === "light" ? "text-amber-700" : "text-amber-400";
   /** Fade in on row hover/focus; stay visible on touch (no hover). */
   const actionsColOpacity =
@@ -220,9 +218,7 @@ export function StationCard({
               <button
                 type="button"
                 data-testid="station-favourite-heart"
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500/80 ${
-                  surface === "light" ? "hover:bg-neutral-200" : "hover:bg-neutral-800"
-                } ${isFav ? "text-rose-400" : heartIdle}`}
+                className={rowHeartBtn}
                 aria-label={isFav ? "Remove from favourites" : "Add to favourites"}
                 aria-pressed={isFav}
                 onClick={(e) => {
@@ -245,10 +241,7 @@ export function StationCard({
                   <button
                     type="button"
                     data-testid="station-add-to-playlist"
-                    className={[
-                      "flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition-colors",
-                      copyBtn,
-                    ].join(" ")}
+                    className={rowIconBtn}
                     aria-label="Add station to playlist"
                     title="Add to playlist"
                     onClick={(e) => {
@@ -291,10 +284,7 @@ export function StationCard({
                 <button
                   type="button"
                   data-testid="station-copy-stream"
-                  className={[
-                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition-colors",
-                    copyBtn,
-                  ].join(" ")}
+                  className={rowIconBtn}
                   aria-label="Copy stream URL"
                   title="Copy stream link"
                   onClick={copyStreamLink}

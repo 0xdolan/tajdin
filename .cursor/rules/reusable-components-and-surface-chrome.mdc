@@ -1,0 +1,16 @@
+---
+description: Prefer reusable components/helpers; align icon buttons with StationFavicon surface chrome.
+alwaysApply: true
+---
+
+# Reusable components
+
+- **Do not duplicate** the same UI block, Tailwind token sets, or behaviour in multiple files. Extract **shared components** (e.g. under `src/shared/components/` or `src/popup/components/`) or **small pure helpers** (e.g. `src/**/utils/*.ts`) when a second callsite appears or is likely.
+- **Icons**: Prefer one SVG component per glyph (or a shared `icons/` module) and reuse sizes (`h-4 w-4` in dense rows) instead of inlining duplicate paths.
+- **Surface (light/dark)**: Centralise paired class strings next to `useSurface()` consumers or use helpers like `listScrollbarClass()` / `stationRowIconButtonClass()` so light and dark stay in sync.
+- **Before adding a third variant** of the same control (button, menu trigger, row chrome), refactor to a single API.
+
+# Station row icon buttons
+
+- List-row actions beside **`StationFavicon`** must use **`stationRowIconButtonClass(surface)`** and **`stationRowHeartIconButtonClass(surface, isFavourite)`** from `src/popup/utils/stationRowIconButton.ts` so border, background, hover, and focus ring match the favicon frame tokens.
+- Do not give one icon a bare `hover:bg-*` panel and another a bordered panel; keep the strip visually one family.
