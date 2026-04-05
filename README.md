@@ -25,7 +25,7 @@ Planning and history also live in **Task Master** (`.taskmaster/tasks/tasks.json
 - **Setup, build, load unpacked, tests, layout:** [docs/development.md](docs/development.md)
 - **Product / UX spec:** [.taskmaster/docs/zeng-prd-v1.txt](.taskmaster/docs/zeng-prd-v1.txt)
 - **Branching:** integrate on `develop`; `main` only with explicit maintainer approval (see `.cursor/rules/git-flow.mdc`)
-- **Security:** [SECURITY.md](SECURITY.md)
+- **Security:** [SECURITY.md](SECURITY.md) · **Privacy (store listing):** [docs/privacy-policy.md](docs/privacy-policy.md)
 
 ## Logo and icons
 
