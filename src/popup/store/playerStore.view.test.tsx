@@ -35,7 +35,7 @@ describe("usePlayerStore + React", () => {
         </StrictMode>,
       );
     });
-    expect(host.querySelector("[data-testid=\"vol\"]")?.textContent).toBe("100");
+    expect(host.querySelector("[data-testid=\"vol\"]")?.textContent).toBe("75");
 
     await act(async () => {
       usePlayerStore.getState().setVolumePercent(33);

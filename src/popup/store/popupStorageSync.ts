@@ -8,14 +8,14 @@ import {
 import { DEFAULT_SETTINGS } from "../../shared/types/settings";
 import { defaultLanguageCodeToBrowseApiValue } from "../../shared/utils/language-mapper";
 import { ensurePlayerStationResolved } from "../ensurePlayerStationResolved";
-import { usePlayerStore } from "./playerStore";
+import { DEFAULT_PLAYER_VOLUME_PERCENT, usePlayerStore } from "./playerStore";
 import { useStationStore } from "./stationStore";
 import { useUiStore, type BrowseSearchMode } from "./uiStore";
 
 const defaultSessionPlayer = {
   stationuuid: null as string | null,
   isPlaying: false,
-  volumePercent: 100,
+  volumePercent: DEFAULT_PLAYER_VOLUME_PERCENT,
   playlistId: null as string | null,
   playlistStationIndex: null as number | null,
 };
@@ -90,7 +90,7 @@ export function attachPopupStorageSyncListeners(): () => void {
         usePlayerStore.getState().applySessionPlayer({
           stationuuid: null,
           isPlaying: false,
-          volumePercent: 100,
+          volumePercent: DEFAULT_PLAYER_VOLUME_PERCENT,
           playlistId: null,
           playlistStationIndex: null,
         });

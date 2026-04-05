@@ -83,3 +83,73 @@ html.tajdin-popup-root #root {
   transform-origin: center bottom;
   animation: tajdin-eq-bar 0.55s ease-in-out infinite;
 }
+
+/* Player volume: custom track + thumb for smoother feel than native thin bar. */
+input[type="range"].tajdin-volume-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: transparent;
+}
+
+input[type="range"].tajdin-volume-range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 9999px;
+  transition: background 0.15s ease;
+}
+
+input[type="range"].tajdin-volume-range--light::-webkit-slider-runnable-track {
+  background: rgb(212 212 212 / 0.95);
+}
+
+input[type="range"].tajdin-volume-range--dark::-webkit-slider-runnable-track {
+  background: rgb(64 64 64 / 0.9);
+}
+
+input[type="range"].tajdin-volume-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -4px;
+  border-radius: 9999px;
+  background: #f59e0b;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.22);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+input[type="range"].tajdin-volume-range::-webkit-slider-thumb:hover {
+  transform: scale(1.08);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.2);
+}
+
+input[type="range"].tajdin-volume-range::-moz-range-track {
+  height: 6px;
+  border-radius: 9999px;
+  border: none;
+  transition: background 0.15s ease;
+}
+
+input[type="range"].tajdin-volume-range--light::-moz-range-track {
+  background: rgb(212 212 212 / 0.95);
+}
+
+input[type="range"].tajdin-volume-range--dark::-moz-range-track {
+  background: rgb(64 64 64 / 0.9);
+}
+
+input[type="range"].tajdin-volume-range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: 9999px;
+  background: #f59e0b;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.22);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+input[type="range"].tajdin-volume-range::-moz-range-thumb:hover {
+  transform: scale(1.08);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.2);
+}
