@@ -209,6 +209,14 @@ export async function deletePlaylist(playlistId: string): Promise<boolean> {
   return (await localPlaylistsStorage.set(STORAGE_KEYS.playlists, next)).success;
 }
 
+/** Re-insert a playlist removed by delete (same `id` must not already exist). */
+export async function restorePlaylist(playlist: Playlist): Promise<boolean> {
+  const lists = await localPlaylistsStorage.getWithDefault(STORAGE_KEYS.playlists, []);
+  if (lists.some((p) => p.id === playlist.id)) return false;
+  const next = [...lists, playlist];
+  return (await localPlaylistsStorage.set(STORAGE_KEYS.playlists, next)).success;
+}
+
 export async function removeStationFromPlaylist(
   playlistId: string,
   stationuuid: string,

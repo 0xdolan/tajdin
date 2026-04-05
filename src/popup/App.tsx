@@ -5,7 +5,9 @@ import { AttributionFooter } from "./components/AttributionFooter";
 import { PlayerDock } from "./components/PlayerDock";
 import { PopupHeader } from "./components/PopupHeader";
 import { TabNav } from "./components/TabNav";
+import { PlaybackFeedbackToast } from "./components/PlaybackFeedbackToast";
 import { TabPanel } from "./components/TabPanel";
+import { WelcomeOnboardingBanner } from "./components/WelcomeOnboardingBanner";
 import { SurfaceProvider, type Surface } from "./SurfaceContext";
 import { startPopupStorageSync } from "./store";
 
@@ -83,9 +85,11 @@ export function App() {
       >
         <PopupHeader />
         <TabNav />
+        <WelcomeOnboardingBanner />
         <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           <TabPanel />
         </main>
+        <PlaybackFeedbackToast />
         <PlayerDock />
         <AttributionFooter />
       </div>

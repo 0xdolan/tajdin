@@ -26,9 +26,11 @@ type Props = {
   playlist: Playlist;
   client: RadioBrowserClient;
   onLibraryChange: () => void;
+  /** Called after a successful delete with a snapshot the parent can pass to `restorePlaylist`. */
+  onPlaylistDeleted?: (snapshot: Playlist) => void;
 };
 
-export function PlaylistEditorCard({ playlist, client, onLibraryChange }: Props) {
+export function PlaylistEditorCard({ playlist, client, onLibraryChange, onPlaylistDeleted }: Props) {
   const surface = useSurface();
   const cx = playlistSurfaceCx(surface);
   const [nameDraft, setNameDraft] = useState(playlist.name);
@@ -74,12 +76,21 @@ export function PlaylistEditorCard({ playlist, client, onLibraryChange }: Props)
     const name = sanitizeDisplayText(playlist.name, { maxLength: 80 });
     if (
       typeof globalThis.confirm === "function" &&
-      !globalThis.confirm(`Delete playlist “${name}”? This cannot be undone.`)
+      !globalThis.confirm(
+        `Delete playlist “${name}”? It will be removed from your library. You can undo for a short time from this tab.`,
+      )
     ) {
       return;
     }
+    const snapshot: Playlist = {
+      ...playlist,
+      stationUuids: [...playlist.stationUuids],
+    };
     void deletePlaylist(playlist.id).then((ok) => {
-      if (ok) onLibraryChange();
+      if (ok) {
+        onPlaylistDeleted?.(snapshot);
+        onLibraryChange();
+      }
     });
   };
 

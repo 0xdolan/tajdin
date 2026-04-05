@@ -9,7 +9,9 @@ export type TajdinOffscreenCommand =
   | { type: "tajdin/offscreen/pause" }
   /** 0–100, maps to HTMLMediaElement.volume (0–1). */
   | { type: "tajdin/offscreen/set-volume"; volumePercent: number }
-  | { type: "tajdin/offscreen/get-state" };
+  | { type: "tajdin/offscreen/get-state" }
+  | { type: "tajdin/offscreen/set-media-metadata"; title: string; artist?: string }
+  | { type: "tajdin/offscreen/clear-media-metadata" };
 
 export type TajdinOffscreenPingResponse = { ok: true; paused: boolean };
 
