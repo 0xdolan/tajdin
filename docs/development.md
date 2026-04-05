@@ -67,7 +67,7 @@ After `npm run build` (or `build:watch`), load **`dist/`** as unpacked and confi
 - [ ] **Popup** — toolbar icon opens the popup: **Browse** / **Favs** / **Lists** / **About**; optional **welcome** strip until dismissed; **player** at the bottom (prev / play / next, random, favourite, add to playlist, mute, volume); **playback feedback** strip above the player when a stream fails.
 - [ ] **Shortcuts** (optional) — `chrome://extensions/shortcuts`: try play/pause or open popup while the popup is closed, if you have already started playback once.
 - [ ] **Options** — gear in the popup (`chrome.runtime.openOptionsPage()`), “Extension options” on the card, or manifest options URL: **General**, **Stations**, **Playlists**, **Backup**, **About**.
-- [ ] **Storage sync** — change a setting on the options page (for example theme) and confirm the popup updates without a full reload (`chrome.storage.onChanged` on `tajdin.*` keys; legacy `zeng.*` is migrated to `tajdin.*` on startup).
+- [ ] **Storage sync** — change a setting on the options page (for example theme) and confirm the popup updates without a full reload (`chrome.storage.onChanged` on `tajdin.*` keys; any legacy extension storage keys from older installs are migrated on startup).
 - [ ] **Permissions** on the card include **storage**, **alarms**, **offscreen**, **clipboardWrite**, and Radio Browser + broad **host** access for streams.
 
 Automated checks in `npm run verify:dist` do **not** replace this pass; they validate `dist/` layout, manifest fields, CSP (no `unsafe-eval`, `script-src 'self'`), and that popup/options/offscreen HTML reference built scripts.
@@ -179,7 +179,7 @@ Marks for UI (**SVG** via `tajdinMarkSvgUrl()`), README, and **raster icons** re
 
 ### `src/settings/`
 
-Full-tab **options** app: **`App.tsx`** sidebar (**`ExtensionBranding`**) and sections **General** (`GeneralSettingsSection`), **Stations** (`CustomStationsTable`, modals), **Playlists** (same **`PlaylistsPage`** as popup), **Backup** (`ImportExportSection` — export/import JSON, merge vs replace preview), **About** (`AboutSection`). Listens to **`chrome.storage.local`** for `tajdin.*` / legacy `zeng.*`.
+Full-tab **options** app: **`App.tsx`** sidebar (**`ExtensionBranding`**) and sections **General** (`GeneralSettingsSection`), **Stations** (`CustomStationsTable`, modals), **Playlists** (same **`PlaylistsPage`** as popup), **Backup** (`ImportExportSection` — export/import JSON, merge vs replace preview), **About** (`AboutSection`). Listens to **`chrome.storage.local`** for `tajdin.*` and legacy-prefixed keys during migration.
 
 ### `src/shared/`
 
@@ -187,9 +187,9 @@ Full-tab **options** app: **`App.tsx`** sidebar (**`ExtensionBranding`**) and se
 - **`data/`** — **`kurdishCuratedStations`** (+ JSON): bundled list when Browse language is Kurdish (`tajdin:kurdish:*` UUIDs).
 - **`constants/`** — **`links.ts`** (repo/issues URLs), **`branding.ts`**, etc.
 - **`components/ExtensionBranding.tsx`** — Shared header branding.
-- **`import-export/`** — **`backup-schema.ts`**, **`backup-io.ts`** (`tajdin-backup` v1, legacy `zeng-backup`, merge/replace).
+- **`import-export/`** — **`backup-schema.ts`**, **`backup-io.ts`** (`tajdin-backup` v1, legacy import format for older exports, merge/replace).
 - **`messages/`** — **`player.ts`**, **`offscreen.ts`**, **`sw-bridge.ts`** (media session → SW).
-- **`storage/`** — Wrappers, **`STORAGE_KEYS`**, Zod schemas, **`storage-migration.ts`** (`zeng.*` → `tajdin.*`).
+- **`storage/`** — Wrappers, **`STORAGE_KEYS`**, Zod schemas, **`storage-migration.ts`** (legacy keys → `tajdin.*`).
 - **`types/`** — Settings (including **`welcomePanelDismissed`**), station, playlist, etc.
 - **`utils/`** — Sanitize, language mapper, stream URL validation, list scrollbar helpers, etc.
 
