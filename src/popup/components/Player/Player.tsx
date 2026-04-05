@@ -165,14 +165,16 @@ function SkipForwardIcon() {
   );
 }
 
-function ShuffleIcon() {
+/** Dice face — reads as “pick at random” vs generic shuffle arrows. */
+function RandomStationIcon() {
   return (
     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M19.5 12c-1.214 0-2.304-.504-3.09-1.318M19.5 12c0 1.214-.504 2.304-1.318 3.09M4.5 12c1.214 0 2.304.504 3.09 1.318M4.5 12c0-1.214.504-2.304 1.318-3.09M8.25 5.25 9 12l-2.25 6.75M16.5 5.25 14.25 12 16.5 18.75"
-      />
+      <rect x="4.75" y="4.75" width="14.5" height="14.5" rx="2.25" ry="2.25" />
+      <circle cx="9.25" cy="9.25" r="1.35" fill="currentColor" stroke="none" />
+      <circle cx="14.75" cy="9.25" r="1.35" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="12" r="1.35" fill="currentColor" stroke="none" />
+      <circle cx="9.25" cy="14.75" r="1.35" fill="currentColor" stroke="none" />
+      <circle cx="14.75" cy="14.75" r="1.35" fill="currentColor" stroke="none" />
     </svg>
   );
 }
@@ -425,11 +427,11 @@ export function Player() {
               type="button"
               className={navBtn}
               aria-label="Random station from list"
-              title="Random from current list"
+              title="Random station from current list"
               disabled={listNavDisabled}
               onClick={() => void goToRandomInSearchResults()}
             >
-              <ShuffleIcon />
+              <RandomStationIcon />
             </button>
             <AddCurrentToPlaylistMenu stationuuid={stationuuid} surface={surface} navBtnClass={navBtn} />
           </div>
