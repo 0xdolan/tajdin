@@ -15,5 +15,7 @@ describe("ExtensionBranding", () => {
     render(<ExtensionBranding titleClassName="text-base" subtitleClassName="text-xs" />);
     expect(screen.getByText("Tajdîn")).toBeInTheDocument();
     expect(screen.getByText("always by your side; Radio Browser.")).toBeInTheDocument();
+    const img = document.querySelector("img");
+    expect(img?.getAttribute("src")).toContain("logo/tajdin-logo-black.svg");
   });
 });

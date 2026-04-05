@@ -2,16 +2,15 @@ import {
   TAJDIN_EXTENSION_ISSUES_URL,
   TAJDIN_EXTENSION_REPO_URL,
 } from "../../shared/constants/links";
+import { tajdinMarkSvgUrl } from "../../shared/utils/tajdinMarkUrl";
 
 const MEM_ZIN_WIKI = "https://en.wikipedia.org/wiki/Mem_and_Zin";
 const RADIO_BROWSER = "https://www.radio-browser.info/";
 
 export type AboutSectionSurface = "dark" | "light";
 
-function extIconUrl(): string {
-  return typeof chrome !== "undefined" && chrome.runtime?.getURL
-    ? chrome.runtime.getURL("icons/tajdin-radio-100.png")
-    : "/icons/tajdin-radio-100.png";
+function aboutMarkUrl(surface: AboutSectionSurface): string {
+  return tajdinMarkSvgUrl(surface === "light" ? "black" : "white");
 }
 
 function manifestVersion(): string {
@@ -66,7 +65,7 @@ const surfaceTokens: Record<
  */
 export function AboutSection({ surface = "dark" }: { surface?: AboutSectionSurface } = {}) {
   const version = manifestVersion();
-  const iconUrl = extIconUrl();
+  const iconUrl = aboutMarkUrl(surface);
   const linkBase = linkClass(surface);
   const t = surfaceTokens[surface];
 

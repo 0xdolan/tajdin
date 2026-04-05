@@ -13,7 +13,11 @@ export function PopupHeader() {
 
   return (
     <header className={bar}>
-      <ExtensionBranding titleClassName={title} subtitleClassName={sub} />
+      <ExtensionBranding
+        titleClassName={title}
+        subtitleClassName={sub}
+        markVariant={surface === "light" ? "black" : "white"}
+      />
     </header>
   );
 }

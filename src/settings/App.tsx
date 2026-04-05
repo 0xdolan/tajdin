@@ -46,6 +46,7 @@ export function App() {
             titleTag="h1"
             titleClassName="text-sm font-semibold text-neutral-50"
             subtitleClassName="text-xs text-neutral-500"
+            markVariant="white"
           />
         </div>
         <nav className="flex flex-col gap-0.5" aria-label="Settings sections">
