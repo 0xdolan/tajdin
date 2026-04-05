@@ -1157,12 +1157,123 @@
           }
         ],
         "updatedAt": "2026-04-04T21:26:26.141Z"
+      },
+      {
+        "id": "25",
+        "title": "Dense station lists, favourites performance, custom-station discovery, tagline",
+        "description": "More stations visible per viewport: horizontal row actions and tighter rows; faster Favourites; custom stations not always pinned to top of Browse; global tagline copy tweak.",
+        "details": "Prefer small PR-sized subtasks. Run `npm run lint`, `npm run typecheck`, `npm test -- --run`, `npm run verify:extension` before merge. Update `docs/development.md` when behaviour or copy in manifest/package/branding changes.",
+        "testStrategy": "Manual: Browse/Favs at min popup height; favourites after cold open; custom station discovery path; Vitest for branding/tests touched.",
+        "priority": "medium",
+        "dependencies": [
+          "24"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "StationCard: horizontal action icons (favourite, add-to-playlist, copy)",
+            "description": "Replace vertical stack of heart / list-plus / copy with a single horizontal group so the action column is shorter and more list rows fit on screen.",
+            "dependencies": [],
+            "details": "`StationCard.tsx`: `flex-row` (or inline flex) for the three controls; preserve touch targets, `stopPropagation`, hover/focus opacity rules, coarse pointer visibility, and Radix dropdown/context behaviour. Adjust spacing so the row does not widen past the popup; `min-w-0` on text column unchanged. Update `StationCard` snapshot / tests if present.",
+            "status": "pending",
+            "testStrategy": "Visual Browse + Favourites light/dark; narrow popup width; no accidental play; Vitest unchanged behaviour on control clicks.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-06T12:00:00.000Z"
+          },
+          {
+            "id": 2,
+            "title": "Compact station rows (padding, min-height, Virtuoso)",
+            "description": "Reduce vertical space per station row so more stations appear without scrolling.",
+            "dependencies": [
+              1
+            ],
+            "details": "Tune `StationCard` row `min-h`, `py`, gaps; `StationFavicon` frame size if needed. Align `defaultItemHeight` / skeleton heights in `StationList`, `FavouritesStationList`, and any loading placeholders. Verify RTL/Arabic names still readable; do not clip focus rings.",
+            "status": "pending",
+            "testStrategy": "Manual: compare before/after row count in same popup height; scroll performance unchanged.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-06T12:00:00.000Z"
+          },
+          {
+            "id": 3,
+            "title": "Favourites tab: faster load (resolve/display)",
+            "description": "Favourite stations feel slow to appear; improve perceived and actual time-to-interactive.",
+            "dependencies": [],
+            "details": "Audit `FavouritesStationList.tsx`, `resolveStationForLibrary`, `stationLibraryApi` / Radio Browser client usage. Options: batch or parallel limits, cache resolved stations by uuid, defer non-critical work, skeleton vs blocking. Avoid regressing correctness when ids are invalid.",
+            "status": "pending",
+            "testStrategy": "Manual: many favourites; network throttling; Vitest for any extracted helper with mocked API.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-06T12:00:00.000Z"
+          },
+          {
+            "id": 4,
+            "title": "Custom stations: do not always inject at top of Browse; clear discovery path",
+            "description": "Stop always showing every custom station at the top of the main browse list; provide a deliberate way to view/manage all custom stations.",
+            "dependencies": [],
+            "details": "Today `StationList` merges `loadCustomStations()` into the first page (`mergeStationsDedupe`). Design: e.g. language-style filter chip “Custom only”, separate Browse sub-mode, or link from Add-station flow — product choice. Wire storage + `useSearch`/empty-query behaviour so random/ranked browse is not dominated by custom rows. Coordinate with settings `CustomStationsTable`. Document in `docs/development.md`.",
+            "status": "pending",
+            "testStrategy": "Manual: add custom station, confirm browse default list; use new path to list customs; Vitest for merge/search behaviour if logic extracted.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-06T12:00:00.000Z"
+          },
+          {
+            "id": 5,
+            "title": "Tagline: Tajdîn - always by your side; Radio Browser.",
+            "description": "Replace long description/subtitle using em dash and “worldwide radio via” with: Tajdîn - always by your side; Radio Browser.",
+            "dependencies": [],
+            "details": "Update `ExtensionBranding` subtitle, `manifest.json` description (and `short` if any), `package.json` description, README/store copy if duplicated; fix `ExtensionBranding.test.tsx` and any snapshot strings. Use hyphen-minus as specified (not em dash).",
+            "status": "pending",
+            "testStrategy": "Grep old string; Vitest branding test; load popup/settings headers.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-06T12:00:00.000Z"
+          }
+        ],
+        "updatedAt": "2026-04-06T12:00:00.000Z"
+      },
+      {
+        "id": "26",
+        "title": "Compact single-row player + random/shuffle icon",
+        "description": "Player bar: artwork, transport, mute, and volume on one horizontal line with slightly smaller controls for a shorter, denser footer; replace shuffle icon with a clearer random-station affordance.",
+        "details": "Builds on task 24 player wrap work. Re-verify narrow `popupWidthPx` after layout change. Update `docs/development.md` if player layout contract changes.",
+        "testStrategy": "Manual: min/max popup size, long titles (title row may stay above controls); light/dark; `Player.test.tsx` + verify:extension.",
+        "priority": "medium",
+        "dependencies": [
+          "24"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Player: one horizontal row (cover + navigation + volume)",
+            "description": "Put station artwork, prev/play/next, add-to-playlist, shuffle, mute, and volume slider on a single row; scale buttons/art down modestly so the dock stays compact.",
+            "dependencies": [],
+            "details": "`PlayerDock.tsx` / `Player/Player.tsx`: collapse the current two-row layout into one primary controls row; title + subtitle may remain above. Smaller `StationArt` frame, `h-8`/`h-9` nav buttons, tighter gaps; volume strip still usable on touch. Keep `flex-wrap` or overflow strategy only as fallback for very narrow width. Preserve a11y labels and keyboard use.",
+            "status": "pending",
+            "testStrategy": "Manual: 200-400px popup widths; no clipping; Vitest player interactions if affected.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-06T12:00:00.000Z"
+          },
+          {
+            "id": 2,
+            "title": "Player: clearer icon for random-from-list (shuffle)",
+            "description": "Replace or refine the shuffle SVG so it reads as “random station in list” rather than generic shuffle.",
+            "dependencies": [
+              1
+            ],
+            "details": "Design inline SVG (e.g. dice, random/wave metaphor) consistent with other transport icons; keep `aria-label` and `title` accurate (“Random station from list”).",
+            "status": "pending",
+            "testStrategy": "Visual check; screen reader label unchanged in meaning.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-06T12:00:00.000Z"
+          }
+        ],
+        "updatedAt": "2026-04-06T12:00:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-04T21:26:26.142Z",
-      "taskCount": 24,
+      "lastModified": "2026-04-06T12:00:00.142Z",
+      "taskCount": 26,
       "completedCount": 24,
       "tags": [
         "master"
