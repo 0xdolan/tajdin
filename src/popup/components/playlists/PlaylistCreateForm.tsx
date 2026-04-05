@@ -5,7 +5,7 @@ import { useSurface } from "../../SurfaceContext";
 import { playlistSurfaceCx } from "./playlistSurfaceClasses";
 
 type Props = {
-  onCreated: (playlist: Playlist) => void;
+  onCreated: (playlist: Playlist) => void | Promise<void>;
 };
 
 /** Name field + “Create playlist” — primary way to add a new list. */
@@ -18,10 +18,10 @@ export function PlaylistCreateForm({ onCreated }: Props) {
     e.preventDefault();
     const trimmed = name.trim();
     if (!trimmed) return;
-    void createPlaylist(trimmed).then((pl) => {
+    void createPlaylist(trimmed).then(async (pl) => {
       if (pl) {
         setName("");
-        onCreated(pl);
+        await Promise.resolve(onCreated(pl));
       }
     });
   };
