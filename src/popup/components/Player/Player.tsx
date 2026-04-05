@@ -55,7 +55,7 @@ function buildStationTooltip(station: Station | null): string | undefined {
 
 function RadioGlyph() {
   return (
-    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -72,7 +72,7 @@ function StationArt({
 }: {
   station: Station | null;
   isPlaying: boolean;
-  /** Tailwind size utilities, e.g. `h-12 w-12`. */
+  /** Tailwind size utilities, e.g. `h-9 w-9`. */
   frameClassName?: string;
 }) {
   const surface = useSurface();
@@ -88,7 +88,7 @@ function StationArt({
 
   return (
     <div
-      className={`relative shrink-0 overflow-hidden rounded-md ${frame} ${frameClassName ?? "h-12 w-12"}`}
+      className={`relative shrink-0 overflow-hidden rounded-md ${frame} ${frameClassName ?? "h-9 w-9"}`}
     >
       {artworkUrl && !imgFailed ? (
         <img
@@ -105,13 +105,13 @@ function StationArt({
       )}
       {isPlaying ? (
         <div
-          className="pointer-events-none absolute inset-0 flex items-end justify-center gap-0.5 bg-neutral-950/35 pb-1.5"
+          className="pointer-events-none absolute inset-0 flex items-end justify-center gap-0.5 bg-neutral-950/35 pb-1"
           aria-hidden
         >
           {[0, 1, 2].map((i) => (
             <span
               key={i}
-              className="tajdin-eq-bar block h-3 w-1 rounded-sm bg-emerald-400/95"
+              className="tajdin-eq-bar block h-2 w-0.5 rounded-sm bg-emerald-400/95"
               style={{ animationDelay: `${i * 120}ms` }}
             />
           ))}
@@ -123,7 +123,7 @@ function StationArt({
 
 function PlayIcon() {
   return (
-    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
       <path d="M8 5v14l11-7z" />
     </svg>
   );
@@ -131,7 +131,7 @@ function PlayIcon() {
 
 function PauseIcon() {
   return (
-    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
       <path d="M6 5h4v14H6V5zm8 0h4v14h-4V5z" />
     </svg>
   );
@@ -139,7 +139,7 @@ function PauseIcon() {
 
 function SpeakerOnIcon() {
   return (
-    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -151,7 +151,7 @@ function SpeakerOnIcon() {
 
 function SkipBackIcon() {
   return (
-    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
       <path d="M6 6h2v12H6V6zm3.5 6l8.5 6V6l-8.5 6z" />
     </svg>
   );
@@ -159,7 +159,7 @@ function SkipBackIcon() {
 
 function SkipForwardIcon() {
   return (
-    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
       <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
     </svg>
   );
@@ -167,7 +167,7 @@ function SkipForwardIcon() {
 
 function ShuffleIcon() {
   return (
-    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -242,7 +242,7 @@ function AddCurrentToPlaylistMenu({
           setOpen((v) => !v);
         }}
       >
-        <AddToPlaylistIcon />
+        <AddToPlaylistIcon className="h-4 w-4" />
       </button>
       {open ? (
         <div className={menuSurface} role="menu">
@@ -271,7 +271,7 @@ function AddCurrentToPlaylistMenu({
 
 function SpeakerOffIcon() {
   return (
-    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -355,25 +355,25 @@ export function Player() {
   const subtitleLine = buildStationSubtitle(station, isPlaying, muted);
   const playBtn =
     surface === "light"
-      ? "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-white shadow-sm hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-40"
-      : "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-500/95 text-neutral-950 shadow-sm hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-40";
+      ? "flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-white shadow-sm hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-40"
+      : "flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-500/95 text-neutral-950 shadow-sm hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-40";
   const muteBtn =
     surface === "light"
-      ? `flex h-9 w-9 shrink-0 items-center justify-center rounded-md hover:bg-neutral-200 ${
+      ? `flex h-8 w-8 shrink-0 items-center justify-center rounded-md hover:bg-neutral-200 ${
           muted ? "text-amber-600" : "text-neutral-600"
         }`
-      : `flex h-9 w-9 shrink-0 items-center justify-center rounded-md hover:bg-neutral-800 ${
+      : `flex h-8 w-8 shrink-0 items-center justify-center rounded-md hover:bg-neutral-800 ${
           muted ? "text-amber-400" : "text-neutral-300"
         }`;
   const navBtn =
     surface === "light"
-      ? "flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-neutral-600 hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-35"
-      : "flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-neutral-300 hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-35";
+      ? "flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-neutral-600 hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-35"
+      : "flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-neutral-300 hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-35";
 
   const listNavDisabled = searchResultsLen === 0 || busy;
 
   return (
-    <div className="flex w-full min-w-0 flex-col gap-1.5">
+    <div className="flex w-full min-w-0 flex-col gap-1">
       <div className="min-w-0" title={tooltip}>
         <p
           className={`truncate text-sm font-semibold leading-tight sm:text-[0.95rem] ${titleMain} ${titleArabic ? "tajdin-font-arabic" : ""}`}
@@ -384,11 +384,11 @@ export function Player() {
         <p className={`mt-0.5 truncate text-xs leading-snug ${titleSub}`}>{subtitleLine}</p>
       </div>
 
-      <div className="flex w-full min-w-0 flex-wrap items-center gap-x-2 gap-y-2">
-        <div className="flex min-h-0 min-w-0 max-w-full flex-[1_1_0] flex-wrap items-center gap-x-2 gap-y-1">
+      <div className="flex w-full min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
+        <div className="flex min-w-0 shrink-0 items-center gap-1.5">
           <StationArt station={station} isPlaying={isPlaying} />
           <div
-            className="flex min-w-0 flex-[1_1_auto] flex-wrap content-center items-center gap-0.5"
+            className="flex shrink-0 items-center gap-0.5"
             role="group"
             aria-label="Playback and list navigation"
           >
@@ -435,7 +435,7 @@ export function Player() {
           </div>
         </div>
 
-        <div className="ms-auto flex min-w-0 shrink-0 items-center gap-1.5">
+        <div className="ms-auto flex min-w-0 shrink-0 items-center gap-1">
           <button
             type="button"
             aria-label={muted ? "Unmute" : "Mute"}
@@ -445,7 +445,7 @@ export function Player() {
           >
             {muted ? <SpeakerOffIcon /> : <SpeakerOnIcon />}
           </button>
-          <label className="flex h-9 min-w-[72px] max-w-[100px] shrink-0 items-center gap-1.5">
+          <label className="flex h-8 min-w-[64px] max-w-[100px] shrink-0 items-center gap-1">
             <span className="sr-only">Volume</span>
             <input
               type="range"
