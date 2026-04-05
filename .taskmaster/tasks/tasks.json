@@ -1347,13 +1347,52 @@
           }
         ],
         "updatedAt": "2026-04-03T22:30:00.000Z"
+      },
+      {
+        "id": "28",
+        "title": "Kurdish curated radios + default browse language",
+        "description": "Add a bundled Kurdish station list (user-provided streams), a Browse language option that shows that list instead of Radio Browser, stable `tajdin:kurdish:*` ids for favourites/playlists, and Kurdish (`ku`) as the default language for new sessions / settings.",
+        "details": "`src/shared/data/kurdishCuratedStations.json` + `kurdishCuratedStations.ts`; `TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE` in `language-mapper.ts`; `StationList` branch; `resolveStationForLibrary` + `resolveFavouriteStationsForLibrary`; `DEFAULT_SETTINGS.defaultLanguageCode` `ku`; `uiStore` + `hydratePopupStoresFromChrome` when session omits `browseLanguageApiValue`.",
+        "testStrategy": "Vitest: `language-mapper.test`, `kurdishCuratedStations.test`, `StationList` Kurdish path; `npm run verify:extension`.",
+        "priority": "medium",
+        "dependencies": [
+          "27"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Curated data + Browse list + resolve for library",
+            "description": "JSON + parsed `Station[]`, Kurdish filter in `StationList`, resolve bundled rows in `stationLibraryApi`.",
+            "dependencies": [],
+            "details": "DONE.",
+            "status": "done",
+            "testStrategy": "Unit tests on data + StationList.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T23:00:00.000Z"
+          },
+          {
+            "id": 2,
+            "title": "Language option + defaults + session hydrate",
+            "description": "`BROWSE_LANGUAGE_OPTIONS` Kurdish; ISO `ku`; `defaultLanguageCodeToBrowseApiValue`; `DEFAULT_SETTINGS` + `uiStore` + `popupStorageSync`.",
+            "dependencies": [
+              1
+            ],
+            "details": "DONE.",
+            "status": "done",
+            "testStrategy": "language-mapper tests; manual popup open.",
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T23:00:00.000Z"
+          }
+        ],
+        "updatedAt": "2026-04-03T23:00:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
       "lastModified": "2026-04-05T01:54:02.221Z",
-      "taskCount": 27,
-      "completedCount": 26,
+      "taskCount": 28,
+      "completedCount": 28,
       "tags": [
         "master"
       ]

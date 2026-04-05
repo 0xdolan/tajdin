@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { SessionUi } from "../../shared/storage/schemas";
+import { TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE } from "../../shared/utils/language-mapper";
 
 export type ActiveTab = NonNullable<SessionUi["activeTab"]>;
 export type BrowseSearchMode = "exact" | "regex";
@@ -20,7 +21,7 @@ export const useUiStore = create<{
   activeTab: "browse",
   browseRawQuery: "",
   browseSearchMode: "exact",
-  browseLanguageApiValue: "",
+  browseLanguageApiValue: TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE,
   browseCustomStationsOnly: false,
   setActiveTab: (activeTab) => set({ activeTab }),
   setBrowseRawQuery: (browseRawQuery) => set({ browseRawQuery }),

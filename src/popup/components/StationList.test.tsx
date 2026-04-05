@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { RadioBrowserClient } from "../../shared/api/radio-browser.api";
 import { useStationStore } from "../store/stationStore";
+import { TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE } from "../../shared/utils/language-mapper";
 import { BROWSE_PAGE_SIZE, StationList } from "./StationList";
 
 const { mockLoadCustom } = vi.hoisted(() => ({
@@ -193,6 +194,19 @@ describe("StationList", () => {
     expect(useStationStore.getState().searchResults.some((s) => s.stationuuid === apiStation.stationuuid)).toBe(
       true,
     );
+  });
+
+  it("Kurdish curated browse loads bundled list and does not call searchStations", async () => {
+    const searchStations = vi.fn().mockResolvedValue([]);
+    const client = { searchStations } as unknown as RadioBrowserClient;
+
+    await act(async () => {
+      root.render(<StationList client={client} languageFilter={TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE} />);
+    });
+
+    await vi.waitFor(() => expect(useStationStore.getState().searchResults.length).toBeGreaterThan(0));
+    expect(searchStations).not.toHaveBeenCalled();
+    expect(useStationStore.getState().searchResults[0].stationuuid).toMatch(/^tajdin:kurdish:/);
   });
 
   it("customStationsOnly lists customs and does not call searchStations", async () => {

@@ -7,7 +7,9 @@ import {
 } from "../../shared/api/radio-browser.api";
 import { regexSearchStations } from "../../shared/utils/fuzzy-search";
 import type { Playlist } from "../../shared/types/playlist";
+import { KURDISH_CURATED_STATIONS } from "../../shared/data/kurdishCuratedStations";
 import type { Station } from "../../shared/types/station";
+import { TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE } from "../../shared/utils/language-mapper";
 import type { SearchMode } from "../hooks/useSearch";
 import { useSurface } from "../SurfaceContext";
 import { STATION_LIST_ROW_HEIGHT_PX } from "../constants/stationListLayout";
@@ -145,6 +147,7 @@ export function StationList({
 
   const q = searchQuery.trim();
   const lang = languageFilter.trim();
+  const kurdishCuratedBrowse = lang === TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE;
   const regexCorpusMode =
     searchMode === "regex" && q !== "" && !regexInvalid;
   /** Server-side name filter in exact mode with a query; regex uses browse pages + client filter. */
@@ -157,9 +160,9 @@ export function StationList({
       ...(useRandomBrowseOrder ? BROWSE_QUERY_RANDOM : BROWSE_QUERY_RANKED),
       offset,
       ...(fetchUsesNameFilter ? { name: q } : {}),
-      ...(lang ? { language: lang } : {}),
+      ...(lang && !kurdishCuratedBrowse ? { language: lang } : {}),
     }),
-    [fetchUsesNameFilter, lang, q, useRandomBrowseOrder],
+    [fetchUsesNameFilter, kurdishCuratedBrowse, lang, q, useRandomBrowseOrder],
   );
 
   // Deps use `listParams` + `fetchUsesNameFilter` (via listParams) instead of `searchMode` so toggling
@@ -195,6 +198,21 @@ export function StationList({
           }
           offsetRef.current = customList.length;
           hasMoreRef.current = false;
+        } else if (kurdishCuratedBrowse) {
+          const base = KURDISH_CURATED_STATIONS;
+          if (cancelled) return;
+          if (regexCorpusMode) {
+            corpusRef.current = base;
+            const r = regexSearchStations(corpusRef.current, searchQuery);
+            replaceResults(r.ok ? r.stations : []);
+          } else if (fetchUsesNameFilter) {
+            const low = q.toLowerCase();
+            replaceResults(base.filter((s) => s.name.toLowerCase().includes(low)));
+          } else {
+            replaceResults(base);
+          }
+          offsetRef.current = base.length;
+          hasMoreRef.current = false;
         } else {
           const batch = await client.searchStations(listParams(0));
           if (cancelled) return;
@@ -228,6 +246,7 @@ export function StationList({
     customStationsOnly,
     customStationsTick,
     fetchUsesNameFilter,
+    kurdishCuratedBrowse,
     listParams,
     q,
     regexCorpusMode,
@@ -238,7 +257,7 @@ export function StationList({
   ]);
 
   const loadMore = useCallback(async () => {
-    if (customStationsOnly) {
+    if (customStationsOnly || kurdishCuratedBrowse) {
       return;
     }
     if (fetchingRef.current || !hasMoreRef.current || isSearchLoading) {
@@ -278,6 +297,7 @@ export function StationList({
     appendResults,
     client,
     customStationsOnly,
+    kurdishCuratedBrowse,
     isSearchLoading,
     listParams,
     q,
@@ -300,7 +320,9 @@ export function StationList({
     const emptyC = surface === "light" ? "text-neutral-600" : "text-neutral-500";
     const msg = customStationsOnly
       ? "No custom stations match. Add one with Add station, or open Settings → Stations. Turn off Custom only to browse Radio Browser."
-      : "No stations loaded. Check your connection and try reopening the popup.";
+      : kurdishCuratedBrowse
+        ? "No Kurdish list stations match your search. Clear the search box or try another filter."
+        : "No stations loaded. Check your connection and try reopening the popup.";
     return (
       <p className={`text-sm ${emptyC}`} role="status">
         {msg}
