@@ -133,6 +133,13 @@ describe("Player", () => {
     expect(img).toBeInTheDocument();
   });
 
+  it("shows mute-style speaker icon when volume is zero", () => {
+    usePlayerStore.getState().setVolumePercent(0);
+    usePlayerStore.getState().setMuted(false);
+    render(<Player />);
+    expect(screen.getByRole("button", { name: /^unmute$/i })).toBeInTheDocument();
+  });
+
   it("mute sends volume 0 and unmute restores stored level", async () => {
     const user = userEvent.setup();
     render(<Player />);

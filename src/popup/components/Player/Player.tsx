@@ -13,7 +13,6 @@ import { sendPlayerCommand } from "../../playerBridge";
 import { appendStationToPlaylist, loadPlaylistsForLibrary } from "../../stationLibraryApi";
 import { usePlayerStore } from "../../store/playerStore";
 import { useStationStore } from "../../store/stationStore";
-import { stationRowHeartIconButtonClass } from "../../utils/stationRowIconButton";
 import type { Station } from "../../../shared/types/station";
 import { AddToPlaylistIcon } from "../AddToPlaylistIcon";
 import { HeartIcon } from "../HeartIcon";
@@ -55,14 +54,21 @@ function buildStationTooltip(station: Station | null): string | undefined {
   return pieces.join(" · ");
 }
 
-/** Heroicons solid `signal` — reads as broadcast / on-air when no artwork. */
+/** Heroicons outline `radio` — default artwork when no favicon/cover (clear “receiver” metaphor). */
 function StationArtPlaceholderGlyph() {
   return (
-    <svg className="h-[1.125rem] w-[1.125rem]" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+    <svg
+      className="h-[1.125rem] w-[1.125rem] shrink-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      aria-hidden
+    >
       <path
-        fillRule="evenodd"
-        d="M5.636 4.575a.75.75 0 0 1 0 1.061 9 9 0 0 0 0 12.728.75.75 0 1 1-1.06 1.06c-4.101-4.1-4.101-10.748 0-14.849a.75.75 0 0 1 1.06 0Zm12.728 0a.75.75 0 0 1 1.06 0c4.101 4.1 4.101 10.75 0 14.85a.75.75 0 1 1-1.06-1.061 9 9 0 0 0 0-12.728.75.75 0 0 1 0-1.06ZM7.757 6.697a.75.75 0 0 1 0 1.06 6 6 0 0 0 0 8.486.75.75 0 0 1-1.06 1.06 7.5 7.5 0 0 1 0-10.606.75.75 0 0 1 1.06 0Zm8.486 0a.75.75 0 0 1 1.06 0 7.5 7.5 0 0 1 0 10.606.75.75 0 0 1-1.06-1.06 6 6 0 0 0 0-8.486.75.75 0 0 1 0-1.06ZM9.879 8.818a.75.75 0 0 1 0 1.06 3 3 0 0 0 0 4.243.75.75 0 1 1-1.061 1.061 4.5 4.5 0 0 1 0-6.364.75.75 0 0 1 1.06 0Zm4.242 0a.75.75 0 0 1 1.061 0 4.5 4.5 0 0 1 0 6.364.75.75 0 0 1-1.06-1.06 3 3 0 0 0 0-4.243.75.75 0 0 1 0-1.061ZM10.875 12a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z"
-        clipRule="evenodd"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="m3.75 7.5 16.5-4.125M12 6.75c-2.708 0-5.363.224-7.948.655C2.999 7.58 2.25 8.507 2.25 9.574v9.176A2.25 2.25 0 0 0 4.5 21h15a2.25 2.25 0 0 0 2.25-2.25V9.574c0-1.067-.75-1.994-1.802-2.169A48.329 48.329 0 0 0 12 6.75Zm-1.683 6.443-.005.005-.006-.005.006-.005.005.005Zm-.005 2.127-.005-.006.005-.005.005.005-.005.005Zm-2.116-.006-.005.006-.006-.006.005-.005.006.005Zm-.005-2.116-.006-.005.006-.005.005.005-.005.005ZM9.255 10.5v.008h-.008V10.5h.008Zm3.249 1.88-.007.004-.003-.007.006-.003.004.006Zm-1.38 5.126-.003-.006.006-.004.004.007-.006.003Zm.007-6.501-.003.006-.007-.003.004-.007.006.004Zm1.37 5.129-.007-.004.004-.006.006.003-.004.007Zm.504-1.877h-.008v-.007h.008v.007ZM9.255 18v.008h-.008V18h.008Zm-3.246-1.87-.007.004L6 16.127l.006-.003.004.006Zm1.366-5.119-.004-.006.006-.004.004.007-.006.003ZM7.38 17.5l-.003.006-.007-.003.004-.007.006.004Zm-1.376-5.116L6 12.38l.003-.007.007.004-.004.007Zm-.5 1.873h-.008v-.007h.008v.007ZM17.25 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Zm0 4.5a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
       />
     </svg>
   );
@@ -75,7 +81,7 @@ function StationArt({
 }: {
   station: Station | null;
   isPlaying: boolean;
-  /** Tailwind size utilities, e.g. `h-9 w-9`. */
+  /** Tailwind size utilities, e.g. `h-8 w-8`. */
   frameClassName?: string;
 }) {
   const surface = useSurface();
@@ -91,7 +97,7 @@ function StationArt({
 
   return (
     <div
-      className={`relative shrink-0 overflow-hidden rounded-md ${frame} ${frameClassName ?? "h-9 w-9"}`}
+      className={`relative shrink-0 overflow-hidden rounded-md ${frame} ${frameClassName ?? "h-8 w-8"}`}
     >
       {artworkUrl && !imgFailed ? (
         <img
@@ -111,10 +117,10 @@ function StationArt({
           className="pointer-events-none absolute inset-0 flex items-end justify-center gap-0.5 bg-neutral-950/35 pb-1"
           aria-hidden
         >
-          {[0, 1, 2].map((i) => (
+            {[0, 1, 2].map((i) => (
             <span
               key={i}
-              className="tajdin-eq-bar block h-2 w-0.5 rounded-sm bg-emerald-400/95"
+              className="tajdin-eq-bar block h-1.5 w-0.5 rounded-sm bg-emerald-400/95"
               style={{ animationDelay: `${i * 120}ms` }}
             />
           ))}
@@ -126,7 +132,7 @@ function StationArt({
 
 function PlayIcon() {
   return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+    <svg className="h-[0.95rem] w-[0.95rem]" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
       <path d="M8 5v14l11-7z" />
     </svg>
   );
@@ -134,7 +140,7 @@ function PlayIcon() {
 
 function PauseIcon() {
   return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+    <svg className="h-[0.95rem] w-[0.95rem]" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
       <path d="M6 5h4v14H6V5zm8 0h4v14h-4V5z" />
     </svg>
   );
@@ -143,7 +149,7 @@ function PauseIcon() {
 /** Heroicons outline `speaker-wave`. */
 function SpeakerOnIcon() {
   return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
+    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -155,7 +161,7 @@ function SpeakerOnIcon() {
 
 function SkipBackIcon() {
   return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
       <path d="M6 6h2v12H6V6zm3.5 6l8.5 6V6l-8.5 6z" />
     </svg>
   );
@@ -163,7 +169,7 @@ function SkipBackIcon() {
 
 function SkipForwardIcon() {
   return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
       <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
     </svg>
   );
@@ -172,7 +178,7 @@ function SkipForwardIcon() {
 /** Heroicons outline `arrow-path` — random / reshuffle from list. */
 function RandomStationIcon() {
   return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
+    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -247,7 +253,7 @@ function AddCurrentToPlaylistMenu({
           setOpen((v) => !v);
         }}
       >
-        <AddToPlaylistIcon className="h-4 w-4" />
+        <AddToPlaylistIcon className="h-3.5 w-3.5" />
       </button>
       {open ? (
         <div className={menuSurface} role="menu">
@@ -277,7 +283,7 @@ function AddCurrentToPlaylistMenu({
 /** Heroicons outline `speaker-x-mark`. */
 function SpeakerOffIcon() {
   return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
+    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -358,26 +364,38 @@ export function Player() {
   const stationTitle = station ? sanitizeDisplayText(station.name, { maxLength: 200 }) : "";
   const titleArabic = stationTitle ? textContainsArabicScript(stationTitle) : false;
   const subtitleLine = buildStationSubtitle(station, isPlaying, muted);
+  const effectivelySilent = muted || volumePercent === 0;
   const playBtn =
     surface === "light"
-      ? "flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-white shadow-sm hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-40"
-      : "flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-500/95 text-neutral-950 shadow-sm hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-40";
+      ? "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-white shadow-sm hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-40"
+      : "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-500/95 text-neutral-950 shadow-sm hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-40";
   const muteBtn =
     surface === "light"
-      ? `flex h-8 w-8 shrink-0 items-center justify-center rounded-md hover:bg-neutral-200 ${
-          muted ? "text-amber-600" : "text-neutral-600"
+      ? `flex h-7 w-7 shrink-0 items-center justify-center rounded-md hover:bg-neutral-200/90 ${
+          effectivelySilent ? "text-amber-600" : "text-neutral-600"
         }`
-      : `flex h-8 w-8 shrink-0 items-center justify-center rounded-md hover:bg-neutral-800 ${
-          muted ? "text-amber-400" : "text-neutral-300"
+      : `flex h-7 w-7 shrink-0 items-center justify-center rounded-md hover:bg-neutral-800/90 ${
+          effectivelySilent ? "text-amber-400" : "text-neutral-300"
         }`;
   const navBtn =
     surface === "light"
-      ? "flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-neutral-600 hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-35"
-      : "flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-neutral-300 hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-35";
+      ? "flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-neutral-600 hover:bg-neutral-200/90 disabled:cursor-not-allowed disabled:opacity-35"
+      : "flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-neutral-300 hover:bg-neutral-800/90 disabled:cursor-not-allowed disabled:opacity-35";
 
   const listNavDisabled = searchResultsLen === 0 || busy;
   const isFavourite = Boolean(stationuuid && favouriteIds.includes(stationuuid));
-  const favBtnClass = stationRowHeartIconButtonClass(surface, isFavourite);
+  const favBtnPlain =
+    surface === "light"
+      ? `flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${
+          isFavourite
+            ? "text-rose-500"
+            : "text-neutral-500 hover:bg-neutral-200/80 hover:text-rose-500"
+        }`
+      : `flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${
+          isFavourite
+            ? "text-rose-400"
+            : "text-neutral-500 hover:bg-neutral-800/80 hover:text-rose-300"
+        }`;
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-1">
@@ -391,8 +409,8 @@ export function Player() {
         <p className={`mt-0.5 truncate text-xs leading-snug ${titleSub}`}>{subtitleLine}</p>
       </div>
 
-      <div className="flex w-full min-w-0 flex-nowrap items-center gap-x-1.5 overflow-x-auto overscroll-x-contain">
-        <div className="flex min-w-0 shrink-0 items-center gap-1.5">
+      <div className="flex w-full min-w-0 items-center gap-1">
+        <div className="flex min-w-0 min-h-0 shrink-0 items-center gap-0.5">
           <StationArt station={station} isPlaying={isPlaying} />
           <div className="flex shrink-0 items-center gap-0.5">
             <div
@@ -443,7 +461,7 @@ export function Player() {
             {stationuuid ? (
               <button
                 type="button"
-                className={favBtnClass}
+                className={favBtnPlain}
                 aria-label={isFavourite ? "Remove from favourites" : "Add to favourites"}
                 aria-pressed={isFavourite}
                 title={isFavourite ? "Remove from favourites" : "Add to favourites"}
@@ -456,17 +474,17 @@ export function Player() {
           </div>
         </div>
 
-        <div className="ms-auto flex shrink-0 items-center gap-1">
+        <div className="flex min-h-0 min-w-0 flex-1 items-center justify-end gap-0.5 ps-0.5">
           <button
             type="button"
-            aria-label={muted ? "Unmute" : "Mute"}
-            aria-pressed={muted}
+            aria-label={effectivelySilent ? "Unmute" : "Mute"}
+            aria-pressed={effectivelySilent}
             className={muteBtn}
             onClick={() => void toggleMute()}
           >
-            {muted ? <SpeakerOffIcon /> : <SpeakerOnIcon />}
+            {effectivelySilent ? <SpeakerOffIcon /> : <SpeakerOnIcon />}
           </button>
-          <label className="flex h-8 min-w-[72px] max-w-[108px] shrink-0 items-center gap-1">
+          <label className="flex h-7 min-h-0 min-w-0 flex-1 basis-0 items-center">
             <span className="sr-only">Volume</span>
             <input
               type="range"
@@ -477,7 +495,7 @@ export function Player() {
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={volumePercent}
-              className={`tajdin-volume-range h-2 w-full min-w-0 cursor-pointer accent-amber-500 ${
+              className={`tajdin-volume-range h-1.5 w-full min-w-0 cursor-pointer accent-amber-500 ${
                 surface === "light" ? "tajdin-volume-range--light" : "tajdin-volume-range--dark"
               }`}
               onChange={(e) => onVolumeChange(Number(e.target.value))}
