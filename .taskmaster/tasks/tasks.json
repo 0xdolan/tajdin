@@ -584,7 +584,7 @@
           {
             "id": 7,
             "title": "Header branding + attribution footer + manifest version",
-            "description": "Logo + Zeng above tabs; footer with 0xdolan, repo link, chrome.runtime.getManifest().version.",
+            "description": "Logo + Tajdîn above tabs; footer with 0xdolan, repo link, chrome.runtime.getManifest().version.",
             "dependencies": [],
             "details": "PopupHeader.tsx, AttributionFooter.tsx in App.tsx.",
             "status": "done",
@@ -606,7 +606,7 @@
           {
             "id": 9,
             "title": "Arabic script: dir auto + Vazirmatn (self-hosted subset)",
-            "description": "Detect Arabic range; zeng-font-arabic; @import font before Tailwind in globals.css.",
+            "description": "Detect Arabic range; tajdin-font-arabic; @import font before Tailwind in globals.css.",
             "dependencies": [],
             "details": "shared/utils/arabic-text.ts; @fontsource/vazirmatn arabic-400.",
             "status": "done",
@@ -679,10 +679,10 @@
       },
       {
         "id": "22",
-        "title": "Rebrand Zeng → Tajdîn (Tajdin in repo/code) + player & settings UX",
+        "title": "Rebrand to Tajdîn (Tajdin in repo/code) + player & settings UX",
         "description": "Rename project/workspace and remote to tajdin; user-facing name Tajdîn; fix search-mode list refresh; redesign player and station row actions; settings header + About; playing state shows extension icon.",
-        "details": "Naming: use Tajdîn in manifest name/description, popup/options chrome, footers, and About copy. Use ASCII Tajdin for repo URL, folder name, package name, and code identifiers (no î in git or npm). Git remote: git@github.com:0xdolan/tajdin.git. About: link https://en.wikipedia.org/wiki/Mem_and_Zin and include the full 'Why Tajdîn?' narrative (Mem û Zîn, loyalty, radio companion). Audit every 'Zeng' / zeng string: UI, manifest, backup format key, STORAGE_KEYS, tests, CI. Decide whether to migrate chrome.storage keys from zeng.* to tajdin.* (data migration) or keep legacy key prefix for compatibility—document in subtask.",
-        "testStrategy": "Grep for Zeng/zeng leftovers; npm run lint, typecheck, test, verify:extension; manual: toggle fuzzy/regex without list flash, player layout, hover actions, About page, playing favicon swap.",
+        "details": "Naming: use Tajdîn in manifest name/description, popup/options chrome, footers, and About copy. Use ASCII Tajdin for repo URL, folder name, package name, and code identifiers (no î in git or npm). Git remote: git@github.com:0xdolan/tajdin.git. About: link https://en.wikipedia.org/wiki/Mem_and_Zin and include the full 'Why Tajdîn?' narrative (Mem û Zîn, loyalty, radio companion). Audit UI, manifest, backup format key, STORAGE_KEYS, tests, CI for old codenames. Migrate chrome.storage keys from legacy prefixed keys to `tajdin.*` with migration on startup—document in subtask.",
+        "testStrategy": "Grep for old branding leftovers; npm run lint, typecheck, test, verify:extension; manual: toggle fuzzy/regex without list flash, player layout, hover actions, About page, playing favicon swap.",
         "priority": "high",
         "dependencies": [
           "21"
@@ -694,7 +694,7 @@
             "title": "Workspace + Git: folder `tajdin`, remote `git@github.com:0xdolan/tajdin.git`",
             "description": "Rename local project directory to tajdin; point origin at the new GitHub repo.",
             "dependencies": [],
-            "details": "DONE: git remote set-url origin git@github.com:0xdolan/tajdin.git; local folder renamed Documents/zeng → Documents/tajdin; Cursor reopened with `cursor -r …/tajdin`. Push to new remote when GitHub repo is ready.",
+            "details": "DONE: git remote set-url origin git@github.com:0xdolan/tajdin.git; local project folder renamed to Documents/tajdin; Cursor reopened with `cursor -r …/tajdin`. Push to new remote when GitHub repo is ready.",
             "status": "done",
             "testStrategy": "git remote -v; clone fresh from new URL builds.",
             "parentId": "undefined",
@@ -713,12 +713,12 @@
           },
           {
             "id": 3,
-            "title": "Storage keys + backup format: zeng → tajdin strategy",
-            "description": "STORAGE_KEYS, session keys, ZENG_BACKUP_FORMAT / file schema strings; migration vs backward compatibility.",
+            "title": "Storage keys + backup format: legacy prefix → tajdin strategy",
+            "description": "STORAGE_KEYS, session keys, legacy backup format string / file schema; migration vs backward compatibility.",
             "dependencies": [
               2
             ],
-            "details": "DONE: STORAGE_KEYS → tajdin.*; ensureLegacyStorageMigrated() copies zeng.* → tajdin.* then removes legacy (local + session); runs in SW startBackground() + popup/settings before render. Exports use format tajdin-backup; parse accepts zeng-backup + tajdin-backup. Settings storage listener matches both prefixes during transition. storage-keys.ts keeps migration import light (no full instances graph in popup chunk).",
+            "details": "DONE: STORAGE_KEYS → tajdin.*; ensureLegacyStorageMigrated() copies prior extension storage keys to tajdin.* then removes legacy (local + session); runs in SW startBackground() + popup/settings before render. Exports use format tajdin-backup; import accepts legacy and current backup formats. Settings storage listener matches both prefixes during transition. storage-keys.ts keeps migration import light (no full instances graph in popup chunk).",
             "status": "done",
             "testStrategy": "Existing profile still works after update; export/import roundtrip.",
             "parentId": "undefined",
@@ -726,15 +726,15 @@
           },
           {
             "id": 4,
-            "title": "Replace residual Zeng/zeng across src, tests, scripts, workflows",
+            "title": "Replace residual old branding across src, tests, scripts, workflows",
             "description": "Grep-driven pass: comments, test fixtures, ImportExport copy, PopupHeader, AttributionFooter, backup-io.",
             "dependencies": [
               2,
               3
             ],
-            "details": "DONE: Message protocol tajdin/player|offscreen|sw|health-check; types Tajdin*; alarm tajdin-keep-alive; CSS tajdin-font-arabic / tajdin-eq-bar; DOM ids tajdin-*; icons renamed tajdin-radio-*.png + manifest; backup TS types TajdinBackup* + LEGACY_ZENG_BACKUP_FORMAT string only; UI Tajdîn + repo github.com/0xdolan/tajdin; README + docs tables. Intentional zeng leftovers: storage migration keys, zeng-backup import literal, settings listener prefix.",
+            "details": "DONE: Message protocol tajdin/player|offscreen|sw|health-check; types Tajdin*; alarm tajdin-keep-alive; CSS tajdin-font-arabic / tajdin-eq-bar; DOM ids tajdin-*; icons + manifest; backup TS types TajdinBackup* + legacy import-format literal only; UI Tajdîn + repo github.com/0xdolan/tajdin; README + docs tables. Intentional legacy strings: storage migration keys for old chrome.storage prefix, legacy backup import format, settings listener for both prefixes.",
             "status": "done",
-            "testStrategy": "rg -i zeng; CI green.",
+            "testStrategy": "rg legacy prefix in src; CI green.",
             "parentId": "undefined",
             "updatedAt": "2026-04-03T23:55:00.000Z"
           },
@@ -814,7 +814,7 @@
           {
             "id": 11,
             "title": "Popup header/footer: GitHub URL + strings → tajdin repo / Tajdîn",
-            "description": "AttributionFooter, PopupHeader, any 0xdolan/zeng links → 0xdolan/tajdin.",
+            "description": "AttributionFooter, PopupHeader, any old repo links → 0xdolan/tajdin.",
             "dependencies": [
               2,
               4
@@ -840,7 +840,7 @@
               10,
               11
             ],
-            "details": "DONE: `npm run lint`, `npm run typecheck`, `npm test -- --run`, `npm run verify:extension` — all green; `npm audit --audit-level=high` — 0 vulnerabilities. `rg zeng` in `src/` only hits intentional migration (`storage-migration*`), backup schema (`LEGACY_ZENG_BACKUP_FORMAT`, tests), settings storage listener. Rebrand work merged on `develop` across feat branches.",
+            "details": "DONE: `npm run lint`, `npm run typecheck`, `npm test -- --run`, `npm run verify:extension` — all green; `npm audit --audit-level=high` — 0 vulnerabilities. Grep in `src/` for old storage prefix only hits intentional migration (`storage-migration*`), backup schema (legacy import constant, tests), settings storage listener. Rebrand work merged on `develop` across feat branches.",
             "status": "done",
             "testStrategy": "All npm scripts green.",
             "parentId": "undefined",

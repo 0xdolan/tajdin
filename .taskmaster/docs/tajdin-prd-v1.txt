@@ -1,7 +1,7 @@
 
 
 
-ZENG
+TAJDÎN
 Radio Browser Extension
 Product Requirements Document
 
@@ -9,7 +9,7 @@ Version	1.0.0
 Status	Active Development
 Date	April 2026
 Classification	Confidential
-Owner	Zeng Engineering Team
+Owner	Tajdîn project maintainers
 Branches	main / develop / release/*
 
 
@@ -18,13 +18,13 @@ A modern, fully-typed browser extension for worldwide radio streaming
 SECTION 1 — EXECUTIVE SUMMARY
 
 1. Executive Summary
-Zeng is a professional-grade browser extension that brings the world's radio stations directly into the user's browser. It leverages the Radio Browser public API to aggregate thousands of stations from every country and language, presenting them in a polished, accessible popup UI with persistent background playback, playlist management, custom station support, and full settings portability via JSON export/import.
+Tajdîn is a professional-grade browser extension that brings the world's radio stations directly into the user's browser. It leverages the Radio Browser public API to aggregate thousands of stations from every country and language, presenting them in a polished, accessible popup UI with persistent background playback, playlist management, custom station support, and full settings portability via JSON export/import.
 
 1.1 Vision
 To be the definitive radio extension — one that feels as native and responsive as a desktop app, works silently in the background, and makes discovering global radio effortless through language-based categorization, smart search, and personal organization tools.
 
 1.2 Goals
-    • Deliver a production-quality Manifest V3 Chrome extension named 'zeng'
+    • Deliver a production-quality Manifest V3 Chrome extension named 'Tajdîn' (npm package: tajdin)
     • Support worldwide radio discovery via Radio Browser API with language categorization
     • Enable background audio playback that persists across browser tab changes
     • Provide rich station management: playlists, groups, custom stations, favourites
@@ -41,7 +41,7 @@ To be the definitive radio extension — one that feels as native and responsive
 SECTION 2 — ARCHITECTURE & FOLDER STRUCTURE
 
 2. Architecture Overview
-Zeng follows a feature-sliced, domain-driven folder structure aligned with modern TypeScript extension development best practices. The architecture separates concerns cleanly across background service workers, popup UI, settings page, content scripts, and shared utilities.
+Tajdîn follows a feature-sliced, domain-driven folder structure aligned with modern TypeScript extension development best practices. The architecture separates concerns cleanly across background service workers, popup UI, settings page, content scripts, and shared utilities.
 
 2.1 High-Level Architecture
 The extension consists of four primary runtime contexts:
@@ -52,7 +52,7 @@ The extension consists of four primary runtime contexts:
 
 2.2 Folder Structure
 Root Structure
-zeng/
+tajdin/
 ├── .github/
 │   ├── workflows/
 │   │   ├── ci.yml                  # Lint, type-check, test on push/PR
@@ -303,5 +303,4 @@ On import, the JSON is validated against a Zod schema before applying. The user 
 SECTION 4 — TECHNICAL STACK
 
 4. Technical Stack
-Category	Technology	Rationale
-Rationale
+See **`package.json`**, **`docs/development.md`**, and the live **`src/`** tree for the current stack (React, TypeScript, Vite, Vitest, Tailwind, Manifest V3, etc.).

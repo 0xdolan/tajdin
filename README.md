@@ -18,12 +18,12 @@
 - **Your library** — **Favourites**, **playlists** (ordered lists, drag-and-drop edit, optional skip-on-failed-stream), and **custom stations** in `chrome.storage.local`. **Playlist delete** offers a short **Undo** window.
 - **Settings & data** — Theme, popup size, search defaults, backup **export/import** JSON (**merge** unions favourites and updates matching IDs; **replace** overwrites per section). **Copy** actions use the **clipboardWrite** permission.
 
-Planning and history also live in **Task Master** (`.taskmaster/tasks/tasks.json`) and the **PRD** (`.taskmaster/docs/zeng-prd-v1.txt`).
+Task tracking lives in **Task Master** (`.taskmaster/tasks/tasks.json`). The product requirements document is **`.taskmaster/docs/tajdin-prd-v1.txt`** (optional **`.docx`** alongside it).
 
 ## Quick links
 
 - **Setup, build, load unpacked, tests, layout:** [docs/development.md](docs/development.md)
-- **Product / UX spec:** [.taskmaster/docs/zeng-prd-v1.txt](.taskmaster/docs/zeng-prd-v1.txt)
+- **Product / UX spec:** [.taskmaster/docs/tajdin-prd-v1.txt](.taskmaster/docs/tajdin-prd-v1.txt)
 - **Branching:** integrate on `develop`; `main` only with explicit maintainer approval (see `.cursor/rules/git-flow.mdc`)
 - **Security:** [SECURITY.md](SECURITY.md) · **Privacy (store listing):** [docs/privacy-policy.md](docs/privacy-policy.md)
 

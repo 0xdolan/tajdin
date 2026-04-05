@@ -19,5 +19,5 @@ Before considering the work done:
 
 1. **Run checks** (adjust if the project adds more scripts): `npm run lint` (if present), `npm run typecheck`, `npm test`, and `npm run verify:extension` (or the closest equivalent build + extension smoke test).
 2. **Fix** any failures before committing.
-3. **Git (Zeng git-flow)**: branch from `develop` as `feat/<topic>`, `fix/<topic>`, or `chore/<topic>`, **commit** with a clear message, then **merge** the branch into `develop` (merge commit or squash per team habit). Do **not** merge `develop` → `main` unless the user explicitly approved a release.
+3. **Git (Tajdîn git-flow)**: branch from `develop` as `feat/<topic>`, `fix/<topic>`, or `chore/<topic>`, **commit** with a clear message, then **merge** the branch into `develop` (merge commit or squash per team habit). Do **not** merge `develop` → `main` unless the user explicitly approved a release.
 4. Mark the Task Master task or subtask **done** in `.taskmaster/tasks/tasks.json` when the scope is complete.
