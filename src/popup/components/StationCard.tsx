@@ -89,7 +89,7 @@ export function StationCard({
     });
   };
 
-  /** Pointer focus on heart/copy keeps :focus-within; blur on leave when not keyboard :focus-visible so the column hides. */
+  /** Pointer focus on row actions keeps :focus-within; blur on leave when not keyboard :focus-visible so the strip hides. */
   const handleRowPointerLeave = (e: MouseEvent<HTMLDivElement>) => {
     if (typeof window.matchMedia === "function" && window.matchMedia("(pointer: coarse)").matches) {
       return;
@@ -216,11 +216,11 @@ export function StationCard({
             <p className={`truncate text-xs ${sub2C}`}>{bitrate}</p>
           </div>
           <div className={`relative shrink-0 ${actionsColOpacity}`}>
-            <div className="flex flex-col items-center gap-1">
+            <div className="flex flex-row items-center justify-end gap-0.5">
               <button
                 type="button"
                 data-testid="station-favourite-heart"
-                className={`rounded-md p-1.5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500/80 ${
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500/80 ${
                   surface === "light" ? "hover:bg-neutral-200" : "hover:bg-neutral-800"
                 } ${isFav ? "text-rose-400" : heartIdle}`}
                 aria-label={isFav ? "Remove from favourites" : "Add to favourites"}
@@ -305,7 +305,7 @@ export function StationCard({
             </div>
             {copyHint ? (
               <span
-                className={`pointer-events-none absolute left-1/2 top-full z-10 mt-0.5 -translate-x-1/2 whitespace-nowrap text-[10px] ${hintC}`}
+                className={`pointer-events-none absolute right-0 top-full z-10 mt-0.5 whitespace-nowrap text-[10px] ${hintC}`}
                 role="status"
               >
                 {copyHint}
