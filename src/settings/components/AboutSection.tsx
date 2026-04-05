@@ -128,7 +128,7 @@ export function AboutSection({ surface = "dark" }: { surface?: AboutSectionSurfa
           directory and the communities who curate stations worldwide).
         </p>
         <p className={t.closing}>
-          Tune in a little every day—there is always another city, another language, another song worth hearing.
+          Tune in a little every day, there is always another city, another language, another song worth hearing.
         </p>
       </section>
     </div>
