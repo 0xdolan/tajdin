@@ -25,7 +25,7 @@ jobs:
             echo "present=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         if: steps.lock.outputs.present == 'true'
         with:
           node-version: "22"
