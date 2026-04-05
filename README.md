@@ -9,6 +9,13 @@
 
 **Tajdîn** — always by your side; Radio Browser. A Chrome extension (**Manifest V3**, **Chrome 116+**) for discovering and playing stations via the [Radio Browser](https://www.radio-browser.info/) public API. Compact **popup** (Browse, Favs, Lists, About), **background playback** through an offscreen document, and a full-tab **options** page.
 
+<p align="center">
+  <img src="docs/screenshots/tajdin-browse-and-about.jpg" alt="Tajdîn popup: Browse tab with Spanish stations and playing EXA FM; About tab with Why Tajdîn story" width="1024" />
+</p>
+<p align="center">
+  <sub><strong>Left:</strong> Browse — search, language filter, station list, player bar. <strong>Right:</strong> About — version, links, and <em>Why Tajdîn?</em> (Mem û Zîn).</sub>
+</p>
+
 ## What it does
 
 - **Browse and search** — Stations by name with exact or regex mode, language filter (default includes a **curated Kurdish** list bundled in the extension), random discovery when idle, optional **custom stations only** mode.
