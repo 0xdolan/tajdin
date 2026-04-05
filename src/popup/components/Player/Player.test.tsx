@@ -3,6 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { usePlayerStore } from "../../store/playerStore";
+import { useStationStore } from "../../store/stationStore";
 import { Player } from "./Player";
 
 const TEST_PLAYLIST_ID = "550e8400-e29b-41d4-a716-446655440000";
@@ -42,6 +43,7 @@ describe("Player", () => {
       url_resolved: "http://stream.example/b",
     });
     usePlayerStore.getState().resetPlayer();
+    useStationStore.getState().setFavouriteIds([]);
     usePlayerStore.getState().setStation({
       stationuuid: "s1",
       name: "Demo FM",
@@ -150,8 +152,25 @@ describe("Player", () => {
 
   it("disables add-to-playlist when no station is selected", () => {
     usePlayerStore.getState().resetPlayer();
+    useStationStore.getState().setFavouriteIds([]);
     render(<Player />);
     expect(screen.getByRole("button", { name: /add current station to playlist/i })).toBeDisabled();
+  });
+
+  it("shows favourite as pressed when current station is saved", () => {
+    useStationStore.getState().setFavouriteIds(["s1"]);
+    render(<Player />);
+    expect(screen.getByRole("button", { name: /remove from favourites/i })).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("toggles favourite for the current station from the player", async () => {
+    const user = userEvent.setup();
+    useStationStore.getState().setFavouriteIds([]);
+    render(<Player />);
+    await user.click(screen.getByRole("button", { name: /add to favourites/i }));
+    expect(useStationStore.getState().favouriteIds).toContain("s1");
+    await user.click(screen.getByRole("button", { name: /remove from favourites/i }));
+    expect(useStationStore.getState().favouriteIds).not.toContain("s1");
   });
 
   it("appends the current station to the chosen playlist from the player menu", async () => {
