@@ -14,7 +14,8 @@
     "pack:extension": "npm run build && npm run pack:zip",
     "lint": "eslint \"src/**/*.{ts,tsx}\" \"scripts/**/*.mjs\"",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "generate:icon-128": "node scripts/generate-extension-icon-128.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
