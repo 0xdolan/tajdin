@@ -2,7 +2,7 @@ import { useSurface } from "../SurfaceContext";
 import { Player } from "./Player/Player";
 
 /**
- * Fixed bottom player bar: title/subtitle row, then one row (artwork + transport + mute + volume); wraps on very narrow width.
+ * Fixed bottom player bar: title/subtitle row, then one horizontal controls row (scrolls horizontally if the popup is narrower than content).
  */
 export function PlayerDock() {
   const surface = useSurface();
