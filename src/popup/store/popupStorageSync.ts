@@ -35,6 +35,7 @@ function pickPersistedUi(state: ReturnType<typeof useUiStore.getState>) {
     browseQuery: state.browseRawQuery,
     browseSearchMode: state.browseSearchMode,
     browseLanguageApiValue: state.browseLanguageApiValue,
+    browseCustomStationsOnly: state.browseCustomStationsOnly,
   };
 }
 

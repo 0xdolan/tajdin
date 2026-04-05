@@ -1210,11 +1210,11 @@
             "title": "Custom stations: do not always inject at top of Browse; clear discovery path",
             "description": "Stop always showing every custom station at the top of the main browse list; provide a deliberate way to view/manage all custom stations.",
             "dependencies": [],
-            "details": "Today `StationList` merges `loadCustomStations()` into the first page (`mergeStationsDedupe`). Design: e.g. language-style filter chip “Custom only”, separate Browse sub-mode, or link from Add-station flow — product choice. Wire storage + `useSearch`/empty-query behaviour so random/ranked browse is not dominated by custom rows. Coordinate with settings `CustomStationsTable`. Document in `docs/development.md`.",
-            "status": "pending",
+            "details": "DONE: Removed `mergeStationsDedupe` from default browse first page. **Custom only** toggle (`BrowseCustomStationsToggle`) + `browseCustomStationsOnly` in `SessionUiSchema` / `uiStore` / `popupStorageSync`. `StationList` `customStationsOnly`: `loadCustomStations` only, exact name substring + regex client filter; no `searchStations`; language select disabled. Empty copy points to Add station / Settings. Vitest: `StationList.test`, `schemas.test`, `useSearch.test` store reset. `docs/development.md`. Full CRUD remains in Settings `CustomStationsTable`.",
+            "status": "done",
             "testStrategy": "Manual: add custom station, confirm browse default list; use new path to list customs; Vitest for merge/search behaviour if logic extracted.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-06T12:00:00.000Z"
+            "updatedAt": "2026-04-03T18:45:00.000Z"
           },
           {
             "id": 5,
@@ -1228,7 +1228,7 @@
             "updatedAt": "2026-04-06T12:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-05T01:29:19.027Z"
+        "updatedAt": "2026-04-05T01:36:21.221Z"
       },
       {
         "id": "26",
@@ -1272,7 +1272,7 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-05T01:29:19.028Z",
+      "lastModified": "2026-04-05T01:36:21.222Z",
       "taskCount": 26,
       "completedCount": 24,
       "tags": [

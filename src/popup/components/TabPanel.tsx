@@ -8,6 +8,7 @@ import { useUiStore, type ActiveTab } from "../store/uiStore";
 import { AddStationModal } from "./AddStationModal";
 import { FavouritesStationList } from "./FavouritesStationList";
 import { PlaylistsPage } from "./PlaylistsPage";
+import { BrowseCustomStationsToggle } from "./BrowseCustomStationsToggle";
 import { StationLanguageFilter } from "./StationLanguageFilter";
 import { StationList } from "./StationList";
 import { StationSearchBar } from "./StationSearchBar";
@@ -25,6 +26,8 @@ export function TabPanel() {
   const search = useSearch();
   const browseLanguage = useUiStore((s) => s.browseLanguageApiValue);
   const setBrowseLanguage = useUiStore((s) => s.setBrowseLanguageApiValue);
+  const browseCustomOnly = useUiStore((s) => s.browseCustomStationsOnly);
+  const setBrowseCustomOnly = useUiStore((s) => s.setBrowseCustomStationsOnly);
   const title = TITLES[activeTab];
   const [addStationOpen, setAddStationOpen] = useState(false);
   const [customStationsTick, setCustomStationsTick] = useState(0);
@@ -74,7 +77,12 @@ export function TabPanel() {
               <button type="button" className={addBtn} onClick={() => setAddStationOpen(true)}>
                 Add station
               </button>
-              <StationLanguageFilter value={browseLanguage} onChange={setBrowseLanguage} />
+              <BrowseCustomStationsToggle pressed={browseCustomOnly} onPressedChange={setBrowseCustomOnly} />
+              <StationLanguageFilter
+                value={browseLanguage}
+                onChange={setBrowseLanguage}
+                disabled={browseCustomOnly}
+              />
             </div>
           </div>
           <AddStationModal
@@ -89,6 +97,7 @@ export function TabPanel() {
               searchMode={search.mode}
               regexInvalid={search.regexInvalid}
               languageFilter={browseLanguage}
+              customStationsOnly={browseCustomOnly}
               customStationsTick={customStationsTick}
             />
           </div>

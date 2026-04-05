@@ -80,6 +80,10 @@ describe("session storage schemas", () => {
     expect(SessionUiSchema.parse({ browseSearchMode: "fuzzy" }).browseSearchMode).toBe("exact");
   });
 
+  it("SessionUiSchema accepts browseCustomStationsOnly", () => {
+    expect(SessionUiSchema.parse({ browseCustomStationsOnly: true }).browseCustomStationsOnly).toBe(true);
+  });
+
   it("SessionUiSchema rejects unknown tab", () => {
     expect(() => SessionUiSchema.parse({ activeTab: "unknown" })).toThrow();
   });

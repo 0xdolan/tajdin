@@ -156,7 +156,20 @@ describe("StationList", () => {
     await vi.waitFor(() => expect(searchStations).toHaveBeenCalledTimes(2));
   });
 
-  it("merges custom stations into the first page", async () => {
+  const apiStation = {
+    stationuuid: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+    name: "API FM",
+    url: "http://stream.example/a",
+    url_resolved: "http://stream.example/a",
+    tags: "",
+    country: "X",
+    votes: 0,
+    bitrate: 128,
+    lastcheckok: 1 as const,
+    hls: 0 as const,
+  };
+
+  it("does not inject custom stations into default Radio Browser browse", async () => {
     mockLoadCustom.mockResolvedValue([
       {
         stationuuid: "custom:test-1",
@@ -165,11 +178,37 @@ describe("StationList", () => {
         url_resolved: "https://c.example/s",
       },
     ]);
-    const searchStations = vi.fn().mockResolvedValue([]);
+    const searchStations = vi.fn().mockResolvedValue([apiStation]);
     const client = { searchStations } as unknown as RadioBrowserClient;
 
     await act(async () => {
       root.render(<StationList client={client} />);
+    });
+
+    await vi.waitFor(() => expect(useStationStore.getState().searchResults.length).toBeGreaterThan(0));
+
+    expect(useStationStore.getState().searchResults.some((s) => s.stationuuid === "custom:test-1")).toBe(
+      false,
+    );
+    expect(useStationStore.getState().searchResults.some((s) => s.stationuuid === apiStation.stationuuid)).toBe(
+      true,
+    );
+  });
+
+  it("customStationsOnly lists customs and does not call searchStations", async () => {
+    mockLoadCustom.mockResolvedValue([
+      {
+        stationuuid: "custom:test-1",
+        name: "Custom FM",
+        url: "https://c.example/s",
+        url_resolved: "https://c.example/s",
+      },
+    ]);
+    const searchStations = vi.fn().mockResolvedValue([apiStation]);
+    const client = { searchStations } as unknown as RadioBrowserClient;
+
+    await act(async () => {
+      root.render(<StationList client={client} customStationsOnly />);
     });
 
     await vi.waitFor(() =>
@@ -177,5 +216,6 @@ describe("StationList", () => {
         true,
       ),
     );
+    expect(searchStations).not.toHaveBeenCalled();
   });
 });

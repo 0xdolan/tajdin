@@ -11,6 +11,7 @@ describe("useSearch", () => {
       browseRawQuery: "",
       browseSearchMode: "exact",
       browseLanguageApiValue: "",
+      browseCustomStationsOnly: false,
     });
     vi.useFakeTimers();
   });
