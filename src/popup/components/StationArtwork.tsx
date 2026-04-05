@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { stationArtworkHttpUrl } from "../../shared/utils/sanitize";
 
+/** Shared default glyph when a station has no artwork (lists, player, modals). */
 export function RadioFallbackIcon({ className = "h-5 w-5" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-      <title>Radio</title>
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"

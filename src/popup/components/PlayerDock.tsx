@@ -2,7 +2,7 @@ import { useSurface } from "../SurfaceContext";
 import { Player } from "./Player/Player";
 
 /**
- * Fixed bottom player bar: title/subtitle row, then one horizontal controls row sized to fit the popup (volume slider flexes).
+ * Fixed bottom player bar: title/subtitle row, then one horizontal controls row (compact volume strip, `ms-auto` audio cluster).
  */
 export function PlayerDock() {
   const surface = useSurface();
