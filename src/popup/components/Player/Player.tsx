@@ -13,8 +13,10 @@ import { sendPlayerCommand } from "../../playerBridge";
 import { appendStationToPlaylist, loadPlaylistsForLibrary } from "../../stationLibraryApi";
 import { usePlayerStore } from "../../store/playerStore";
 import { useStationStore } from "../../store/stationStore";
+import { stationRowHeartIconButtonClass } from "../../utils/stationRowIconButton";
 import type { Station } from "../../../shared/types/station";
 import { AddToPlaylistIcon } from "../AddToPlaylistIcon";
+import { HeartIcon } from "../HeartIcon";
 
 function buildStationSubtitle(station: Station | null, isPlaying: boolean, muted: boolean): string {
   if (!station) {
@@ -288,6 +290,8 @@ function SpeakerOffIcon() {
 export function Player() {
   const surface = useSurface();
   const searchResultsLen = useStationStore((s) => s.searchResults.length);
+  const favouriteIds = useStationStore((s) => s.favouriteIds);
+  const toggleFavourite = useStationStore((s) => s.toggleFavourite);
   const station = usePlayerStore((s) => s.station);
   const stationuuid = usePlayerStore((s) => s.stationuuid);
   const streamUrl = usePlayerStore((s) => s.streamUrl);
@@ -372,6 +376,8 @@ export function Player() {
       : "flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-neutral-300 hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-35";
 
   const listNavDisabled = searchResultsLen === 0 || busy;
+  const isFavourite = Boolean(stationuuid && favouriteIds.includes(stationuuid));
+  const favBtnClass = stationRowHeartIconButtonClass(surface, isFavourite);
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-1">
@@ -388,6 +394,18 @@ export function Player() {
       <div className="flex w-full min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
         <div className="flex min-w-0 shrink-0 items-center gap-1.5">
           <StationArt station={station} isPlaying={isPlaying} />
+          {stationuuid ? (
+            <button
+              type="button"
+              className={favBtnClass}
+              aria-label={isFavourite ? "Remove from favourites" : "Add to favourites"}
+              aria-pressed={isFavourite}
+              title={isFavourite ? "Remove from favourites" : "Add to favourites"}
+              onClick={() => toggleFavourite(stationuuid)}
+            >
+              <HeartIcon filled={isFavourite} />
+            </button>
+          ) : null}
           <div
             className="flex shrink-0 items-center gap-0.5"
             role="group"
