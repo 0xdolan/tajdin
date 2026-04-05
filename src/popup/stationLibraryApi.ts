@@ -60,6 +60,46 @@ export async function resolveStationForLibrary(
   return client.fetchStationByUuid(stationuuid);
 }
 
+/**
+ * Resolve favourite ids to stations in **list order**, skipping ids that cannot be resolved.
+ * Uses one {@link RadioBrowserClient.fetchStationsByUuids} call for all non-custom ids (avoids N×
+ * rate-limited single-uuid requests) and reads custom stations from storage once.
+ */
+export async function resolveFavouriteStationsForLibrary(
+  client: RadioBrowserClient,
+  favouriteIds: readonly string[],
+): Promise<Station[]> {
+  if (favouriteIds.length === 0) return [];
+
+  const customs = await loadCustomStations();
+  const customById = new Map(customs.map((s) => [s.stationuuid, s] as const));
+
+  const radioUuids: string[] = [];
+  for (const id of favouriteIds) {
+    if (!id.startsWith("custom:")) {
+      const t = id.trim();
+      if (t) radioUuids.push(t);
+    }
+  }
+
+  const radioMap =
+    radioUuids.length > 0 ? await client.fetchStationsByUuids(radioUuids) : new Map<string, Station>();
+
+  const out: Station[] = [];
+  for (const id of favouriteIds) {
+    if (id.startsWith("custom:")) {
+      const s = customById.get(id);
+      if (s) out.push(s);
+      continue;
+    }
+    const t = id.trim();
+    if (!t) continue;
+    const s = radioMap.get(t);
+    if (s) out.push(s);
+  }
+  return out;
+}
+
 export async function removeCustomStation(stationuuid: string): Promise<boolean> {
   const list = await loadCustomStations();
   const next = list.filter((s) => s.stationuuid !== stationuuid);

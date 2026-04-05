@@ -8,6 +8,8 @@ export const DEFAULT_RADIO_BROWSER_BASES = [
 
 const SEARCH_PATH = "/json/stations/search";
 const BYUUID_PATH = "/json/stations/byuuid/";
+/** POST JSON `{ "uuids": string[] }` — resolves many stations in one request (favourites / playlists). */
+const BYUUID_BATCH_PATH = "/json/stations/byuuid";
 
 export type StationSearchParams = {
   name?: string;
@@ -213,6 +215,66 @@ export class RadioBrowserClient {
             return null;
           }
           return mapApiStationRow(json[0]);
+        } catch (e) {
+          if (e instanceof RadioBrowserRequestError && e.status !== undefined && !shouldRetryHttpStatus(e.status)) {
+            throw e;
+          }
+          lastError = e;
+        }
+      }
+
+      const msg =
+        lastError instanceof Error ? lastError.message : "All Radio Browser endpoints failed";
+      throw new RadioBrowserRequestError(msg, undefined, lastError);
+    });
+  }
+
+  /**
+   * Resolve multiple Radio Browser `stationuuid` values in **one** queued request (POST `{ uuids }`).
+   * Unknown ids are omitted from the returned map. Uses the same retry/fallback behaviour as
+   * {@link fetchStationByUuid}.
+   */
+  async fetchStationsByUuids(stationuuids: readonly string[]): Promise<Map<string, Station>> {
+    const unique = [...new Set(stationuuids.map((u) => u.trim()).filter(Boolean))];
+    if (unique.length === 0) return new Map();
+
+    let lastError: unknown;
+    return this.runQueued(async () => {
+      for (const base of this.bases) {
+        const url = `${base}${BYUUID_BATCH_PATH}`;
+        try {
+          const res = await this.fetchImpl(url, {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ uuids: unique }),
+          });
+          if (!res.ok) {
+            if (shouldRetryHttpStatus(res.status)) {
+              lastError = new RadioBrowserRequestError(`HTTP ${res.status} from ${base}`, res.status);
+              continue;
+            }
+            throw new RadioBrowserRequestError(`HTTP ${res.status} from ${base}`, res.status);
+          }
+          let json: unknown;
+          try {
+            json = await res.json();
+          } catch (e) {
+            lastError = e;
+            continue;
+          }
+          const out = new Map<string, Station>();
+          if (!Array.isArray(json)) {
+            lastError = new RadioBrowserRequestError("Expected JSON array of stations");
+            continue;
+          }
+          for (const row of json) {
+            const s = mapApiStationRow(row);
+            if (s) out.set(s.stationuuid, s);
+          }
+          return out;
         } catch (e) {
           if (e instanceof RadioBrowserRequestError && e.status !== undefined && !shouldRetryHttpStatus(e.status)) {
             throw e;
