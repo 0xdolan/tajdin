@@ -1,7 +1,10 @@
 # Tajdîn
 
 <p align="center">
-  <img src="public/icons/tajdin-radio-100.png" alt="Tajdîn — radio broadcast icon" width="100" height="100" />
+  <img src="public/logo/tajdin-logo-black.png" alt="Tajdîn mark" width="128" height="128" />
+</p>
+<p align="center">
+  <sub>Vector: <code>tajdin-logo-black.svg</code> / <code>tajdin-logo-white.svg</code> · Raster: <code>tajdin-logo-white.png</code> · Also <code>.jpg</code>, <code>.pdf</code> under <code>public/logo/</code> for print or other tools.</sub>
 </p>
 
 **Tajdîn** - always by your side; Radio Browser. A Chrome extension (Manifest V3) for discovering and playing stations via the [Radio Browser](https://www.radio-browser.info/) public API. Compact popup UI, background playback through an offscreen audio document, playlists, favourites, and settings you can tune over time.
@@ -22,6 +25,9 @@ Work in progress: features land incrementally; task order lives in `.taskmaster/
 - **Branching:** integrate on `develop`; `main` only with explicit maintainer approval (see `.cursor/rules/git-flow.mdc`)
 - **Security:** [SECURITY.md](SECURITY.md)
 
-## Icon assets
+## Logo and icons
 
-Extension and toolbar icons live under **`public/icons/`** (50×50 and 100×100 sources, referenced in `manifest.json` at standard Chrome sizes 16 / 32 / 48 / 128). Vite copies `public/` into `dist/` on build so Chrome loads them from `dist/icons/…` when you load the unpacked extension.
+- **`public/logo/`** — Full set for references: **SVG** (scalable, used in the extension UI), **PNG** and **JPG** (previews, README, stores), **PDF** (print/share). Black variants for light backgrounds; white for dark.
+- **README** — Uses **`tajdin-logo-black.png`** above (broad GitHub/client compatibility). You can switch the `<img>` to `.svg` if you prefer vector in the repo view.
+- **Extension UI** (popup header, settings, About) — Loads packaged **`logo/*.svg`** via `chrome.runtime.getURL` and `tajdinMarkSvgUrl()` so the mark stays sharp at any size.
+- **Chrome toolbar / `manifest.json`** — **`public/icons/`** PNGs only (Chromium requirement). Regenerate from `public/logo` when refreshing creative. Vite copies `public/` into `dist/` on build.
