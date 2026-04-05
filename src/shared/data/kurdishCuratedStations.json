@@ -33,5 +33,6 @@
   { "id": "33", "name": "Zerguwan-Fm", "url": "https://zerguwanfm.kesintisizyayin.com:7366/;", "cover": "https://cdn-profiles.tunein.com/s337240/images/logog.png?t=1" },
   { "id": "34", "name": "Radyo Gülistan", "url": "https://anadolu.liderhost.com.tr:10967/;", "cover": "https://play-lh.googleusercontent.com/Mk4e1vG1ftI96YM3Zk23gU2l0ofEAvIVbzN_rQwNzrXcCxs1c5pricpqC4gn1oiA18M" },
   { "id": "35", "name": "Jesus Coming FM", "url": "http://live.jesuscomingfm.com:8338/;", "cover": "" },
-  { "id": "36", "name": "Orkes FM", "url": "https://orks-rojavaradio.radioca.st/stream?type=http&nocache=6", "cover": "https://images.keepone.net/5434-2020-04-26.png" }
+  { "id": "36", "name": "Orkes FM", "url": "https://orks-rojavaradio.radioca.st/stream?type=http&nocache=6", "cover": "https://images.keepone.net/5434-2020-04-26.png" },
+  { "id": "38", "name": "Channel 8 Kurdish", "url": "https://live.channel8.com/Channel8-Kurdish/index.fmp4.m3u8", "cover": "https://play-lh.googleusercontent.com/uhDQnyiHRHuhEfK6ZhGNlbYAmjGIU8Siq1XQ_fnuhbmpUY5fY_dctRF4x1b3RVXGDkYz" }
 ]
