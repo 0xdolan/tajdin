@@ -6,6 +6,7 @@ import {
   sessionUiStorage,
 } from "../../shared/storage/instances";
 import { DEFAULT_SETTINGS } from "../../shared/types/settings";
+import { defaultLanguageCodeToBrowseApiValue } from "../../shared/utils/language-mapper";
 import { ensurePlayerStationResolved } from "../ensurePlayerStationResolved";
 import { usePlayerStore } from "./playerStore";
 import { useStationStore } from "./stationStore";
@@ -64,6 +65,11 @@ export async function hydratePopupStoresFromChrome(): Promise<void> {
   });
   if (ui.browseSearchMode === undefined) {
     useUiStore.getState().setBrowseSearchMode(mapSettingsSearchToPopup(settings.searchMode));
+  }
+  if (ui.browseLanguageApiValue === undefined) {
+    useUiStore
+      .getState()
+      .setBrowseLanguageApiValue(defaultLanguageCodeToBrowseApiValue(settings.defaultLanguageCode));
   }
 }
 

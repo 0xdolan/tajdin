@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   apiLanguageToDisplayName,
+  defaultLanguageCodeToBrowseApiValue,
   languageTagToApiLanguage,
   normalizeLanguageStringToApi,
+  TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE,
 } from "./language-mapper";
 
 describe("languageTagToApiLanguage", () => {
@@ -15,6 +17,7 @@ describe("languageTagToApiLanguage", () => {
   it("maps bare ISO 639-1 codes", () => {
     expect(languageTagToApiLanguage("de")).toBe("german");
     expect(languageTagToApiLanguage("FR")).toBe("french");
+    expect(languageTagToApiLanguage("ku")).toBe(TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE);
   });
 
   it("returns null for unknown codes", () => {
@@ -42,6 +45,11 @@ describe("normalizeLanguageStringToApi", () => {
   it("passes through allowed API tokens", () => {
     expect(normalizeLanguageStringToApi("norwegian")).toBe("norwegian");
   });
+
+  it("maps Kurdish labels to curated browse token", () => {
+    expect(normalizeLanguageStringToApi("Kurdish")).toBe(TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE);
+    expect(normalizeLanguageStringToApi("kurdi")).toBe(TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE);
+  });
 });
 
 describe("apiLanguageToDisplayName", () => {
@@ -49,9 +57,25 @@ describe("apiLanguageToDisplayName", () => {
     expect(apiLanguageToDisplayName("")).toBe("All languages");
     expect(apiLanguageToDisplayName("spanish")).toBe("Spanish");
     expect(apiLanguageToDisplayName("english")).toBe("English");
+    expect(apiLanguageToDisplayName(TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE)).toBe("Kurdish");
   });
 
   it("title-cases unknown tokens", () => {
     expect(apiLanguageToDisplayName("foobar")).toBe("Foobar");
+  });
+});
+
+describe("defaultLanguageCodeToBrowseApiValue", () => {
+  it("defaults ku and undefined to Kurdish curated token", () => {
+    expect(defaultLanguageCodeToBrowseApiValue("ku")).toBe(TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE);
+    expect(defaultLanguageCodeToBrowseApiValue(undefined)).toBe(TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE);
+  });
+
+  it("maps en to english", () => {
+    expect(defaultLanguageCodeToBrowseApiValue("en")).toBe("english");
+  });
+
+  it("treats explicit empty string as all languages", () => {
+    expect(defaultLanguageCodeToBrowseApiValue("")).toBe("");
   });
 });

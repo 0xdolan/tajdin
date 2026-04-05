@@ -3,6 +3,12 @@
  * (English names, typically lowercase in API usage).
  */
 
+/**
+ * Browse filter value for the bundled Kurdish station list (not a Radio Browser `language` token).
+ * {@link StationList} loads {@link KURDISH_CURATED_STATIONS} when this is selected.
+ */
+export const TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE = "__tajdin_kurdish__" as const;
+
 /** ISO 639-1 (primary subtag of BCP 47) → Radio Browser language token. */
 export const ISO_639_1_TO_API_LANGUAGE: Readonly<Record<string, string>> = {
   ar: "arabic",
@@ -33,6 +39,7 @@ export const ISO_639_1_TO_API_LANGUAGE: Readonly<Record<string, string>> = {
   tr: "turkish",
   uk: "ukrainian",
   vi: "vietnamese",
+  ku: TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE,
   cs: "czech",
   da: "danish",
   fi: "finnish",
@@ -85,6 +92,8 @@ const API_LANGUAGE_SYNONYMS: Readonly<Record<string, string>> = {
   croatian: "croatian",
   hrvatski: "croatian",
   slovak: "slovak",
+  kurdish: TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE,
+  kurdi: TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE,
 };
 
 function normalizeSynonymKey(s: string): string {
@@ -112,6 +121,7 @@ export const BROWSE_LANGUAGE_OPTIONS: ReadonlyArray<{ apiValue: string; label: s
   { apiValue: "italian", label: "Italian" },
   { apiValue: "japanese", label: "Japanese" },
   { apiValue: "korean", label: "Korean" },
+  { apiValue: TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE, label: "Kurdish" },
   { apiValue: "norwegian", label: "Norwegian" },
   { apiValue: "persian", label: "Persian" },
   { apiValue: "polish", label: "Polish" },
@@ -172,4 +182,17 @@ export function apiLanguageToDisplayName(apiToken: string): string {
   if (!apiToken) return "All languages";
   const opt = BROWSE_LANGUAGE_OPTIONS.find((o) => o.apiValue === apiToken);
   return opt?.label ?? apiToken.charAt(0).toUpperCase() + apiToken.slice(1);
+}
+
+/**
+ * Map settings `defaultLanguageCode` (ISO-style) to browse `browseLanguageApiValue` (Radio Browser token or
+ * {@link TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE}).
+ */
+export function defaultLanguageCodeToBrowseApiValue(code: string | undefined): string {
+  if (code !== undefined && code.trim() === "") return "";
+  const effective = (code ?? "ku").trim().toLowerCase();
+  if (effective === "all" || effective === "any") return "";
+  const fromTag = languageTagToApiLanguage(effective);
+  if (fromTag) return fromTag;
+  return normalizeLanguageStringToApi(effective);
 }

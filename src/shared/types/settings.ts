@@ -38,6 +38,8 @@ export type SettingsPartial = z.infer<typeof SettingsPartialSchema>;
 
 export const DEFAULT_SETTINGS: Settings = {
   theme: "system",
+  /** Default browse language: ISO `ku` maps to bundled Kurdish station list in the popup. */
+  defaultLanguageCode: "ku",
   popupWidthPx: 400,
   popupHeightPx: 600,
   searchMode: "exact",
