@@ -7,6 +7,9 @@ export type PlaylistPlaybackContext = {
   stationIndex: number;
 };
 
+/** First-launch default; session persistence keeps user adjustments until changed. */
+export const DEFAULT_PLAYER_VOLUME_PERCENT = 75;
+
 export type PlayerStoreState = {
   stationuuid: string | null;
   isPlaying: boolean;
@@ -22,7 +25,7 @@ export type PlayerStoreState = {
 const defaults: PlayerStoreState = {
   stationuuid: null,
   isPlaying: false,
-  volumePercent: 100,
+  volumePercent: DEFAULT_PLAYER_VOLUME_PERCENT,
   muted: false,
   streamUrl: null,
   station: null,
