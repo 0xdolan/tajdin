@@ -30,4 +30,4 @@ Work in progress: features land incrementally; task order lives in `.taskmaster/
 - **`public/logo/`** — Full set for references: **SVG** (scalable, used in the extension UI), **PNG** and **JPG** (previews, README, stores), **PDF** (print/share). Black variants for light backgrounds; white for dark.
 - **README** — Uses **`tajdin-logo-black.png`** above (broad GitHub/client compatibility). You can switch the `<img>` to `.svg` if you prefer vector in the repo view.
 - **Extension UI** (popup header, settings, About) — Loads packaged **`logo/*.svg`** via `chrome.runtime.getURL` and `tajdinMarkSvgUrl()` so the mark stays sharp at any size.
-- **Chrome toolbar / `manifest.json`** — **`public/icons/`** PNGs only (Chromium requirement). Regenerate from `public/logo` when refreshing creative. Vite copies `public/` into `dist/` on build.
+- **Chrome toolbar / `manifest.json`** — **`public/logo/tajdin-logo-black.png`** for extension and action icons (Chromium needs raster; same asset at 16/32/48/128). Vite copies `public/` into `dist/` on build.

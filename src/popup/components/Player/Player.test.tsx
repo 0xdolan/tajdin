@@ -113,7 +113,7 @@ describe("Player", () => {
     const img = document.querySelector('img[src="https://example.com/station-icon.png"]');
     expect(img).toBeInTheDocument();
     expect(
-      document.querySelector(`img[src="chrome-extension://test-id/icons/tajdin-radio-50.png"]`),
+      document.querySelector(`img[src="chrome-extension://test-id/logo/tajdin-logo-black.png"]`),
     ).not.toBeInTheDocument();
   });
 
