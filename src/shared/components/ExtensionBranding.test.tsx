@@ -14,6 +14,6 @@ describe("ExtensionBranding", () => {
     });
     render(<ExtensionBranding titleClassName="text-base" subtitleClassName="text-xs" />);
     expect(screen.getByText("Tajdîn")).toBeInTheDocument();
-    expect(screen.getByText("Always by your side · Radio Browser")).toBeInTheDocument();
+    expect(screen.getByText("always by your side; Radio Browser.")).toBeInTheDocument();
   });
 });
