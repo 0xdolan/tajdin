@@ -31,6 +31,9 @@ node_modules/
 # OS specific
 .DS_Store
 
+# Accidental nested copies under repo root (do not commit)
+Documents/
+
 # Task Master: generated markdown exports (tasks.json is source of truth)
 .taskmaster/tasks/task_*.md
 
