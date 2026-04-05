@@ -1,11 +1,27 @@
+import { defaultRadioBrowserClient } from "../shared/api/radio-browser.api";
 import { startPlaybackWithPlaylistSkip } from "./playerPlayback";
+import { resolveStationForLibrary } from "./stationLibraryApi";
 import { usePlayerStore } from "./store/playerStore";
 import { useStationStore } from "./store/stationStore";
 import type { Station } from "../shared/types/station";
 
+function hasPlayableStreamUrl(s: Station | null | undefined): boolean {
+  return Boolean((s?.url_resolved || s?.url || "").trim());
+}
+
+/** If the row has no stream URL yet, fetch full station metadata (same as library / Play resolve). */
+async function ensureStationHasStreamUrl(station: Station): Promise<Station> {
+  if (hasPlayableStreamUrl(station)) return station;
+  if (!station.stationuuid) return station;
+  const resolved = await resolveStationForLibrary(defaultRadioBrowserClient, station.stationuuid);
+  if (resolved && hasPlayableStreamUrl(resolved)) return resolved;
+  return station;
+}
+
 /** Start playback for a station from browse/favourites list (clears playlist context). */
 export async function playStationFromList(station: Station): Promise<boolean> {
-  usePlayerStore.getState().setStation(station);
+  const ready = await ensureStationHasStreamUrl(station);
+  usePlayerStore.getState().setStation(ready);
   return startPlaybackWithPlaylistSkip();
 }
 
@@ -29,7 +45,8 @@ export async function goToAdjacentInSearchResults(delta: -1 | 1): Promise<boolea
 
   const next = searchResults[nextIdx];
   if (!next) return false;
-  usePlayerStore.getState().setStation(next);
+  const ready = await ensureStationHasStreamUrl(next);
+  usePlayerStore.getState().setStation(ready);
   return startPlaybackWithPlaylistSkip();
 }
 
@@ -43,6 +60,7 @@ export async function goToRandomInSearchResults(): Promise<boolean> {
     pool = searchResults.filter((s) => s.stationuuid !== current);
   }
   const next = pool[Math.floor(Math.random() * pool.length)]!;
-  usePlayerStore.getState().setStation(next);
+  const ready = await ensureStationHasStreamUrl(next);
+  usePlayerStore.getState().setStation(ready);
   return startPlaybackWithPlaylistSkip();
 }
