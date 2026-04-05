@@ -24,6 +24,8 @@ const settingsShape = {
   preferredBitrateKbps: preferredBitrate,
   /** Start playback immediately when a station is selected. */
   playbackAutostart: z.boolean(),
+  /** User dismissed the one-time welcome tips strip in the popup. */
+  welcomePanelDismissed: z.boolean().optional(),
 } as const;
 
 /**
@@ -45,6 +47,7 @@ export const DEFAULT_SETTINGS: Settings = {
   searchMode: "exact",
   preferredBitrateKbps: "auto",
   playbackAutostart: false,
+  welcomePanelDismissed: false,
 };
 
 /** Parse stored / imported settings merged with defaults. */
