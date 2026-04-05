@@ -47,6 +47,8 @@ export const SessionUiSchema = z.object({
     z.enum(["exact", "regex"]).optional(),
   ),
   browseLanguageApiValue: z.string().optional(),
+  /** When true, Browse shows only `custom:*` stations (no merge into Radio Browser results). */
+  browseCustomStationsOnly: z.boolean().optional(),
 });
 
 export type SessionUi = z.infer<typeof SessionUiSchema>;

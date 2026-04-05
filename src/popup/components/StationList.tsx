@@ -6,7 +6,6 @@ import {
   type StationSearchParams,
 } from "../../shared/api/radio-browser.api";
 import { regexSearchStations } from "../../shared/utils/fuzzy-search";
-import { mergeStationsDedupe } from "../../shared/utils/station-merge";
 import type { Playlist } from "../../shared/types/playlist";
 import type { Station } from "../../shared/types/station";
 import type { SearchMode } from "../hooks/useSearch";
@@ -42,9 +41,11 @@ export type StationListProps = {
   searchQuery?: string;
   searchMode?: SearchMode;
   regexInvalid?: boolean;
-  /** Radio Browser `language` search token (e.g. `spanish`); empty = any. */
+  /** Radio Browser `language` search token (e.g. `spanish`); empty = any. Ignored when {@link customStationsOnly}. */
   languageFilter?: string;
-  /** Bump to refetch and merge custom stations into the first browse/search page. */
+  /** When true, list only saved custom streams (local storage); search filters that list client-side. */
+  customStationsOnly?: boolean;
+  /** Bump to refetch custom list or browse after add/remove custom station. */
   customStationsTick?: number;
   /**
    * When true, results and loading live in this component only (do not read/write global {@link useStationStore} search buffers).
@@ -83,6 +84,7 @@ export function StationList({
   searchMode = "exact",
   regexInvalid = false,
   languageFilter = "",
+  customStationsOnly = false,
   customStationsTick = 0,
   isolated = false,
   appendToPlaylist,
@@ -178,21 +180,35 @@ export function StationList({
 
     void (async () => {
       try {
-        const batch = await client.searchStations(listParams(0));
-        if (cancelled) return;
-
-        const customList = await loadCustomStations();
-        const mergedBase = mergeStationsDedupe(customList, batch);
-
-        if (regexCorpusMode) {
-          corpusRef.current = mergedBase;
-          const r = regexSearchStations(corpusRef.current, searchQuery);
-          replaceResults(r.ok ? r.stations : []);
+        if (customStationsOnly) {
+          const customList = await loadCustomStations();
+          if (cancelled) return;
+          if (regexCorpusMode) {
+            corpusRef.current = customList;
+            const r = regexSearchStations(corpusRef.current, searchQuery);
+            replaceResults(r.ok ? r.stations : []);
+          } else if (fetchUsesNameFilter) {
+            const low = q.toLowerCase();
+            replaceResults(customList.filter((s) => s.name.toLowerCase().includes(low)));
+          } else {
+            replaceResults(customList);
+          }
+          offsetRef.current = customList.length;
+          hasMoreRef.current = false;
         } else {
-          replaceResults(mergedBase);
+          const batch = await client.searchStations(listParams(0));
+          if (cancelled) return;
+
+          if (regexCorpusMode) {
+            corpusRef.current = batch;
+            const r = regexSearchStations(corpusRef.current, searchQuery);
+            replaceResults(r.ok ? r.stations : []);
+          } else {
+            replaceResults(batch);
+          }
+          offsetRef.current = batch.length;
+          hasMoreRef.current = batch.length >= BROWSE_PAGE_SIZE;
         }
-        offsetRef.current = batch.length;
-        hasMoreRef.current = batch.length >= BROWSE_PAGE_SIZE;
       } catch {
         if (!cancelled) {
           hasMoreRef.current = false;
@@ -207,9 +223,24 @@ export function StationList({
     return () => {
       cancelled = true;
     };
-  }, [client, customStationsTick, listParams, regexInvalid, replaceResults, searchQuery, setLoading]);
+  }, [
+    client,
+    customStationsOnly,
+    customStationsTick,
+    fetchUsesNameFilter,
+    listParams,
+    q,
+    regexCorpusMode,
+    regexInvalid,
+    replaceResults,
+    searchQuery,
+    setLoading,
+  ]);
 
   const loadMore = useCallback(async () => {
+    if (customStationsOnly) {
+      return;
+    }
     if (fetchingRef.current || !hasMoreRef.current || isSearchLoading) {
       return;
     }
@@ -246,6 +277,7 @@ export function StationList({
   }, [
     appendResults,
     client,
+    customStationsOnly,
     isSearchLoading,
     listParams,
     q,
@@ -266,9 +298,12 @@ export function StationList({
 
   if (!isSearchLoading && searchResults.length === 0) {
     const emptyC = surface === "light" ? "text-neutral-600" : "text-neutral-500";
+    const msg = customStationsOnly
+      ? "No custom stations match. Add one with Add station, or open Settings → Stations. Turn off Custom only to browse Radio Browser."
+      : "No stations loaded. Check your connection and try reopening the popup.";
     return (
       <p className={`text-sm ${emptyC}`} role="status">
-        No stations loaded. Check your connection and try reopening the popup.
+        {msg}
       </p>
     );
   }
