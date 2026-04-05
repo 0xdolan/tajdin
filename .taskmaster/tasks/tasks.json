@@ -1240,18 +1240,18 @@
         "dependencies": [
           "24"
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
             "title": "Player: one horizontal row (cover + navigation + volume)",
             "description": "Put station artwork, prev/play/next, add-to-playlist, shuffle, mute, and volume slider on a single row; scale buttons/art down modestly so the dock stays compact.",
             "dependencies": [],
-            "details": "`PlayerDock.tsx` / `Player/Player.tsx`: collapse the current two-row layout into one primary controls row; title + subtitle may remain above. Smaller `StationArt` frame, `h-8`/`h-9` nav buttons, tighter gaps; volume strip still usable on touch. Keep `flex-wrap` or overflow strategy only as fallback for very narrow width. Preserve a11y labels and keyboard use.",
-            "status": "pending",
+            "details": "DONE: `Player` — metadata block unchanged; controls are one `flex-wrap` row: `[art h-9 + transport]` cluster + `ms-auto` mute/volume. Nav `h-8`, play `h-9`, icons `h-4`, tighter gaps; EQ bars scaled for small art. `PlayerDock` `py-1.5`. `docs/development.md`; `Player.test.tsx` green.",
+            "status": "done",
             "testStrategy": "Manual: 200-400px popup widths; no clipping; Vitest player interactions if affected.",
             "parentId": "undefined",
-            "updatedAt": "2026-04-06T12:00:00.000Z"
+            "updatedAt": "2026-04-03T19:00:00.000Z"
           },
           {
             "id": 2,
@@ -1267,14 +1267,14 @@
             "updatedAt": "2026-04-06T12:00:00.000Z"
           }
         ],
-        "updatedAt": "2026-04-06T12:00:00.000Z"
+        "updatedAt": "2026-04-05T01:49:34.893Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-05T01:43:50.143Z",
+      "lastModified": "2026-04-05T01:49:34.894Z",
       "taskCount": 26,
-      "completedCount": 24,
+      "completedCount": 25,
       "tags": [
         "master"
       ]
