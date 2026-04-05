@@ -391,70 +391,72 @@ export function Player() {
         <p className={`mt-0.5 truncate text-xs leading-snug ${titleSub}`}>{subtitleLine}</p>
       </div>
 
-      <div className="flex w-full min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
+      <div className="flex w-full min-w-0 flex-nowrap items-center gap-x-1.5 overflow-x-auto overscroll-x-contain">
         <div className="flex min-w-0 shrink-0 items-center gap-1.5">
           <StationArt station={station} isPlaying={isPlaying} />
-          {stationuuid ? (
-            <button
-              type="button"
-              className={favBtnClass}
-              aria-label={isFavourite ? "Remove from favourites" : "Add to favourites"}
-              aria-pressed={isFavourite}
-              title={isFavourite ? "Remove from favourites" : "Add to favourites"}
-              onClick={() => toggleFavourite(stationuuid)}
+          <div className="flex shrink-0 items-center gap-0.5">
+            <div
+              className="flex shrink-0 items-center gap-0.5"
+              role="group"
+              aria-label="Playback and list navigation"
             >
-              <HeartIcon filled={isFavourite} />
-            </button>
-          ) : null}
-          <div
-            className="flex shrink-0 items-center gap-0.5"
-            role="group"
-            aria-label="Playback and list navigation"
-          >
-            <button
-              type="button"
-              className={navBtn}
-              aria-label="Previous station in list"
-              title="Previous in list (wraps)"
-              disabled={listNavDisabled}
-              onClick={() => void goToAdjacentInSearchResults(-1)}
-            >
-              <SkipBackIcon />
-            </button>
-            <button
-              type="button"
-              disabled={busy || (!canStart && !isPlaying)}
-              aria-label={isPlaying ? "Pause" : "Play"}
-              className={playBtn}
-              onClick={() => void togglePlay()}
-            >
-              {isPlaying ? <PauseIcon /> : <PlayIcon />}
-            </button>
-            <button
-              type="button"
-              className={navBtn}
-              aria-label="Next station in list"
-              title="Next in list (wraps)"
-              disabled={listNavDisabled}
-              onClick={() => void goToAdjacentInSearchResults(1)}
-            >
-              <SkipForwardIcon />
-            </button>
-            <button
-              type="button"
-              className={navBtn}
-              aria-label="Random station from list"
-              title="Random station from current list"
-              disabled={listNavDisabled}
-              onClick={() => void goToRandomInSearchResults()}
-            >
-              <RandomStationIcon />
-            </button>
+              <button
+                type="button"
+                className={navBtn}
+                aria-label="Previous station in list"
+                title="Previous in list (wraps)"
+                disabled={listNavDisabled}
+                onClick={() => void goToAdjacentInSearchResults(-1)}
+              >
+                <SkipBackIcon />
+              </button>
+              <button
+                type="button"
+                disabled={busy || (!canStart && !isPlaying)}
+                aria-label={isPlaying ? "Pause" : "Play"}
+                className={playBtn}
+                onClick={() => void togglePlay()}
+              >
+                {isPlaying ? <PauseIcon /> : <PlayIcon />}
+              </button>
+              <button
+                type="button"
+                className={navBtn}
+                aria-label="Next station in list"
+                title="Next in list (wraps)"
+                disabled={listNavDisabled}
+                onClick={() => void goToAdjacentInSearchResults(1)}
+              >
+                <SkipForwardIcon />
+              </button>
+              <button
+                type="button"
+                className={navBtn}
+                aria-label="Random station from list"
+                title="Random station from current list"
+                disabled={listNavDisabled}
+                onClick={() => void goToRandomInSearchResults()}
+              >
+                <RandomStationIcon />
+              </button>
+            </div>
+            {stationuuid ? (
+              <button
+                type="button"
+                className={favBtnClass}
+                aria-label={isFavourite ? "Remove from favourites" : "Add to favourites"}
+                aria-pressed={isFavourite}
+                title={isFavourite ? "Remove from favourites" : "Add to favourites"}
+                onClick={() => toggleFavourite(stationuuid)}
+              >
+                <HeartIcon filled={isFavourite} />
+              </button>
+            ) : null}
             <AddCurrentToPlaylistMenu stationuuid={stationuuid} surface={surface} navBtnClass={navBtn} />
           </div>
         </div>
 
-        <div className="ms-auto flex min-w-0 shrink-0 items-center gap-1">
+        <div className="ms-auto flex shrink-0 items-center gap-1">
           <button
             type="button"
             aria-label={muted ? "Unmute" : "Mute"}
