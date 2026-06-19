@@ -8,6 +8,7 @@ import {
 import { DEFAULT_SETTINGS } from "../../shared/types/settings";
 import { defaultLanguageCodeToBrowseApiValue } from "../../shared/utils/language-mapper";
 import { ensurePlayerStationResolved } from "../ensurePlayerStationResolved";
+import { syncPlayerPlayingFromEngine } from "../syncPlayerEngineState";
 import { DEFAULT_PLAYER_VOLUME_PERCENT, usePlayerStore } from "./playerStore";
 import { useStationStore } from "./stationStore";
 import { useUiStore, type BrowseSearchMode } from "./uiStore";
@@ -53,6 +54,7 @@ export async function hydratePopupStoresFromChrome(): Promise<void> {
   );
   usePlayerStore.getState().applySessionPlayer(playerBlob);
   await ensurePlayerStationResolved();
+  await syncPlayerPlayingFromEngine();
 
   const favs = await localFavouriteIdsStorage.getWithDefault(STORAGE_KEYS.favouriteIds, []);
   useStationStore.getState().setFavouriteIds(favs);

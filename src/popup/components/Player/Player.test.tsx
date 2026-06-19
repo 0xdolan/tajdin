@@ -58,10 +58,26 @@ describe("Player", () => {
         msg: { type: string },
         cb: (r: {
           ok: boolean;
-          result?: { type: string; data: { ok: boolean } };
+          result?: { type: string; data: Record<string, unknown> };
           error?: string;
         }) => void,
       ) => {
+        if (msg.type === "tajdin/player/get-state") {
+          const playing = usePlayerStore.getState().isPlaying;
+          cb({
+            ok: true,
+            result: {
+              type: "tajdin/player/get-state",
+              data: {
+                paused: !playing,
+                volumePercent: 80,
+                currentSrc: "",
+                readyState: 0,
+              },
+            },
+          });
+          return;
+        }
         if (msg.type === "tajdin/player/load") {
           cb({ ok: true, result: { type: "tajdin/player/load", data: { ok: true } } });
           return;

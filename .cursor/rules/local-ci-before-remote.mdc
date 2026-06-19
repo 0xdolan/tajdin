@@ -1,0 +1,52 @@
+---
+description: Run local CI before push, merge, or PR; block remote CI/CD until it passes
+alwaysApply: true
+---
+
+# Local CI before remote CI/CD
+
+## Gate
+
+Do **not** push to GitHub, open/update a pull request, merge to `develop` or `main`, or rely on GitHub Actions as the first verification pass until **local CI passes** on the branch you are about to publish.
+
+## Required local commands
+
+Run from the repository root (matches `.github/workflows/ci.yml` for the Node extension):
+
+```bash
+npm run ci
+```
+
+That runs, in order:
+
+1. `npm run lint`
+2. `npm run typecheck`
+3. `npm test`
+4. `npm run build`
+5. `npm run verify:dist`
+
+Before **merge to `develop`** (or when preparing a release), also run:
+
+```bash
+npm run ci:full
+```
+
+`ci:full` adds `npm run ci:audit` (`npm audit --audit-level=high`), aligned with the CI workflow audit step.
+
+## Agent workflow
+
+1. Finish the code change.
+2. Run **`npm run ci`** (or **`npm run ci:full`** before merge/release).
+3. Fix any failure locally; re-run until green.
+4. Only then: commit (if requested), push, open PR, or merge.
+
+## Do not
+
+- Push or open a PR “to see if CI passes” when local `npm run ci` has not been run or is failing.
+- Treat GitHub Actions as a substitute for the local gate when the same scripts exist in `package.json`.
+- Skip `verify:dist` locally when the change touches build output, `manifest.json`, Vite entries, or extension packaging.
+
+## Related
+
+- **`docs/development.md`** — script reference and manual Chrome checklist.
+- **`.cursor/rules/security-and-ci-gates.mdc`** — security and audit expectations on merge.

@@ -126,6 +126,9 @@ For real extension behavior, use **`build:watch`** and reload the extension as a
 | `npm run pack:extension` | `build` then `pack:zip` (Web Store bundle) |
 | `npm run test` | `vitest run` |
 | `npm run typecheck` | `tsc --noEmit` across `src/` |
+| `npm run ci` | **Local CI gate** — `lint` → `typecheck` → `test` → `build` → `verify:dist` (run before push/PR; see `.cursor/rules/local-ci-before-remote.mdc`) |
+| `npm run ci:audit` | `npm audit --audit-level=high` (same threshold as GitHub CI) |
+| `npm run ci:full` | `ci` then `ci:audit` — use before merge to `develop` or release prep |
 | `npm run dev` | Vite dev server (see limitations above) |
 | `npm run generate:icon-128` | Regenerate **`public/logo/tajdin-extension-icon-128.png`** (needs **`magick`**) — 128×128 Web Store icon: 96×96 mark + 16px transparent padding + subtle white glow |
 
@@ -138,6 +141,8 @@ For real extension behavior, use **`build:watch`** and reload the extension as a
 - **Playlist delete** — **Undo** bar on the Lists tab for ~12 seconds via **`restorePlaylist`**.
 
 ## CI (GitHub Actions)
+
+Run **`npm run ci`** locally first; only push or open a PR after it passes (see **`.cursor/rules/local-ci-before-remote.mdc`**). Before merging to **`develop`**, prefer **`npm run ci:full`**.
 
 Workflows under **`.github/workflows/`**:
 
@@ -167,7 +172,7 @@ Marks for UI (**SVG** via `tajdinMarkSvgUrl()`), README, and **raster icons** re
 
 ### `src/offscreen/`
 
-**`index.html`** + **`index.ts`**: `<audio id="player">`, message handlers for load/play/pause/volume/state, **media metadata** and **Media Session** action handlers posting to the service worker.
+**`index.html`** + **`index.ts`**: `<audio id="player">`, message handlers for load/play/pause/volume/state, **media metadata** and **Media Session** action handlers posting to the service worker. **`media-player.ts`** waits for stream readiness before play and retries transient **`play()`** failures. The service worker calls **`waitUntilOffscreenReady()`** (ping loop after **`createDocument`**) before dispatching commands so the first click is not lost to “Receiving end does not exist”.
 
 ### `src/popup/`
 

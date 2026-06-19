@@ -301,23 +301,28 @@ export function Player() {
     if (busy) return;
     setBusy(true);
     try {
-      if (!isPlaying) {
-        await ensurePlayerStationResolved();
-        const ok = await startPlaybackWithPlaylistSkip();
-        if (!ok) {
-          setPlaying(false);
-        }
-      } else {
+      const stateR = await sendPlayerCommand({ type: "tajdin/player/get-state" });
+      const enginePaused =
+        !stateR.ok ||
+        stateR.result.type !== "tajdin/player/get-state" ||
+        stateR.result.data.paused;
+
+      if (!enginePaused) {
         const pauseR = await sendPlayerCommand({ type: "tajdin/player/pause" });
         if (!pauseR.ok) return;
-        if (pauseR.result.type === "tajdin/player/pause") {
-          setPlaying(false);
-        }
+        setPlaying(false);
+        return;
+      }
+
+      await ensurePlayerStationResolved();
+      const ok = await startPlaybackWithPlaylistSkip();
+      if (!ok) {
+        setPlaying(false);
       }
     } finally {
       setBusy(false);
     }
-  }, [busy, isPlaying, setPlaying]);
+  }, [busy, setPlaying]);
 
   const toggleMute = useCallback(async () => {
     const { muted: m, volumePercent: vol } = usePlayerStore.getState();

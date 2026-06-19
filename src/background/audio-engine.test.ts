@@ -8,7 +8,7 @@ import {
 } from "./audio-engine";
 
 vi.mock("./offscreen-document", () => ({
-  ensureOffscreenDocument: vi.fn().mockResolvedValue(undefined),
+  waitUntilOffscreenReady: vi.fn().mockResolvedValue(undefined),
 }));
 
 describe("audio-engine", () => {
