@@ -1,4 +1,4 @@
-import { ensureOffscreenDocument } from "./offscreen-document";
+import { waitUntilOffscreenReady } from "./offscreen-document";
 import type {
   TajdinOffscreenCommand,
   TajdinOffscreenGetStateResponse,
@@ -15,13 +15,29 @@ import {
 export const TAJDIN_KEEP_ALIVE_ALARM = "tajdin-keep-alive";
 
 const KEEP_ALIVE_DELAY_MINUTES = 20 / 60;
+const OFFSCREEN_MESSAGE_RETRIES = 3;
 
 /** When false, keep-alive ticks do not reschedule (avoids races after pause). */
 let keepAliveEnabled = false;
 
 async function dispatchToOffscreen<T>(command: TajdinOffscreenCommand): Promise<T> {
-  await ensureOffscreenDocument();
-  return chrome.runtime.sendMessage(command) as Promise<T>;
+  let lastError: unknown;
+  for (let attempt = 0; attempt < OFFSCREEN_MESSAGE_RETRIES; attempt++) {
+    await waitUntilOffscreenReady();
+    try {
+      const res = await chrome.runtime.sendMessage(command);
+      if (res === undefined) {
+        throw new Error("No response from offscreen audio page");
+      }
+      return res as T;
+    } catch (e) {
+      lastError = e;
+      if (attempt < OFFSCREEN_MESSAGE_RETRIES - 1) {
+        await new Promise((r) => setTimeout(r, 50 * (attempt + 1)));
+      }
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error(String(lastError));
 }
 
 function scheduleKeepAliveAlarm(): void {

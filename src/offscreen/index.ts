@@ -5,6 +5,7 @@ import type {
   TajdinOffscreenPingResponse,
   TajdinOffscreenPlayResponse,
 } from "../shared/messages/offscreen";
+import { assignAudioSource, playAudioWithRetry } from "./media-player";
 
 const player = ((): HTMLAudioElement => {
   const el = document.querySelector("#player");
@@ -72,36 +73,36 @@ chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) =
       return false;
     }
     case "tajdin/offscreen/load": {
-      try {
-        player.src = message.url;
-        const res: TajdinOffscreenLoadResponse = { ok: true };
-        sendResponse(res);
-      } catch (e) {
-        const res: TajdinOffscreenLoadResponse = {
-          ok: false,
-          error: e instanceof Error ? e.message : String(e),
-        };
-        sendResponse(res);
-      }
-      return false;
+      void assignAudioSource(player, message.url)
+        .then(() => {
+          const res: TajdinOffscreenLoadResponse = { ok: true };
+          sendResponse(res);
+        })
+        .catch((e: unknown) => {
+          const res: TajdinOffscreenLoadResponse = {
+            ok: false,
+            error: e instanceof Error ? e.message : String(e),
+          };
+          sendResponse(res);
+        });
+      return true;
     }
     case "tajdin/offscreen/play": {
-      void player.play().then(
-        () => {
+      void playAudioWithRetry(player)
+        .then(() => {
           if ("mediaSession" in navigator) {
             navigator.mediaSession.playbackState = "playing";
           }
           const res: TajdinOffscreenPlayResponse = { ok: true };
           sendResponse(res);
-        },
-        (e: unknown) => {
+        })
+        .catch((e: unknown) => {
           const res: TajdinOffscreenPlayResponse = {
             ok: false,
             error: e instanceof Error ? e.message : String(e),
           };
           sendResponse(res);
-        },
-      );
+        });
       return true;
     }
     case "tajdin/offscreen/pause": {
