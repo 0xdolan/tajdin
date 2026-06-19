@@ -25,7 +25,7 @@ jobs:
             echo "present=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: actions/dependency-review-action@v4
+      - uses: actions/dependency-review-action@v5
         if: steps.lock.outputs.present == 'true'
         with:
           fail-on-severity: high
