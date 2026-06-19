@@ -1,6 +1,20 @@
 import type { TajdinOffscreenPingResponse } from "../shared/messages/offscreen";
 
 const OFFSCREEN_PAGE = "src/offscreen/index.html";
+const OFFSCREEN_READY_TIMEOUT_MS = 5000;
+const OFFSCREEN_READY_INTERVAL_MS = 50;
+
+async function tryPingOffscreen(): Promise<TajdinOffscreenPingResponse | null> {
+  try {
+    const res = (await chrome.runtime.sendMessage({
+      type: "tajdin/offscreen/ping",
+    })) as TajdinOffscreenPingResponse | undefined;
+    if (res?.ok) return res;
+  } catch {
+    /* listener not registered yet */
+  }
+  return null;
+}
 
 /**
  * Ensures the offscreen audio document exists (idempotent).
@@ -25,8 +39,27 @@ export async function ensureOffscreenDocument(): Promise<void> {
   }
 }
 
+/**
+ * Create the offscreen page if needed, then wait until its message listener responds.
+ * Avoids "Receiving end does not exist" races right after {@link chrome.offscreen.createDocument}.
+ */
+export async function waitUntilOffscreenReady(): Promise<void> {
+  await ensureOffscreenDocument();
+  const deadline = Date.now() + OFFSCREEN_READY_TIMEOUT_MS;
+  while (Date.now() < deadline) {
+    const pong = await tryPingOffscreen();
+    if (pong) return;
+    await new Promise((r) => setTimeout(r, OFFSCREEN_READY_INTERVAL_MS));
+  }
+  throw new Error("Tajdîn offscreen audio page did not respond in time");
+}
+
 /** Create offscreen page if needed, then ping its audio listener. */
 export async function pingOffscreenAudio(): Promise<TajdinOffscreenPingResponse> {
-  await ensureOffscreenDocument();
-  return chrome.runtime.sendMessage({ type: "tajdin/offscreen/ping" }) as Promise<TajdinOffscreenPingResponse>;
+  await waitUntilOffscreenReady();
+  const pong = await tryPingOffscreen();
+  if (!pong) {
+    throw new Error("Tajdîn offscreen audio page did not respond to ping");
+  }
+  return pong;
 }

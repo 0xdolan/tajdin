@@ -157,10 +157,13 @@ export async function sessionNextStation(): Promise<void> {
         stationuuid: next.station.stationuuid,
         playlistId: sess.playlistId,
         playlistStationIndex: next.index,
-        isPlaying: true,
+        isPlaying: false,
       });
       const r = await loadUrlVolumePlay(url, sess.volumePercent);
-      if (r === "ok") await pushMetadataForStation(next.station);
+      if (r === "ok") {
+        await writeSession({ isPlaying: true });
+        await pushMetadataForStation(next.station);
+      }
       return;
     }
     await writeSession({ playlistId: null, playlistStationIndex: null });
@@ -179,10 +182,13 @@ export async function sessionNextStation(): Promise<void> {
     stationuuid: next.stationuuid,
     playlistId: null,
     playlistStationIndex: null,
-    isPlaying: true,
+    isPlaying: false,
   });
   const r = await loadUrlVolumePlay(url, sess.volumePercent);
-  if (r === "ok") await pushMetadataForStation(next);
+  if (r === "ok") {
+    await writeSession({ isPlaying: true });
+    await pushMetadataForStation(next);
+  }
 }
 
 export async function sessionPreviousStation(): Promise<void> {
@@ -203,10 +209,13 @@ export async function sessionPreviousStation(): Promise<void> {
         stationuuid: prev.station.stationuuid,
         playlistId: sess.playlistId,
         playlistStationIndex: prev.index,
-        isPlaying: true,
+        isPlaying: false,
       });
       const r = await loadUrlVolumePlay(url, sess.volumePercent);
-      if (r === "ok") await pushMetadataForStation(prev.station);
+      if (r === "ok") {
+        await writeSession({ isPlaying: true });
+        await pushMetadataForStation(prev.station);
+      }
       return;
     }
     await writeSession({ playlistId: null, playlistStationIndex: null });
@@ -224,10 +233,13 @@ export async function sessionPreviousStation(): Promise<void> {
     stationuuid: prev.stationuuid,
     playlistId: null,
     playlistStationIndex: null,
-    isPlaying: true,
+    isPlaying: false,
   });
   const r = await loadUrlVolumePlay(url, sess.volumePercent);
-  if (r === "ok") await pushMetadataForStation(prev);
+  if (r === "ok") {
+    await writeSession({ isPlaying: true });
+    await pushMetadataForStation(prev);
+  }
 }
 
 export async function handleMediaSessionAction(action: "play" | "pause" | "next" | "previous"): Promise<void> {

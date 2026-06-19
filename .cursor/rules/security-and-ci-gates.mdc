@@ -7,7 +7,7 @@ alwaysApply: true
 
 ## Before every merge to `develop`
 
-- Run **CI locally** when possible: `npm run lint`, `npm run typecheck`, `npm test`, `npm run build` (use whatever scripts exist once `package.json` is present).
+- Run **CI locally** when possible: **`npm run ci`** (or **`npm run ci:full`** before merge to `develop`). See **`.cursor/rules/local-ci-before-remote.mdc`** — do not push or rely on GitHub Actions until local CI passes.
 - Run **`npm audit`** (or `pnpm audit` / `yarn npm audit`) and address **high/critical** issues or document a timed exception.
 - **No secrets** in git: use `.env` (gitignored) and secret stores only.
 - **Browser extension**: follow Manifest V3 least privilege; tight **CSP**; validate and sanitize user input (URLs, regex search, import JSON); treat imported JSON as untrusted until **Zod** (or equivalent) validation passes.
