@@ -126,11 +126,11 @@ export function StationCard({
     ? `Add ${sanitizeDisplayText(station.name, { maxLength: 80 })} to playlist`
     : `Play ${sanitizeDisplayText(station.name, { maxLength: 80 })}`;
 
-  const rowBorder = surface === "light" ? "border-neutral-200/90" : "border-neutral-800/90";
-  const rowHover = surface === "light" ? "hover:bg-neutral-200/70" : "hover:bg-neutral-900/60";
+  const rowBorder = surface === "light" ? "border-neutral-200/50" : "border-neutral-800/50";
+  const rowHover = surface === "light" ? "hover:bg-neutral-200/50" : "hover:bg-neutral-900/40";
   const rowBg = surface === "light" ? "bg-white" : "";
   const titleC = surface === "light" ? "text-neutral-900" : "text-neutral-100";
-  const subC = surface === "light" ? "text-neutral-600" : "text-neutral-500";
+  const subC = "text-neutral-500/60";
   const sub2C = surface === "light" ? "text-neutral-500" : "text-neutral-600";
   const currentRing =
     surface === "light"
@@ -168,9 +168,9 @@ export function StationCard({
           tabIndex={0}
           aria-label={rowAriaLabel}
           aria-current={isCurrent ? "true" : undefined}
-          style={{ minHeight: STATION_LIST_ROW_HEIGHT_PX }}
+          style={{ minHeight: STATION_LIST_ROW_HEIGHT_PX, transition: 'background-color 150ms var(--ease-out), box-shadow 200ms var(--ease-out)' }}
           className={[
-            "group/station box-border flex cursor-pointer items-center gap-1.5 overflow-visible border-b px-1 py-1 outline-none",
+            "group/station box-border flex cursor-pointer items-center gap-1.5 overflow-visible border-b px-1 py-1 outline-none transition-colors duration-150 ease-out-custom",
             rowBorder,
             rowHover,
             rowBg,
@@ -201,7 +201,7 @@ export function StationCard({
             >
               {country} · {lang}
             </p>
-            <p className={`truncate text-xs leading-tight ${sub2C}`}>{bitrate}</p>
+            <p className={`truncate text-xs leading-tight tabular-nums ${sub2C}`}>{bitrate}</p>
           </div>
           <div className={`relative shrink-0 ${actionsColOpacity}`}>
             <div className="flex flex-row items-center justify-end gap-0.5">
