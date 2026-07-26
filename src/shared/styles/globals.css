@@ -202,3 +202,80 @@ input[type="range"].tajdin-volume-range::-moz-range-thumb:hover {
   transform: scale(1.08);
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.2);
 }
+
+/* ── Modal / Dropdown animations (Task 37) ───────────────────── */
+@keyframes tajdin-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes tajdin-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes tajdin-scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes tajdin-scale-out {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.95); }
+}
+
+@keyframes tajdin-dropdown-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes tajdin-dropdown-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-4px); }
+}
+
+/* Modal panel: scale-in from 0.95, 200ms ease-out */
+.tajdin-modal-panel {
+  animation: tajdin-scale-in var(--duration-normal) var(--ease-out) both;
+}
+
+/* Dropdown: fade + slide down, 125ms ease-out */
+.tajdin-dropdown-content {
+  animation: tajdin-dropdown-in var(--duration-fast) var(--ease-out) both;
+}
+
+/* Reduced motion: opacity-only, no transform */
+@media (prefers-reduced-motion: reduce) {
+  .tajdin-modal-panel {
+    animation-name: tajdin-fade-in;
+  }
+  .tajdin-dropdown-content {
+    animation-name: tajdin-fade-in;
+  }
+}
+
+/* ── Station list stagger animation (Task 38) ────────────────── */
+@keyframes tajdin-stagger-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tajdin-stagger-item {
+  animation: tajdin-stagger-in var(--duration-normal) var(--ease-out) both;
+}
+
+.tajdin-stagger-item:nth-child(1) { animation-delay: 0ms; }
+.tajdin-stagger-item:nth-child(2) { animation-delay: 30ms; }
+.tajdin-stagger-item:nth-child(3) { animation-delay: 60ms; }
+.tajdin-stagger-item:nth-child(4) { animation-delay: 90ms; }
+.tajdin-stagger-item:nth-child(5) { animation-delay: 120ms; }
+.tajdin-stagger-item:nth-child(6) { animation-delay: 150ms; }
+.tajdin-stagger-item:nth-child(7) { animation-delay: 180ms; }
+.tajdin-stagger-item:nth-child(8) { animation-delay: 210ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tajdin-stagger-item {
+    animation: none;
+    opacity: 1;
+  }
+}

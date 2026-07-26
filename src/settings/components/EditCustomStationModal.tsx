@@ -106,7 +106,7 @@ export function EditCustomStationModal({ open, station, onOpenChange, onSaved }:
         aria-labelledby="tajdin-edit-station-title"
         className="relative z-10 w-full max-w-md rounded-t-xl border border-neutral-700 bg-neutral-950 p-4 shadow-2xl sm:rounded-xl"
       >
-        <h2 id="tajdin-edit-station-title" className="mb-3 text-base font-semibold text-neutral-100">
+        <h2 id="tajdin-edit-station-title" className="mb-3 text-base font-semibold text-balance text-neutral-100">
           Edit custom station
         </h2>
         <p className="mb-2 font-mono text-[10px] text-neutral-500">{station.stationuuid}</p>
