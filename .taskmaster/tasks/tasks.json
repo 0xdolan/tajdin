@@ -1747,7 +1747,7 @@
           "35",
           "36"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [],
         "updatedAt": "2026-07-26T00:00:00.000Z"
       },
@@ -1777,7 +1777,7 @@
           "31",
           "38"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [],
         "updatedAt": "2026-07-26T00:00:00.000Z"
       },
@@ -1838,7 +1838,7 @@
       "version": "1.0.0",
       "lastModified": "2026-07-26T00:00:00.000Z",
       "taskCount": 45,
-      "completedCount": 38,
+      "completedCount": 40,
       "tags": [
         "master"
       ]
