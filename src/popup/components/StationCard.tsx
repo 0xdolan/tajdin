@@ -245,7 +245,7 @@ export function StationCard({
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Portal>
                   <DropdownMenu.Content
-                    className={dropdownSurface}
+                    className={`${dropdownSurface} tajdin-dropdown-content`}
                     side="left"
                     align="start"
                     sideOffset={6}
