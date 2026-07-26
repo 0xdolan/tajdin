@@ -115,7 +115,7 @@ export function TabNav() {
                 data-tab={tab.id}
                 title={TAB_TOOLTIP[tab.id]}
                 className={[
-                  "flex h-full min-h-[44px] min-w-[2.75rem] flex-col items-center justify-center gap-px rounded-md px-1.5 py-0.5 text-[10px] font-medium leading-tight transition-colors sm:min-w-[3rem] sm:px-2 sm:text-[11px] pointer:coarse:min-w-[3rem] pointer:coarse:px-2",
+                  "flex h-full min-h-[44px] min-w-[2.75rem] flex-col items-center justify-center gap-px rounded-md px-1.5 py-0.5 text-[10px] font-medium leading-tight transition-colors duration-150 ease-out-custom sm:min-w-[3rem] sm:px-2 sm:text-[11px] pointer:coarse:min-w-[3rem] pointer:coarse:px-2",
                   selected ? tabSel : tabIdle,
                 ].join(" ")}
                 onClick={() => setActiveTab(tab.id)}

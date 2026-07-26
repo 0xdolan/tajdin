@@ -44,7 +44,7 @@ export function StationSearchBar({
 
   const toggleWrap = surface === "light" ? "flex shrink-0 items-center pr-1" : "flex shrink-0 items-center pr-1";
   const btnBase =
-    "flex h-8 min-w-[2.25rem] items-center justify-center rounded-md px-1.5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1";
+    "flex h-8 min-w-[2.25rem] items-center justify-center rounded-md px-1.5 transition-colors duration-150 ease-out-custom focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1";
   const btnIdle =
     surface === "light"
       ? `${btnBase} text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800`
