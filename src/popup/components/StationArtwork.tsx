@@ -32,13 +32,14 @@ export function StationFavicon({
   const [failed, setFailed] = useState(false);
   const safeSrc = stationArtworkHttpUrl({ coverUrl, favicon });
   const frameBg = surface === "light" ? "bg-neutral-200/90" : "bg-neutral-800";
+  const frameDark = surface === "dark" ? "shadow-sm" : "";
   useEffect(() => {
     setFailed(false);
   }, [safeSrc]);
   if (!safeSrc || failed) {
     return (
       <div
-        className={`flex shrink-0 items-center justify-center rounded-md ${frameBg} text-neutral-500 ${sizeClass}`}
+        className={`flex shrink-0 items-center justify-center rounded-lg ${frameBg} ${frameDark} text-neutral-500 ${sizeClass}`}
         aria-hidden
       >
         <RadioFallbackIcon />
@@ -49,7 +50,7 @@ export function StationFavicon({
     <img
       src={safeSrc}
       alt=""
-      className={`shrink-0 rounded-md object-cover ${frameBg} ${sizeClass}`}
+      className={`shrink-0 rounded-lg object-cover ${frameBg} ${frameDark} ${sizeClass}`}
       loading="lazy"
       onError={() => setFailed(true)}
     />
