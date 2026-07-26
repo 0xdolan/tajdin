@@ -116,7 +116,7 @@ export function ImportExportSection({ reloadToken }: ImportExportSectionProps) {
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div>
-        <h2 className="text-base font-semibold text-neutral-100">Backup &amp; restore</h2>
+        <h2 className="text-base font-semibold text-balance text-neutral-100">Backup &amp; restore</h2>
         <p className="mt-1 text-sm text-neutral-500">
           Export all local Tajdîn data (settings, playlists, custom stations, favourites) as JSON. Import validates
           with the same schemas used for storage. Very old backup files may contain extra keys that Tajdîn no longer

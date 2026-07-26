@@ -44,8 +44,8 @@ export function TabPanel() {
       : "box-border flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden px-3 py-3";
   const titleClass =
     surface === "light"
-      ? "mb-2 shrink-0 text-sm font-semibold text-neutral-800"
-      : "mb-2 shrink-0 text-sm font-semibold text-neutral-200";
+      ? "mb-2 shrink-0 text-sm font-semibold text-balance text-neutral-800"
+      : "mb-2 shrink-0 text-sm font-semibold text-balance text-neutral-200";
   const panelHeadingClass =
     activeTab === "about" ? `${titleClass} sr-only` : titleClass;
   const addBtn =
