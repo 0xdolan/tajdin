@@ -82,8 +82,8 @@ export function TabNav() {
   const setActiveTab = useUiStore((s) => s.setActiveTab);
   const navBar =
     surface === "light"
-      ? "flex h-11 shrink-0 items-stretch border-b border-neutral-200 bg-white px-0.5"
-      : "flex h-11 shrink-0 items-stretch border-b border-neutral-800 bg-neutral-950 px-0.5";
+      ? "flex h-11 shrink-0 items-stretch border-b border-neutral-200/60 bg-white px-0.5"
+      : "flex h-11 shrink-0 items-stretch border-b border-neutral-800/60 bg-neutral-950 px-0.5";
   const tabIdle =
     surface === "light"
       ? "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
@@ -94,8 +94,8 @@ export function TabNav() {
       : "bg-neutral-800 text-neutral-50 shadow-sm";
   const gear =
     surface === "light"
-      ? "ml-0.5 flex h-full w-9 shrink-0 items-center justify-center rounded-md text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
-      : "ml-0.5 flex h-full w-9 shrink-0 items-center justify-center rounded-md text-neutral-400 hover:bg-neutral-900 hover:text-neutral-100";
+      ? "ml-1 flex h-full w-9 shrink-0 items-center justify-center rounded-md border-l border-neutral-200/60 text-neutral-500 transition-colors duration-150 ease-out-custom hover:bg-neutral-100 hover:text-neutral-900"
+      : "ml-1 flex h-full w-9 shrink-0 items-center justify-center rounded-md border-l border-neutral-800/60 text-neutral-400 transition-colors duration-150 ease-out-custom hover:bg-neutral-900 hover:text-neutral-100";
 
   return (
     <nav className={navBar} aria-label="Main">

@@ -79,7 +79,7 @@ function StationArt({
 
   return (
     <div
-      className={`relative shrink-0 overflow-hidden rounded-md ${frame} ${frameClassName ?? "h-8 w-8"}`}
+      className={`relative shrink-0 overflow-hidden rounded-lg ${frame} ${frameClassName ?? "h-8 w-8"}`}
     >
       {artworkUrl && !imgFailed ? (
         <img
@@ -356,8 +356,8 @@ export function Player() {
   const effectivelySilent = muted || volumePercent === 0;
   const playBtn =
     surface === "light"
-      ? `flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-white shadow-sm transition-transform duration-fast ease-out-custom hover:bg-neutral-800 ${scaleCls} disabled:cursor-not-allowed disabled:opacity-40`
-      : `flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-500/95 text-neutral-950 shadow-sm transition-transform duration-fast ease-out-custom hover:bg-amber-400 ${scaleCls} disabled:cursor-not-allowed disabled:opacity-40`;
+      ? `flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-white shadow-sm transition-transform duration-fast ease-out-custom hover:bg-neutral-800 ${scaleCls} disabled:cursor-not-allowed disabled:opacity-40`
+      : `flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-500/95 text-neutral-950 shadow-sm transition-transform duration-fast ease-out-custom hover:bg-amber-400 ${scaleCls} disabled:cursor-not-allowed disabled:opacity-40`;
   const muteBtn =
     surface === "light"
       ? `flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors duration-fast ease-out-custom hover:bg-neutral-200/90 ${scaleCls} ${
