@@ -238,7 +238,7 @@ function AddCurrentToPlaylistMenu({
         <AddToPlaylistIcon className="h-3.5 w-3.5" />
       </button>
       {open ? (
-        <div className={menuSurface} role="menu">
+        <div className={`${menuSurface} tajdin-dropdown-content`} role="menu">
           {playlists.length === 0 ? (
             <p className="px-3 py-2 text-xs text-neutral-500">
               No playlists yet. Create one under Lists or in Settings → Playlists.
@@ -384,7 +384,7 @@ export function Player() {
     <div className="flex w-full min-w-0 flex-col gap-1">
       <div className="min-w-0" title={tooltip}>
         <p
-          className={`truncate text-sm font-semibold leading-tight sm:text-[0.95rem] ${titleMain} ${titleArabic ? "tajdin-font-arabic" : ""}`}
+          className={`truncate text-sm font-semibold text-balance leading-tight sm:text-[0.95rem] ${titleMain} ${titleArabic ? "tajdin-font-arabic" : ""}`}
           dir="auto"
         >
           {station ? stationTitle : "No station selected"}

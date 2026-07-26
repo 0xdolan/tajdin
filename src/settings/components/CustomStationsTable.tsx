@@ -27,7 +27,7 @@ export function CustomStationsTable({ reloadToken }: CustomStationsTableProps) {
   return (
     <div className="mx-auto max-w-4xl">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-base font-semibold text-neutral-100">Custom stations</h2>
+        <h2 className="text-base font-semibold text-balance text-neutral-100">Custom stations</h2>
         <button
           type="button"
           className="rounded-md bg-sky-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-sky-600"
