@@ -35,7 +35,7 @@ export function StationSearchBar({
   const borderInvalid = invalid ? "border-red-500" : surface === "light" ? "border-neutral-300" : "border-neutral-600";
   const inputCls =
     surface === "light"
-      ? `min-w-0 flex-1 rounded-md border-0 bg-transparent py-2 pl-2.5 pr-1 text-sm text-neutral-900 outline-none ring-0 placeholder:text-neutral-500 focus:ring-0 ${
+      ? `min-w-0 flex-1 rounded-md border-0 bg-transparent py-2 pl-2.5 pr-1 text-sm text-neutral-900 outline-none ring-0 placeholder:text-neutral-400 focus:ring-0 ${
           invalid ? "text-red-900" : ""
         }`
       : `min-w-0 flex-1 rounded-md border-0 bg-transparent py-2 pl-2.5 pr-1 text-sm text-neutral-100 outline-none ring-0 placeholder:text-neutral-500 focus:ring-0 ${
@@ -51,8 +51,8 @@ export function StationSearchBar({
       : `${btnBase} text-neutral-400 hover:bg-neutral-800 hover:text-neutral-100`;
   const btnOn =
     surface === "light"
-      ? `${btnBase} bg-amber-100 text-amber-900`
-      : `${btnBase} bg-amber-500/20 text-amber-300`;
+      ? `${btnBase} border border-amber-300 bg-amber-50 text-amber-700`
+      : `${btnBase} border border-amber-500/30 bg-amber-500/15 text-amber-300`;
 
   return (
     <div className="flex w-full shrink-0 flex-col gap-1">
