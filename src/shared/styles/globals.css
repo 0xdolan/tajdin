@@ -123,7 +123,7 @@ html.tajdin-popup-root #root {
 
 .tajdin-eq-bar {
   transform-origin: center bottom;
-  animation: tajdin-eq-bar 0.55s ease-in-out infinite;
+  animation: tajdin-eq-bar 0.55s var(--ease-in-out) infinite;
 }
 
 /* Player volume: custom track + thumb for smoother feel than native thin bar. */
@@ -138,7 +138,7 @@ input[type="range"].tajdin-volume-range {
 input[type="range"].tajdin-volume-range::-webkit-slider-runnable-track {
   height: 6px;
   border-radius: 9999px;
-  transition: background 0.15s ease;
+  transition: background 0.15s var(--ease-out);
 }
 
 input[type="range"].tajdin-volume-range--light::-webkit-slider-runnable-track {
@@ -158,7 +158,7 @@ input[type="range"].tajdin-volume-range::-webkit-slider-thumb {
   border-radius: 9999px;
   background: #f59e0b;
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.22);
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  transition: transform 0.12s var(--ease-out), box-shadow 0.12s var(--ease-out);
 }
 
 input[type="range"].tajdin-volume-range::-webkit-slider-thumb:hover {
@@ -170,7 +170,7 @@ input[type="range"].tajdin-volume-range::-moz-range-track {
   height: 6px;
   border-radius: 9999px;
   border: none;
-  transition: background 0.15s ease;
+  transition: background 0.15s var(--ease-out);
 }
 
 input[type="range"].tajdin-volume-range--light::-moz-range-track {
@@ -188,7 +188,7 @@ input[type="range"].tajdin-volume-range::-moz-range-thumb {
   border-radius: 9999px;
   background: #f59e0b;
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.22);
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  transition: transform 0.12s var(--ease-out), box-shadow 0.12s var(--ease-out);
 }
 
 input[type="range"].tajdin-volume-range::-moz-range-thumb:hover {

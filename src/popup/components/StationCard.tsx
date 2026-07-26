@@ -141,7 +141,7 @@ export function StationCard({
   const hintC = surface === "light" ? "text-amber-700" : "text-amber-400";
   /** Fade in on row hover/focus; stay visible on touch (no hover). */
   const actionsColOpacity =
-    "opacity-0 transition-opacity duration-200 ease-out group-hover/station:opacity-100 group-focus-within/station:opacity-100 [@media(pointer:coarse)]:opacity-100";
+    "opacity-0 transition-opacity duration-normal ease-out-custom group-hover/station:opacity-100 group-focus-within/station:opacity-100 [@media(pointer:coarse)]:opacity-100";
 
   const menuSurface =
     surface === "light"
