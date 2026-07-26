@@ -48,7 +48,7 @@ export function GeneralSettingsSection({ reloadToken }: GeneralSettingsSectionPr
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div>
-        <h2 className="text-base font-semibold text-neutral-100">General</h2>
+        <h2 className="text-base font-semibold text-balance text-neutral-100">General</h2>
         <p className="mt-1 text-sm text-neutral-500">Theme and default behaviour (stored locally).</p>
       </div>
 

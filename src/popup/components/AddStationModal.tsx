@@ -141,7 +141,7 @@ export function AddStationModal({ open, onOpenChange, onAdded, draftScope }: Add
     <div className="fixed inset-0 z-[200] flex items-end justify-center sm:items-center">
       <button
         type="button"
-        className="absolute inset-0 bg-black/60"
+        className="absolute inset-0 bg-black/60 tajdin-fade-in"
         aria-label="Close"
         onClick={dismissRetainDraft}
       />
@@ -149,12 +149,12 @@ export function AddStationModal({ open, onOpenChange, onAdded, draftScope }: Add
         role="dialog"
         aria-modal="true"
         aria-labelledby="tajdin-add-station-title"
-        className="relative z-10 w-full max-w-md rounded-t-xl border border-neutral-700 bg-neutral-950 p-4 shadow-2xl sm:rounded-xl"
+        className="relative z-10 w-full max-w-md rounded-t-xl border border-neutral-700 bg-neutral-950 p-4 shadow-2xl tajdin-modal-panel sm:rounded-xl"
       >
-        <h2 id="tajdin-add-station-title" className="mb-3 text-base font-semibold text-neutral-100">
+        <h2 id="tajdin-add-station-title" className="mb-3 text-base font-semibold text-balance text-neutral-100">
           Add custom station
         </h2>
-        <p className="mb-3 text-xs text-neutral-500">
+        <p className="mb-3 text-xs text-pretty text-neutral-500">
           Stream URL must use HTTP or HTTPS. Optional cover is an image URL (HTTP/HTTPS) shown in lists and
           the player when stopped. The station is stored on this device and appears in Browse search with a{" "}
           <code className="text-neutral-400">custom:</code> id.
@@ -169,7 +169,7 @@ export function AddStationModal({ open, onOpenChange, onAdded, draftScope }: Add
             <p className="truncate text-sm font-medium text-neutral-100" dir="auto">
               {previewTitle}
             </p>
-            <p className="truncate text-xs text-neutral-500">Custom stream</p>
+            <p className="truncate text-xs text-pretty text-neutral-500">Custom stream</p>
             <p className="truncate text-xs text-neutral-600">{previewUrlLine}</p>
           </div>
         </div>

@@ -44,7 +44,7 @@ export function App() {
         <div className="mb-6 px-2">
           <ExtensionBranding
             titleTag="h1"
-            titleClassName="text-sm font-semibold text-neutral-50"
+            titleClassName="text-sm font-semibold text-balance text-neutral-50"
             subtitleClassName="text-xs text-neutral-500"
             markVariant="white"
           />
@@ -78,7 +78,7 @@ export function App() {
         {section === "stations" ? <CustomStationsTable reloadToken={storageRev} /> : null}
         {section === "playlists" ? (
           <div className="flex h-[min(70vh,800px)] min-h-[320px] flex-col">
-            <h2 className="mb-3 shrink-0 text-base font-semibold text-neutral-100">Playlists</h2>
+            <h2 className="mb-3 shrink-0 text-base font-semibold text-balance text-neutral-100">Playlists</h2>
             <div className="min-h-0 flex-1">
               <PlaylistsPage key={storageRev} />
             </div>
