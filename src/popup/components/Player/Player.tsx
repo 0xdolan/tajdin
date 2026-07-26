@@ -7,6 +7,7 @@ import {
   goToRandomInSearchResults,
 } from "../../browseNavigation";
 import { useSurface, type Surface } from "../../SurfaceContext";
+import { useReducedMotion } from "../../../shared/hooks/useReducedMotion";
 import { ensurePlayerStationResolved } from "../../ensurePlayerStationResolved";
 import { startPlaybackWithPlaylistSkip } from "../../playerPlayback";
 import { sendPlayerCommand } from "../../playerBridge";
@@ -276,6 +277,8 @@ function SpeakerOffIcon() {
 
 export function Player() {
   const surface = useSurface();
+  const rm = useReducedMotion();
+  const scaleCls = rm ? "" : "active:scale-95";
   const searchResultsLen = useStationStore((s) => s.searchResults.length);
   const favouriteIds = useStationStore((s) => s.favouriteIds);
   const toggleFavourite = useStationStore((s) => s.toggleFavourite);
@@ -353,20 +356,20 @@ export function Player() {
   const effectivelySilent = muted || volumePercent === 0;
   const playBtn =
     surface === "light"
-      ? "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-white shadow-sm transition-transform duration-fast ease-out-custom hover:bg-neutral-800 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
-      : "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-500/95 text-neutral-950 shadow-sm transition-transform duration-fast ease-out-custom hover:bg-amber-400 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40";
+      ? `flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-white shadow-sm transition-transform duration-fast ease-out-custom hover:bg-neutral-800 ${scaleCls} disabled:cursor-not-allowed disabled:opacity-40`
+      : `flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-500/95 text-neutral-950 shadow-sm transition-transform duration-fast ease-out-custom hover:bg-amber-400 ${scaleCls} disabled:cursor-not-allowed disabled:opacity-40`;
   const muteBtn =
     surface === "light"
-      ? `flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors duration-fast ease-out-custom hover:bg-neutral-200/90 active:scale-95 ${
+      ? `flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors duration-fast ease-out-custom hover:bg-neutral-200/90 ${scaleCls} ${
           effectivelySilent ? "text-amber-600" : "text-neutral-600"
         }`
-      : `flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors duration-fast ease-out-custom hover:bg-neutral-800/90 active:scale-95 ${
+      : `flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors duration-fast ease-out-custom hover:bg-neutral-800/90 ${scaleCls} ${
           effectivelySilent ? "text-amber-400" : "text-neutral-300"
         }`;
   const navBtn =
     surface === "light"
-      ? "flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-neutral-600 transition-colors duration-fast ease-out-custom hover:bg-neutral-200/90 active:scale-95 disabled:cursor-not-allowed disabled:opacity-35"
-      : "flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-neutral-300 transition-colors duration-fast ease-out-custom hover:bg-neutral-800/90 active:scale-95 disabled:cursor-not-allowed disabled:opacity-35";
+      ? `flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-neutral-600 transition-colors duration-fast ease-out-custom hover:bg-neutral-200/90 ${scaleCls} disabled:cursor-not-allowed disabled:opacity-35`
+      : `flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-neutral-300 transition-colors duration-fast ease-out-custom hover:bg-neutral-800/90 ${scaleCls} disabled:cursor-not-allowed disabled:opacity-35`;
 
   const listNavDisabled = searchResultsLen === 0 || busy;
   const isFavourite = Boolean(stationuuid && favouriteIds.includes(stationuuid));
