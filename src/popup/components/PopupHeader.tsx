@@ -8,7 +8,7 @@ export function PopupHeader() {
     surface === "light"
       ? "flex shrink-0 items-center border-b border-neutral-200 bg-white px-3 py-2"
       : "flex shrink-0 items-center border-b border-neutral-800 bg-neutral-950 px-3 py-2";
-  const title = surface === "light" ? "text-sm font-semibold text-neutral-900" : "text-sm font-semibold text-neutral-50";
+  const title = surface === "light" ? "text-sm font-semibold text-balance text-neutral-900" : "text-sm font-semibold text-balance text-neutral-50";
   const sub = "text-xs text-neutral-500";
 
   return (

@@ -42,19 +42,19 @@ const surfaceTokens: Record<
 > = {
   dark: {
     root: "mx-auto max-w-2xl space-y-6 text-neutral-300 sm:space-y-8",
-    h2: "text-xl font-semibold text-neutral-50",
+    h2: "text-xl font-semibold text-balance text-neutral-50",
     versionMuted: "text-sm text-neutral-400",
     versionMono: "font-mono text-neutral-200",
-    h3: "text-base font-semibold text-neutral-100",
+    h3: "text-base font-semibold text-balance text-neutral-100",
     bodyStrong: "font-medium text-neutral-100",
     closing: "text-sm font-medium leading-relaxed text-neutral-200",
   },
   light: {
     root: "mx-auto max-w-2xl space-y-6 text-neutral-600 sm:space-y-8",
-    h2: "text-xl font-semibold text-neutral-900",
+    h2: "text-xl font-semibold text-balance text-neutral-900",
     versionMuted: "text-sm text-neutral-500",
     versionMono: "font-mono text-neutral-800",
-    h3: "text-base font-semibold text-neutral-800",
+    h3: "text-base font-semibold text-balance text-neutral-800",
     bodyStrong: "font-medium text-neutral-900",
     closing: "text-sm font-medium leading-relaxed text-neutral-800",
   },
