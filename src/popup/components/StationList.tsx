@@ -10,6 +10,7 @@ import type { Playlist } from "../../shared/types/playlist";
 import { KURDISH_CURATED_STATIONS } from "../../shared/data/kurdishCuratedStations";
 import type { Station } from "../../shared/types/station";
 import { TAJDIN_KURDISH_CURATED_LANGUAGE_VALUE } from "../../shared/utils/language-mapper";
+import { useReducedMotion } from "../../shared/hooks/useReducedMotion";
 import type { SearchMode } from "../hooks/useSearch";
 import { useSurface } from "../SurfaceContext";
 import { STATION_LIST_ROW_HEIGHT_PX } from "../constants/stationListLayout";
@@ -65,16 +66,38 @@ export type StationListContext = {
   appendToPlaylist?: { playlistId: string };
 };
 
+const SKELETON_ROW_COUNT = 8;
+
 function StationListSkeleton() {
   const surface = useSurface();
-  const bar =
+  const rm = useReducedMotion();
+
+  const rowBg =
     surface === "light"
-      ? "shrink-0 animate-pulse rounded-md bg-neutral-200/90"
-      : "shrink-0 animate-pulse rounded-md bg-neutral-800/80";
+      ? "bg-neutral-200 dark:bg-neutral-800"
+      : "bg-neutral-800";
+  const barBg =
+    surface === "light"
+      ? "bg-neutral-300 dark:bg-neutral-700"
+      : "bg-neutral-700";
+  const animClass = rm ? "" : "animate-pulse";
+
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-2 py-1" aria-busy="true" aria-label="Loading stations">
-      {Array.from({ length: 8 }, (_, i) => (
-        <div key={i} className={bar} style={{ height: STATION_LIST_ROW_HEIGHT_PX }} />
+    <div className="flex min-h-0 flex-1 flex-col py-1" aria-busy="true" aria-label="Loading stations">
+      {Array.from({ length: SKELETON_ROW_COUNT }, (_, i) => (
+        <div
+          key={i}
+          className={`flex items-center gap-1.5 rounded px-1 py-1 ${rowBg} ${animClass}`}
+          style={{ minHeight: STATION_LIST_ROW_HEIGHT_PX }}
+        >
+          {/* Fake favicon */}
+          <div className={`shrink-0 h-9 w-9 rounded-lg ${barBg}`} />
+          {/* Fake text lines */}
+          <div className="min-w-0 flex-1 flex flex-col gap-1.5">
+            <div className={`h-3 w-3/4 rounded ${barBg}`} />
+            <div className={`h-2 w-1/2 rounded ${barBg}`} />
+          </div>
+        </div>
       ))}
     </div>
   );
