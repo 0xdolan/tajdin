@@ -1,7 +1,7 @@
 import type { Surface } from "../SurfaceContext";
 
 const focusRing =
-  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500/80";
+  "focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 focus-visible:outline-none";
 
 /**
  * Shared chrome for station list row icon buttons — aligned with {@link StationFavicon} frame tokens

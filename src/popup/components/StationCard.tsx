@@ -170,7 +170,7 @@ export function StationCard({
           aria-current={isCurrent ? "true" : undefined}
           style={{ minHeight: STATION_LIST_ROW_HEIGHT_PX, transition: 'background-color 150ms var(--ease-out), box-shadow 200ms var(--ease-out)' }}
           className={[
-            "group/station box-border flex cursor-pointer items-center gap-1.5 overflow-visible border-b px-1 py-1 outline-none transition-colors duration-150 ease-out-custom",
+            "group/station box-border flex cursor-pointer items-center gap-1.5 overflow-visible border-b px-1 py-1 outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 transition-colors duration-150 ease-out-custom",
             rowBorder,
             rowHover,
             rowBg,
