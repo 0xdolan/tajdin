@@ -10,8 +10,8 @@ export function BrowseCustomStationsToggle({ pressed, onPressedChange }: BrowseC
   const surface = useSurface();
   const base =
     surface === "light"
-      ? "rounded-md border px-2.5 py-1.5 text-sm font-medium shadow-sm transition-colors"
-      : "rounded-md border px-2.5 py-1.5 text-sm font-medium transition-colors";
+      ? "rounded-md border px-2.5 py-1.5 text-sm font-medium shadow-sm transition-colors duration-150 ease-out-custom active:scale-[0.97]"
+      : "rounded-md border px-2.5 py-1.5 text-sm font-medium transition-colors duration-150 ease-out-custom active:scale-[0.97]";
   const idle =
     surface === "light"
       ? "border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-50"
