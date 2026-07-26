@@ -58,7 +58,7 @@ export function App() {
                 type="button"
                 onClick={() => setSection(item.id)}
                 className={[
-                  "rounded-md px-3 py-2 text-left text-sm transition-colors",
+                  "rounded-md px-3 py-2 text-left text-sm transition-colors duration-150 ease-out-custom active:scale-[0.97]",
                   active
                     ? "bg-neutral-800 font-medium text-neutral-50"
                     : "text-neutral-400 hover:bg-neutral-900 hover:text-neutral-200",

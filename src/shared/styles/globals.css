@@ -11,9 +11,51 @@ html.tajdin-popup-root #root {
   box-sizing: border-box;
 }
 
+/* ── Design Tokens (see DESIGN.md) ─────────────────────────────── */
+@layer base {
+  :root {
+    /* Easing curves — strong custom cubic-beziers */
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+    /* Duration tokens */
+    --duration-fast: 125ms;
+    --duration-normal: 200ms;
+    --duration-slow: 300ms;
+
+    /* Z-index scale */
+    --z-dropdown: 100;
+    --z-modal: 200;
+    --z-toast: 300;
+  }
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ── Motion utility classes ────────────────────────────────────── */
+@layer utilities {
+  .ease-out-custom {
+    transition-timing-function: var(--ease-out);
+  }
+  .ease-in-out-custom {
+    transition-timing-function: var(--ease-in-out);
+  }
+  .ease-drawer {
+    transition-timing-function: var(--ease-drawer);
+  }
+  .duration-fast {
+    transition-duration: var(--duration-fast);
+  }
+  .duration-normal {
+    transition-duration: var(--duration-normal);
+  }
+  .duration-slow {
+    transition-duration: var(--duration-slow);
+  }
+}
 
 /* Station / playlist scroll areas — class names from `listScrollbarClass()` in `list-scrollbar.ts`. */
 @layer utilities {
@@ -81,7 +123,14 @@ html.tajdin-popup-root #root {
 
 .tajdin-eq-bar {
   transform-origin: center bottom;
-  animation: tajdin-eq-bar 0.55s ease-in-out infinite;
+  animation: tajdin-eq-bar 0.55s var(--ease-in-out) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tajdin-eq-bar {
+    animation: none;
+    transform: scaleY(0.6);
+  }
 }
 
 /* Player volume: custom track + thumb for smoother feel than native thin bar. */
@@ -96,7 +145,7 @@ input[type="range"].tajdin-volume-range {
 input[type="range"].tajdin-volume-range::-webkit-slider-runnable-track {
   height: 6px;
   border-radius: 9999px;
-  transition: background 0.15s ease;
+  transition: background 0.15s var(--ease-out);
 }
 
 input[type="range"].tajdin-volume-range--light::-webkit-slider-runnable-track {
@@ -116,7 +165,7 @@ input[type="range"].tajdin-volume-range::-webkit-slider-thumb {
   border-radius: 9999px;
   background: #f59e0b;
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.22);
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  transition: transform 0.12s var(--ease-out), box-shadow 0.12s var(--ease-out);
 }
 
 input[type="range"].tajdin-volume-range::-webkit-slider-thumb:hover {
@@ -128,7 +177,7 @@ input[type="range"].tajdin-volume-range::-moz-range-track {
   height: 6px;
   border-radius: 9999px;
   border: none;
-  transition: background 0.15s ease;
+  transition: background 0.15s var(--ease-out);
 }
 
 input[type="range"].tajdin-volume-range--light::-moz-range-track {
@@ -146,7 +195,7 @@ input[type="range"].tajdin-volume-range::-moz-range-thumb {
   border-radius: 9999px;
   background: #f59e0b;
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.22);
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  transition: transform 0.12s var(--ease-out), box-shadow 0.12s var(--ease-out);
 }
 
 input[type="range"].tajdin-volume-range::-moz-range-thumb:hover {
