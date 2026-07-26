@@ -126,6 +126,13 @@ html.tajdin-popup-root #root {
   animation: tajdin-eq-bar 0.55s var(--ease-in-out) infinite;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .tajdin-eq-bar {
+    animation: none;
+    transform: scaleY(0.6);
+  }
+}
+
 /* Player volume: custom track + thumb for smoother feel than native thin bar. */
 input[type="range"].tajdin-volume-range {
   -webkit-appearance: none;
