@@ -1386,13 +1386,459 @@
           }
         ],
         "updatedAt": "2026-04-03T23:00:00.000Z"
+      },
+      {
+        "id": "29",
+        "title": "Web player site — same Tajdîn UI for browser tabs (GitHub Pages)",
+        "description": "Ship a normal responsive web page (not the extension popup) where visitors can browse, play radio, and keep the tab open like any website. Match popup visual design (header, tabs, station list, player dock, About, GitHub footer). Host on GitHub Pages with links to the extension repo.",
+        "details": "New Vite entry `src/web/` (or `src/site/`) built alongside the extension. Reuse shared API, types, Zustand stores, and popup UI components where possible behind a small platform layer (storage + playback). Web uses in-page `<audio>` + Media Session API instead of service worker/offscreen. Layout uses full viewport with responsive breakpoints (mobile / tablet / desktop), not fixed popup width×height. Footer keeps Made by 0xdolan · Source · version; add optional Chrome Web Store / install extension CTA. Deploy via GitHub Actions to `gh-pages` or `docs/` with correct `base` for `https://0xdolan.github.io/tajdin/`.",
+        "testStrategy": "Vitest for platform adapters; manual responsive pass (320px–1440px); `npm run ci` includes web build; verify Radio Browser + stream play in a normal Chrome/Firefox tab.",
+        "priority": "high",
+        "dependencies": [
+          "28"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Scope, parity matrix, and PRD update for web player",
+            "description": "Define what the public web app includes vs the extension, and document hosting URL.",
+            "dependencies": [],
+            "details": "Write a short parity table in `.taskmaster/docs/tajdin-prd-v1.txt` (or add `tajdin-web-prd-v1.txt`): IN SCOPE — Browse/Favs/Lists/About tabs, play/pause, favourites, playlists, custom stations, backup import/export, theme (light/dark/system), GitHub footer links. OUT OF SCOPE v1 web — background playback when tab is discarded (browser limits), chrome.commands shortcuts, extension options chrome URL, offscreen keep-alive. Note CORS: Radio Browser API works from browser; some stream hosts may block web origins (document fallback UX). Target URL: GitHub Pages at repo root or `/tajdin` path.",
+            "status": "pending",
+            "testStrategy": "Review doc with stakeholder; no code required.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Vite web entry, HTML shell, and npm scripts",
+            "description": "Add a third user-facing build target separate from popup/settings/offscreen.",
+            "dependencies": [
+              1
+            ],
+            "details": "Add `src/web/index.html`, `src/web/main.tsx`, `src/web/App.tsx`. Extend `vite.config.ts` `rollupOptions.input` with `web`. Add scripts: `npm run dev:web` (vite --open /web entry), `npm run build:web`, `npm run build:all` (extension + web). Configure `base` for production (`/tajdin/` on GitHub Pages vs `./` for extension). Copy `public/logo` assets; share `src/popup/globals.css` / Tailwind entry.",
+            "status": "pending",
+            "testStrategy": "`npm run build:web` emits `dist/` web bundle; `npm run dev:web` loads in browser without chrome.* errors.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Platform abstraction — runtime, storage, and version",
+            "description": "Isolate chrome.* usage so popup and web share stores and library code.",
+            "dependencies": [
+              2
+            ],
+            "details": "Introduce `src/shared/platform/` (or similar): `isExtensionRuntime()`, `getAppVersion()` (manifest vs `import.meta.env.VITE_APP_VERSION` from package.json at build). Implement `webStorageAdapter` backed by `localStorage` + optional `sessionStorage` mirroring `chrome.storage.local` / `.session` keys (`tajdin.*`). Refactor `popupStorageSync` to call adapter interface; extension keeps chrome wrapper. Ensure `AttributionFooter`, `WelcomeOnboardingBanner`, and `TabNav` settings gear use injectable callbacks (`openSettings`, `getVersion`).",
+            "status": "pending",
+            "testStrategy": "Vitest: web adapter round-trip get/set/watch; extension tests unchanged.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Web audio playback engine (in-tab HTMLAudioElement)",
+            "description": "Replace extension playerBridge/offscreen path on web with direct audio control.",
+            "dependencies": [
+              3
+            ],
+            "details": "Add `src/web/audio/webPlayerEngine.ts` reusing `src/offscreen/media-player.ts` helpers (`assignAudioSource`, `playAudioWithRetry`). Wire `playerPlayback.ts` / `Player.tsx` toggle through a `PlayerTransport` interface: extension → `sendPlayerCommand`; web → local engine. Register `navigator.mediaSession` on the web page for OS media keys. Sync `isPlaying` from audio events (`play`/`pause`/`ended`). No service worker required for v1 web.",
+            "status": "pending",
+            "testStrategy": "Manual: play/pause, volume, station switch; unit tests for transport selection and state sync.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Responsive web layout shell (match extension design)",
+            "description": "Full-page layout that looks like the popup screenshot but scales to desktop and mobile.",
+            "dependencies": [
+              2
+            ],
+            "details": "Web `App.tsx` structure mirrors popup: `PopupHeader`/`ExtensionBranding`, `TabNav`, optional welcome banner, scrollable `TabPanel`, `PlaybackFeedbackToast`, sticky bottom `PlayerDock`, `AttributionFooter`. Replace fixed `style={{ width, height }}` with: `min-h-dvh flex flex-col max-w-3xl mx-auto w-full` (tune max-width). Breakpoints: sm — full width player row; md+ — same horizontal player as extension; safe-area padding for mobile. Dark/light via existing `SurfaceProvider`. Hide or repurpose settings gear → in-page `/settings` route or slide-over panel.",
+            "status": "pending",
+            "testStrategy": "Visual check at 320, 768, 1024, 1440px; no horizontal scroll; player dock always visible.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Compose web app from shared radio UI modules",
+            "description": "Avoid duplicating Browse/Favs/Lists/About; extract or re-import popup components.",
+            "dependencies": [
+              3,
+              4,
+              5
+            ],
+            "details": "Preferred: move presentation components to `src/shared/components/radio/` (or `src/radio-ui/`) — `TabPanel`, `StationList`, `Player`, playlists module — with imports updated in popup and web. Web `main.tsx` mounts same `TabPanel` tree with web storage sync. Keep extension-only pieces (`TabNav` openOptionsPage) behind props. Reuse `stationLibraryApi`, `playerPlayback`, `browseNavigation` unchanged where they only touch stores/API.",
+            "status": "pending",
+            "testStrategy": "Popup regression: `npm run ci`; web smoke: browse → play station → favourite.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Web settings and backup (full-page or routed)",
+            "description": "Expose General, Stations, Playlists, Backup, About without chrome.runtime.openOptionsPage.",
+            "dependencies": [
+              6
+            ],
+            "details": "Option A: second Vite entry `web-settings` (reuse `src/settings/App.tsx` with platform adapter). Option B: client-side route `/settings` in single-page web app. Wire theme, custom stations, import/export JSON with web storage. Ensure settings changes reflect main view via shared storage watch.",
+            "status": "pending",
+            "testStrategy": "Change theme on settings → main app updates; export/import round-trip.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 8,
+            "title": "GitHub links, About tab, and extension install CTA",
+            "description": "Public page marketing/footer aligned with store listing.",
+            "dependencies": [
+              5
+            ],
+            "details": "Footer: `EXTENSION_AUTHOR_GITHUB_URL`, `TAJDIN_EXTENSION_REPO_URL` from `src/shared/constants/links.ts`; version from `getAppVersion()`. About tab already has Why Tajdîn — ensure visible on web. Add subtle CTA row: ‘Get the Chrome extension’ linking to GitHub releases or Web Store URL when available. Optional hero line on landing: ‘always by your side; Radio Browser’.",
+            "status": "pending",
+            "testStrategy": "Links open in new tab; version matches package.json build.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 9,
+            "title": "GitHub Pages deploy workflow and README",
+            "description": "Publish the web build for visitors.",
+            "dependencies": [
+              2,
+              6,
+              8
+            ],
+            "details": "Add `.github/workflows/pages.yml` (or extend release): build web with `base: /tajdin/`, upload `dist` artifact, deploy to GitHub Pages. Enable Pages in repo settings. README: add ‘Try in browser’ link to live URL. Update `docs/development.md` with `dev:web`, `build:web`, Pages deploy, and note extension vs web outputs.",
+            "status": "pending",
+            "testStrategy": "Deploy to staging branch; live URL loads assets, plays audio, footer links work.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 10,
+            "title": "Stream/CORS hardening, responsive QA, and CI gate",
+            "description": "Handle web-only playback failures and lock quality bar.",
+            "dependencies": [
+              4,
+              6,
+              9
+            ],
+            "details": "Some streams reject browser Origin; extend playback toast copy for web (‘station may not allow browser playback — try extension’). Document in troubleshooting. Add vitest for layout helpers if any. Extend `npm run ci` or add `ci:web` (build:web + smoke test). Manual matrix: Chrome desktop, mobile Safari/Chrome, keyboard/media keys where supported.",
+            "status": "pending",
+            "testStrategy": "`npm run ci:full` green; checklist signed off for responsive + play paths.",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-06-19T12:00:00.000Z"
+      },
+      {
+        "id": "30",
+        "title": "DESIGN.md foundation and CSS motion tokens",
+        "description": "Create DESIGN.md at project root (Impeccable token spec format) and add CSS custom properties for easing curves, duration tokens, and z-index scale to globals.css.",
+        "details": "1) Create DESIGN.md with sections: Color Tokens (primary accent amber-500, surface light neutral-100/dark neutral-950, semantic success/error/warning), Typography Scale (headings text-balance, body text-pretty, data tabular-nums), Spacing Scale (Tailwind defaults), Easing Curves (--ease-out, --ease-in-out, --ease-drawer), Spring Config (critically damped damping=1.0, momentum damping=0.8), Component Inventory (buttons, cards, inputs, modals, dropdowns, tooltips, toasts), Anti-Slop Rules (from Impeccable). 2) Add to globals.css @layer base: CSS custom properties for --ease-out: cubic-bezier(0.23,1,0.32,1), --ease-in-out: cubic-bezier(0.77,0,0.175,1), --ease-drawer: cubic-bezier(0.32,0.72,0,1), --duration-fast: 125ms, --duration-normal: 200ms, --duration-slow: 300ms, z-index scale tokens (--z-dropdown: 100, --z-modal: 200, --z-toast: 300). 3) Document motion principles: never animate layout props, only transform+opacity, UI animations <=300ms, feedback <=200ms, never ease-in on UI, never scale(0), asymmetric enter/exit.",
+        "testStrategy": "DESIGN.md exists and is valid markdown; CSS custom properties accessible via getComputedStyle; globals.css parses without errors; npm run lint && npm run typecheck pass.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create DESIGN.md with token spec",
+            "description": "Write DESIGN.md at project root following Impeccable token spec format with all required sections.",
+            "dependencies": [],
+            "details": "Sections: Color Tokens (primary accent amber-500, surface light neutral-100/dark neutral-950, semantic success green-500/error red-500/warning amber-500), Typography Scale (headings text-balance font-semibold, body text-pretty font-normal, data tabular-nums, meta text-xs leading-snug), Spacing Scale (Tailwind defaults: 0.25rem per unit), Easing Curves (custom cubic-bezier for out/in-out/drawer), Spring Config (critically damped damping=1.0 for UI, under-damped damping=0.8 for momentum), Component Inventory (buttons with active:scale-[0.97], cards with subtle borders, inputs with focus ring, modals with scale-in, dropdowns with fade+slide, tooltips with delay, toasts with slide-in), Anti-Slop Rules (from Impeccable: no AI beige, no italic serif, no generic CTAs, no cards-in-cards, no everything-equal layouts, surface awareness for persuade/operate/read modes).",
+            "status": "done",
+            "testStrategy": "DESIGN.md exists, valid markdown, all sections present, token values match globals.css custom properties.",
+            "parentId": "30",
+            "updatedAt": "2026-07-26T00:00:00.000Z"
+          },
+          {
+            "id": 2,
+            "title": "Add CSS custom properties to globals.css",
+            "description": "Add easing curves, duration tokens, and z-index scale as CSS custom properties in globals.css @layer base.",
+            "dependencies": [
+              1
+            ],
+            "details": "In globals.css, after @tailwind directives but before @layer utilities, add @layer base with: :root { --ease-out: cubic-bezier(0.23, 1, 0.32, 1); --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1); --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1); --duration-fast: 125ms; --duration-normal: 200ms; --duration-slow: 300ms; --z-base: 0; --z-dropdown: 100; --z-modal: 200; --z-toast: 300; } Also add .tajdin-ease-out { transition-timing-function: var(--ease-out); } and similar utility classes for inline use.",
+            "status": "done",
+            "testStrategy": "globals.css parses; getComputedStyle returns correct values for custom properties; no Tailwind conflicts.",
+            "parentId": "30",
+            "updatedAt": "2026-07-26T00:00:00.000Z"
+          },
+          {
+            "id": 3,
+            "title": "Document motion principles in DESIGN.md",
+            "description": "Add a Motion Principles section to DESIGN.md covering animation rules, timing budgets, and anti-patterns.",
+            "dependencies": [
+              1
+            ],
+            "details": "Section should cover: Never animate layout properties (width/height/margin/padding/top/left) -- only transform and opacity. UI animations max 300ms, interaction feedback max 200ms. Never use ease-in on UI (starts slow, feels sluggish). Never animate from scale(0) -- start from scale(0.95) with opacity. Asymmetric enter/exit: exit faster than enter. High-frequency actions (100+/day, keyboard-initiated) get NO animation. Spring config: critically damped (damping 1.0) for UI, under-damped (damping 0.8) only for momentum-driven gestures. prefers-reduced-motion: keep opacity/color, drop transform. Hover animations gated behind @media (hover: hover) and (pointer: fine).",
+            "status": "done",
+            "testStrategy": "DESIGN.md motion section complete and accurate; aligns with Emil Kowalski 10 non-negotiable standards.",
+            "parentId": "30",
+            "updatedAt": "2026-07-26T00:00:00.000Z"
+          },
+          {
+            "id": 4,
+            "title": "Add Tailwind config extensions for motion tokens",
+            "description": "Extend tailwind.config (if present) or add @layer utilities in globals.css for custom easing and duration tokens usable as Tailwind classes.",
+            "dependencies": [
+              2
+            ],
+            "details": "Since the project uses Tailwind v3 without a tailwind.config.js (uses defaults), add @layer utilities in globals.css: .ease-out-custom { transition-timing-function: var(--ease-out); } .ease-in-out-custom { transition-timing-function: var(--ease-in-out); } .ease-drawer { transition-timing-function: var(--ease-drawer); } .duration-fast { transition-duration: var(--duration-fast); } .duration-normal { transition-duration: var(--duration-normal); } .duration-slow { transition-duration: var(--duration-slow); } These can be used as: transition-all duration-normal ease-out-custom.",
+            "status": "done",
+            "testStrategy": "Classes usable in TSX; npm run build succeeds; visual check that transitions use custom easing.",
+            "parentId": "30",
+            "updatedAt": "2026-07-26T00:00:00.000Z"
+          },
+          {
+            "id": 5,
+            "title": "Quality gate: lint, typecheck, build, verify",
+            "description": "Run full CI checks and verify the design system foundation is solid.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Run npm run lint, npm run typecheck, npm run build, npm run verify:dist. Verify DESIGN.md is well-formed. Verify globals.css custom properties are correct. Verify utility classes are usable.",
+            "status": "done",
+            "testStrategy": "All npm scripts green; DESIGN.md complete; globals.css valid.",
+            "parentId": "30",
+            "updatedAt": "2026-07-26T00:00:00.000Z"
+          }
+        ],
+        "updatedAt": "2026-07-26T00:00:00.000Z"
+      },
+      {
+        "id": "31",
+        "title": "Animation audit and transition fixes across all components",
+        "description": "Audit all existing transition-* usages, replace vague transitions with specific property transitions, add :active scale feedback to pressable elements, gate hover animations behind pointer media query.",
+        "details": "Scan all .tsx files for transition classes. Replace transition-colors with transition-colors duration-150 ease-out (explicit timing). Add active:scale-[0.97] with transition: transform 100ms ease-out to all buttons (StationCard actions, Player transport, TabNav, SearchBar, modals, settings). Gate hover:bg-* behind @media (hover: hover) and (pointer: fine). Never use transition: all. All UI animations must be <=300ms; interaction feedback <=200ms. Files: StationCard.tsx, TabNav.tsx, StationSearchBar.tsx, Player.tsx, BrowseCustomStationsToggle.tsx, settings/App.tsx, playlists/*.tsx, AddStationModal.tsx, AttributionFooter.tsx.",
+        "testStrategy": "grep -r 'transition: all' src/ returns 0 matches; grep -r 'ease-in' src/ returns 0 matches (except animation keyframes); manual: buttons feel responsive on click; hover only on desktop; npm run ci green.",
+        "priority": "high",
+        "dependencies": [
+          "30"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "updatedAt": "2026-07-26T00:00:00.000Z"
+      },
+      {
+        "id": "32",
+        "title": "prefers-reduced-motion global handling",
+        "description": "Implement prefers-reduced-motion support across all animated elements: equalizer bars, list entrance animations, modal/dropdown transitions, toast notifications.",
+        "details": "1) In globals.css, wrap .tajdin-eq-bar animation in @media (prefers-reduced-motion: no-preference) and provide static fallback (scaleY(0.6) or hide bars). 2) Add a useReducedMotion() hook that checks matchMedia('(prefers-reduced-motion: reduce)'). 3) In components with entrance animations (StationCard stagger, modal scale-in, dropdown fade), conditionally skip transform animations when reduced motion is preferred -- keep opacity transitions for state changes. 4) Toast enter/exit: use opacity-only transition when reduced motion. 5) Volume slider thumb: disable hover scale when reduced motion.",
+        "testStrategy": "Enable reduced motion in OS settings; verify equalizer bars are static; verify no sliding/scaling animations play; verify opacity transitions still work for state changes; npm run ci green.",
+        "priority": "high",
+        "dependencies": [
+          "30"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "updatedAt": "2026-07-26T00:00:00.000Z"
+      },
+      {
+        "id": "33",
+        "title": "StationCard redesign -- rows, hover, current indicator, actions",
+        "description": "Redesign StationCard with refined spacing, smooth hover transitions, improved current-station indicator, consistent action icon sizing, and better visual hierarchy.",
+        "details": "1) Row hover: bg transition with duration-150 ease-out (not instant). 2) Current station: amber ring with smooth transition on change (transition: box-shadow 200ms ease-out). 3) Action icons: all h-4 w-4, consistent gap-1, aria-labels, focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2. 4) Favicon frame: border-radius rounded-lg (not rounded-md), subtle shadow shadow-sm in dark mode. 5) Title: font-medium, truncate, text-sm. 6) Meta line: text-xs, neutral-500/60. 7) Bitrate: text-xs, tabular-nums. 8) Action column opacity: transition-opacity duration-150 ease-out. 9) Border-bottom: border-neutral-200/60 light, border-neutral-800/60 dark (subtler than current). 10) Row min-height: keep 60px but refine internal padding to py-1.5.",
+        "testStrategy": "Visual check: light/dark, narrow/wide popup, Arabic station names; hover shows smooth bg transition; current station ring animates on change; actions visible on hover/focus; screen reader reads all aria-labels; snapshot tests updated; npm run ci green.",
+        "priority": "high",
+        "dependencies": [
+          "31"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "updatedAt": "2026-07-26T00:00:00.000Z"
+      },
+      {
+        "id": "34",
+        "title": "Player dock redesign -- metadata, transport, volume, equalizer",
+        "description": "Redesign the player bar with improved typography hierarchy, refined transport controls, smoother volume slider, and polished equalizer overlay.",
+        "details": "1) Metadata: title text-balance (if wrapping), font-semibold, text-sm; subtitle text-pretty, text-xs, neutral-500/60. 2) Transport controls: all min-w-[44px] min-h-[44px] for touch targets. 3) Play button: bg-amber-500 dark / bg-neutral-900 light, rounded-full, active:scale-95 transition-transform 100ms ease-out. 4) Prev/Next/Random: h-8 w-8, rounded-md, active:scale-95. 5) Volume slider: custom track with 6px height, thumb 14px with shadow, thumb hover scale 1.08 with transition. 6) Equalizer: 3 bars with staggered delays (0ms, 120ms, 240ms), emerald-400, bars h-1.5 w-0.5. 7) Mute button: amber accent when muted. 8) Add-to-playlist button: consistent with nav buttons. 9) Favourite heart: rose-500 when active, consistent sizing. 10) PlayerDock: min-h-[88px], py-2, border-t border-neutral-200/60 dark:border-neutral-800/60.",
+        "testStrategy": "Visual: light/dark, min/max popup size, long station names; play button feels responsive (scale on press); volume slider smooth; equalizer animates with stagger; mute toggle amber indicator; npm run ci green; Player.test.tsx updated.",
+        "priority": "high",
+        "dependencies": [
+          "31"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "updatedAt": "2026-07-26T00:00:00.000Z"
+      },
+      {
+        "id": "35",
+        "title": "TabNav and navigation redesign",
+        "description": "Redesign the tab navigation bar with refined active state, hover behavior, and settings gear separation.",
+        "details": "1) Active tab: subtle bg-neutral-200 dark:bg-neutral-800 pill with transition-colors duration-150. 2) Idle tab: hover gated behind @media (hover: hover) and (pointer: fine). 3) Tab icons: h-3.5 w-3.5 sm:h-4 sm:w-4, stroke-width 1.5, consistent sizing. 4) Tab labels: text-[10px] sm:text-[11px], font-medium. 5) Settings gear: separated with border-l border-neutral-200 dark:border-neutral-800, ml-1. 6) Nav bar: h-11, border-b, bg-white dark:bg-neutral-950. 7) Touch targets: min-h-[44px] for all tabs. 8) Focus-visible: ring-2 ring-amber-500 ring-offset-1. 9) Tab switch: no animation (high-frequency action per Emil Kowalski rule: never animate keyboard-initiated actions).",
+        "testStrategy": "Visual: tab switching is instant (no animation); active tab has subtle pill; hover only on desktop; settings gear visually separated; keyboard navigation works; screen reader announces tabs; npm run ci green; TabNav.test.tsx updated.",
+        "priority": "medium",
+        "dependencies": [
+          "31"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "updatedAt": "2026-07-26T00:00:00.000Z"
+      },
+      {
+        "id": "36",
+        "title": "Search bar redesign -- focus, regex toggle, placeholder",
+        "description": "Redesign the search bar with improved focus state, clear regex toggle, and better placeholder text.",
+        "details": "1) Focus ring: focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-1. 2) Regex toggle: monospace .* with selected state (bg-amber-500/15 text-amber-600 dark:text-amber-400), unselected: neutral-500. 3) Placeholder: text-neutral-400 dark:text-neutral-500. 4) Input height: h-8, rounded-md, border border-neutral-200 dark:border-neutral-700. 5) Search icon: h-4 w-4, neutral-400. 6) Clear button: appears when query non-empty, neutral-400 hover:neutral-600. 7) Focus transition: ring with transition-shadow duration-150 ease-out. 8) Regex toggle: aria-label='Toggle regex search', title='Regex search'.",
+        "testStrategy": "Visual: focus ring appears on tab/click; regex toggle clear selected/unselected state; placeholder readable; clear button works; screen reader labels correct; npm run ci green.",
+        "priority": "medium",
+        "dependencies": [
+          "31"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "updatedAt": "2026-07-26T00:00:00.000Z"
+      },
+      {
+        "id": "37",
+        "title": "Modal and dropdown animation system",
+        "description": "Implement consistent entrance/exit animations for all modals and dropdown menus.",
+        "details": "1) Modal entrance: scale from 0.95 + opacity 0 to scale 1 + opacity 1, duration 200ms ease-out. 2) Modal exit: scale to 0.95 + opacity 0, duration 150ms ease-in (faster exit per asymmetric rule). 3) Modal backdrop: bg-black/40 with backdrop-blur-sm, fade in/out with opacity. 4) Dropdown entrance: opacity 0 + translateY(-4px) to opacity 1 + translateY(0), duration 125ms ease-out. 5) Dropdown exit: opacity 0, duration 75ms. 6) Context menu: same as dropdown. 7) Toast: slide in from bottom + opacity, exit to bottom + opacity. 8) All entrance animations: scale from 0.95 minimum (never scale(0)). 9) Implement via CSS @keyframes in globals.css + Tailwind animate classes, or inline styles with useReducedMotion guard. 10) transform-origin for dropdowns: set via CSS variable from trigger position.",
+        "testStrategy": "Manual: open/close modals with smooth scale animation; open/close dropdowns with smooth fade; reduced motion mode uses opacity only; no jarring pop-in; exit faster than enter; npm run ci green.",
+        "priority": "high",
+        "dependencies": [
+          "30",
+          "32"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "updatedAt": "2026-07-26T00:00:00.000Z"
+      },
+      {
+        "id": "38",
+        "title": "Station list stagger animation and empty states",
+        "description": "Add staggered entrance animation for station list items and redesign empty states with clear CTAs.",
+        "details": "1) StationList: when items first mount (popup open, tab switch, search result), stagger appearance with 30ms delay per item (max 8 items staggered, rest instant). Use CSS animation: opacity 0 to 1 + translateY(4px to 0), duration 200ms ease-out. 2) Stagger only on initial mount, not on scroll/load-more. 3) Empty state Browse: 'No stations found' + 'Try a different search or change language' + icon. 4) Empty state Favourites: 'No favourites yet' + 'Browse and tap the heart to save stations' + heart icon. 5) Empty state Playlists: 'No playlists yet' + 'Create your first playlist' + create button. 6) Empty state Search: 'No results' + 'Try exact or regex mode' + search icon. 7) All empty states: centered, max-w-xs, text-neutral-500, with one clear next action. 8) Guard stagger with useReducedMotion.",
+        "testStrategy": "Visual: list items fade in with stagger on popup open; empty states show correct copy and CTA; reduced motion: no stagger, instant appearance; npm run ci green.",
+        "priority": "medium",
+        "dependencies": [
+          "32",
+          "33"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "updatedAt": "2026-07-26T00:00:00.000Z"
+      },
+      {
+        "id": "39",
+        "title": "Typography pass -- text-balance, text-pretty, tabular-nums",
+        "description": "Apply typography best practices across all components: text-balance for headings, text-pretty for body, tabular-nums for data, consistent font weights.",
+        "details": "1) Headings (h1, h2, h3, station names in Player/StationCard): add text-balance class. 2) Body/paragraph text (About section, onboarding banner, empty states): add text-pretty class. 3) Data displays (bitrate, version, station count): add tabular-nums class. 4) Dense UI text (tab labels, meta lines): keep truncate or add line-clamp-2 where needed. 5) Font weights: headings font-semibold, body font-normal, labels font-medium, data font-normal. 6) Never modify letter-spacing unless explicitly requested. 7) Arabic text: maintain Vazirmatn with dir=auto, tajdin-font-arabic class. 8) Line heights: headings leading-tight, body leading-normal, meta leading-snug.",
+        "testStrategy": "Visual: headings do not have awkward line breaks (text-balance); body text wraps cleanly (text-pretty); data numbers align (tabular-nums); Arabic text renders correctly; no tracking changes; npm run ci green.",
+        "priority": "medium",
+        "dependencies": [
+          "33",
+          "34"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "updatedAt": "2026-07-26T00:00:00.000Z"
+      },
+      {
+        "id": "40",
+        "title": "Accessibility audit -- focus management, ARIA, keyboard nav",
+        "description": "Comprehensive accessibility audit: focus-visible rings, ARIA labels on icon buttons, keyboard navigation, modal focus trap, color contrast.",
+        "details": "1) All icon-only buttons: add aria-label (HeartIcon, CopyLinkIcon, AddToPlaylistIcon, SpeakerOn/Off, SkipBack/Forward, RandomStation, CogIcon, SearchClear). 2) Focus-visible: ring-2 ring-amber-500 ring-offset-2 on all interactive elements. 3) Tab navigation: logical order, no focus traps except modals. 4) Modal focus management: trap focus inside modal, focus first input on open, restore focus to trigger on close. 5) Color contrast: verify 4.5:1 minimum for all text against backgrounds. 6) aria-current on current station row (already present, verify). 7) aria-selected on active tab (already present, verify). 8) aria-pressed on favourite heart toggle (already present, verify). 9) Screen reader: announce play/pause state changes via aria-live or role=status. 10) Dropdown menus: aria-haspopup, aria-expanded on triggers.",
+        "testStrategy": "Keyboard-only navigation: all interactive elements reachable; tab order logical; modals trap focus; screen reader announces all controls; contrast checker passes; npm run ci green.",
+        "priority": "high",
+        "dependencies": [
+          "33",
+          "34",
+          "35",
+          "36"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "updatedAt": "2026-07-26T00:00:00.000Z"
+      },
+      {
+        "id": "41",
+        "title": "Settings page redesign -- sidebar, sections, About marketing copy",
+        "description": "Redesign the settings/options page with consistent styling, improved About section with marketing-optimized copy, and better section organization.",
+        "details": "1) Sidebar: reuse ExtensionBranding (icon + wordmark), consistent with popup header. 2) Navigation items: consistent with TabNav styling (active bg, hover behavior). 3) Section headers: text-balance, font-semibold, text-lg. 4) Form controls: consistent border-radius, focus ring, disabled states. 5) About section: marketing-optimized with clear value proposition, Why Tajdin narrative, GitHub link, version, Radio Browser attribution. 6) CTA: 'Get the Chrome extension' link when on web player. 7) Footer: Made by 0xdolan, Source, Version (consistent with popup). 8) Import/Export: clear drag-and-drop zone, success/error feedback. 9) Custom stations table: consistent row styling with popup StationCard.",
+        "testStrategy": "Visual: settings page consistent with popup design language; About section reads well; form controls have focus states; import/export works; npm run ci green.",
+        "priority": "medium",
+        "dependencies": [
+          "39",
+          "40"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "updatedAt": "2026-07-26T00:00:00.000Z"
+      },
+      {
+        "id": "42",
+        "title": "Performance guardrails and loading states",
+        "description": "Enforce animation performance rules, add structural skeletons for loading states, verify virtual scrolling performance.",
+        "details": "1) ESLint rule or review checklist: no animation of width/height/margin/padding/top/left. 2) No will-change outside active animations. 3) No large blur() or backdrop-filter animation. 4) Structural skeletons: use bg-neutral-200 dark:bg-neutral-800 animated pulse for loading states (StationList loading, Favourites resolving). 5) Verify react-virtuoso performance: 500+ items scroll at 60fps. 6) Lazy load images (loading=lazy on StationCard favicons, already present). 7) Debounce search input 300ms (already present). 8) Memoize expensive renders (StationCard, Player) with React.memo where beneficial. 9) Profile popup open to first paint time; aim for less than 100ms.",
+        "testStrategy": "Chrome DevTools Performance tab: no layout thrashing during animations; 60fps scroll in station list; skeletons show during loading; no will-change in computed styles when idle; npm run ci green.",
+        "priority": "medium",
+        "dependencies": [
+          "31",
+          "38"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "updatedAt": "2026-07-26T00:00:00.000Z"
+      },
+      {
+        "id": "43",
+        "title": "Playlists UI polish -- picker, editor, DnD, empty states",
+        "description": "Polish the Playlists experience: refined picker list, editor card with clear affordances, smooth DnD feedback, and helpful empty states.",
+        "details": "1) PlaylistPickerList: role=listbox, aria-selected, consistent row styling with StationCard. 2) PlaylistCreateForm: clear input with focus ring, submit button primary accent. 3) PlaylistEditorCard: rename inline with confirm/cancel, delete with confirmation dialog (AlertDialog). 4) DnD: shadow + scale(1.02) on dragged item, smooth transition on drop. 5) Add station picker: consistent with popup add-to-playlist dropdown. 6) Empty state: 'Create your first playlist' + prominent create button. 7) Surface tokens: light/dark consistent with rest of popup. 8) Scroll: same scrollbar styling as station lists.",
+        "testStrategy": "Manual: create playlist, add stations, reorder via DnD, rename, delete; light/dark; reduced motion: DnD feedback is opacity-only; npm run ci green.",
+        "priority": "medium",
+        "dependencies": [
+          "37",
+          "38"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "updatedAt": "2026-07-26T00:00:00.000Z"
+      },
+      {
+        "id": "44",
+        "title": "Web player responsive layout and design parity",
+        "description": "Ensure the web player (Task 29) matches the redesigned popup visual design with responsive breakpoints.",
+        "details": "1) Responsive layout: min-h-dvh flex flex-col max-w-3xl mx-auto w-full. 2) Breakpoints: sm (mobile) full-width player row; md+ (tablet/desktop) horizontal player as extension. 3) Header: ExtensionBranding with responsive sizing. 4) TabNav: same styling as popup but responsive width. 5) Station list: full viewport width, same row design. 6) Player dock: sticky bottom, responsive controls. 7) Footer: same as popup with Chrome Web Store CTA. 8) Safe-area padding for mobile. 9) Dark/light: same SurfaceProvider. 10) Settings: in-page route or slide-over panel.",
+        "testStrategy": "Visual check at 320px, 768px, 1024px, 1440px; no horizontal scroll; player always visible; matches popup design; npm run ci green.",
+        "priority": "medium",
+        "dependencies": [
+          "33",
+          "34",
+          "35",
+          "41"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "updatedAt": "2026-07-26T00:00:00.000Z"
+      },
+      {
+        "id": "45",
+        "title": "Final integration, visual QA, and documentation update",
+        "description": "Final pass: visual comparison before/after, documentation update, CI verification, and merge to develop.",
+        "details": "1) Before/after screenshots for key surfaces: Browse list, Player dock, TabNav, Settings About, Playlists, Modals. 2) Update docs/development.md with any layout, behaviour, or copy changes. 3) Run full CI: npm run ci:full (lint, typecheck, test, build, verify:dist, audit). 4) Manual smoke test: Chrome light/dark, popup min/max size, all tabs, play/pause, favourites, playlists, settings, import/export. 5) Verify DESIGN.md is accurate and complete. 6) Branch feat/ui-redesign-v2, commit, merge to develop per git-flow. 7) Delete temp prompt file (.taskmaster/docs/ui-redesign-v2-prompt.md).",
+        "testStrategy": "All npm scripts green; visual comparison shows clear improvement; no regressions in functionality; documentation current; merge to develop.",
+        "priority": "high",
+        "dependencies": [
+          "38",
+          "39",
+          "40",
+          "41",
+          "42",
+          "43",
+          "44"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "updatedAt": "2026-07-26T00:00:00.000Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-05T01:54:02.221Z",
-      "taskCount": 28,
-      "completedCount": 28,
+      "lastModified": "2026-07-26T00:00:00.000Z",
+      "taskCount": 45,
+      "completedCount": 29,
       "tags": [
         "master"
       ]

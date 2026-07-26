@@ -57,7 +57,7 @@ exports[`StationCard > matches snapshot for core layout 1`] = `
     </p>
   </div>
   <div
-    class="relative shrink-0 opacity-0 transition-opacity duration-200 ease-out group-hover/station:opacity-100 group-focus-within/station:opacity-100 [@media(pointer:coarse)]:opacity-100"
+    class="relative shrink-0 opacity-0 transition-opacity duration-normal ease-out-custom group-hover/station:opacity-100 group-focus-within/station:opacity-100 [@media(pointer:coarse)]:opacity-100"
   >
     <div
       class="flex flex-row items-center justify-end gap-0.5"
