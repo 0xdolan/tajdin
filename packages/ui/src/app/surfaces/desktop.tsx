@@ -253,7 +253,10 @@ function Grid({
 
   if (feed.status === 'loading') {
     return (
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(168px,1fr))] gap-4" aria-busy="true">
+      <div
+        className="grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(150px,1fr))] sm:gap-4"
+        aria-busy="true"
+      >
         {Array.from({ length: 12 }, (_, i) => (
           <div key={i} className="flex flex-col gap-3 rounded-xl border p-3">
             <Skeleton className="aspect-square w-full rounded-lg" />
@@ -288,7 +291,7 @@ function Grid({
   }
   return (
     <>
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(168px,1fr))] gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(150px,1fr))] sm:gap-4">
         {feed.stations.map((s) => (
           <StationCard
             key={s.id}
@@ -382,13 +385,13 @@ export function DesktopApp() {
 
   return (
     <div className="bg-background grid h-svh grid-rows-[auto_1fr_auto]">
-      <header className="flex h-16 items-center gap-4 border-b px-4">
+      <header className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b px-4 py-3 md:h-16 md:flex-nowrap md:py-0">
         <div className="flex shrink-0 items-center gap-2.5 md:w-56">
           <RojMark className="h-6 w-auto" live={player.status === 'playing'} />
-          <span className="hidden text-lg font-semibold tracking-tight sm:inline">Tajdîn</span>
+          <span className="text-lg font-semibold tracking-tight">Tajdîn</span>
         </div>
-        <SearchBar browse={browse} className="mx-auto w-full max-w-2xl" />
-        <div className="flex items-center gap-1">
+        <SearchBar browse={browse} className="order-last mx-auto w-full max-w-2xl md:order-none" />
+        <div className="ml-auto flex items-center gap-1 md:ml-0">
           <ThemeMenu />
           <Button
             variant="ghost"
@@ -473,7 +476,8 @@ export function DesktopApp() {
 
       <footer className="bg-card/80 border-t backdrop-blur">
         <div className="flex flex-col gap-1 px-4 pt-3 pb-1">
-          <Player variant="full" />
+          <Player variant="full" className="hidden md:grid" />
+          <Player className="md:hidden" />
           <Footer className="py-1" />
         </div>
       </footer>
