@@ -3,6 +3,14 @@
 All notable changes to Tajdîn. The format follows [Keep a Changelog](https://keepachangelog.com/),
 and versions follow [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+### Fixes
+
+- Manrope and Sahel now apply everywhere. Chrome injects a system font into extension pages and
+  the toast library sets its own, so most text (including Arabic-script names in menus) showed in
+  Arial. The documentation pages on the website use the same fonts too.
+
 ## [0.1.1](https://github.com/0xdolan/tajdin/releases/tag/v0.1.1) · 2026-10-25
 
 ### Features
