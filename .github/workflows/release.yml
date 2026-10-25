@@ -93,6 +93,8 @@ jobs:
       - name: Submit
         working-directory: apps/extension
         env:
+          # --chrome-cancel-pending: a newer version replaces one still waiting for review,
+          # instead of the upload being refused.
           CHROME_API_VERSION: v2
           CHROME_EXTENSION_ID: igldoeednndfkhmigohfblmlppmphock
           CHROME_PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
@@ -104,7 +106,7 @@ jobs:
         run: |
           V=${{ needs.build.outputs.version }}
           ARGS=""
-          if [ -n "$CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL" ]; then ARGS="$ARGS --chrome-zip ../../zips/tajdin-$V-chrome.zip"; else echo "::warning::Chrome secrets not set, skipping Chrome Web Store"; fi
+          if [ -n "$CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL" ]; then ARGS="$ARGS --chrome-zip ../../zips/tajdin-$V-chrome.zip --chrome-cancel-pending"; else echo "::warning::Chrome secrets not set, skipping Chrome Web Store"; fi
           if [ -n "$FIREFOX_JWT_ISSUER" ]; then ARGS="$ARGS --firefox-zip ../../zips/tajdin-$V-firefox.zip --firefox-sources-zip ../../zips/tajdin-$V-sources.zip"; else echo "::warning::Firefox secrets not set, skipping Firefox Add-ons"; fi
           if [ -z "$ARGS" ]; then echo "No store credentials configured"; exit 0; fi
           if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; echo "Dry run: checking credentials only"; fi

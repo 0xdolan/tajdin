@@ -31,7 +31,7 @@ tattoos, a sign of life and light, here broadcasting.
 
 No accounts. No tracking. No servers of our own. Everything you save stays in your browser.
 
-## The name: Tajdîn, from _Mem û Zîn_
+## The name: Tajdîn (تاژدین), from _Mem û Zîn_
 
 <img src="assets/images/mem-u-zin.webp" width="180" align="right" alt="Cover art of Mem û Zîn: the lovers Mem and Zîn in Kurdish dress beneath the trees" />
 
@@ -40,7 +40,7 @@ love epic written in 1692 by [Ehmedê Xanî](https://en.wikipedia.org/wiki/Ahmad
 Mem and Zîn, two lovers kept apart by the jealous Beko, and it is often called the national epic of
 Kurdish literature.
 
-**Tajdîn** (Tacdîn) is Mem's best friend. He stands by Mem to the very end, and when Beko's treachery
+**Tajdîn** (تاژدین) is Mem's best friend. He stands by Mem to the very end, and when Beko's treachery
 comes to light, it is Tajdîn who avenges him. A loyal companion who never leaves your side: that's
 what this radio wants to be. Hence the motto, _always by your side_.
 
@@ -51,32 +51,33 @@ what this radio wants to be. Hence the motto, _always by your side_.
 
 ## Features
 
-- 🎲 **A fresh mix every time.** The popup opens on new random stations, or on your favourites, a
+- **A fresh mix every time.** The popup opens on new random stations, or on your favourites, a
   playlist, a group or a language.
-- 🌍 **Four directories, one search.** Tajdîn's Kurdish list, [Radio Browser](https://www.radio-browser.info/)
+- **Four directories, one search.** Tajdîn's Kurdish list, [Radio Browser](https://www.radio-browser.info/)
   (50,000+ stations), [SomaFM](https://somafm.com/) and [laut.fm](https://laut.fm/). Search by name
   or tag, filter by language, or use regular expressions.
-- ▶️ **A real player.** It keeps playing when the popup closes and has play/pause, previous/next,
+- **A real player.** It keeps playing when the popup closes and has play/pause, previous/next,
   random, repeat (list, or one station with automatic reconnect), volume with mouse-wheel control,
   speed for local files, and an optional "On air" song line.
-- 🌞 **A living toolbar icon.** The Roj is grey when idle, amber when paused, and its wave pulses
+- **A living toolbar icon.** The Roj is grey when idle, amber when paused, and its wave pulses
   green while playing.
-- 📚 **Your library.** Favourites (one tap away in the popup, with their own tab in Options),
+- **Your library.** Favourites (one tap away in the popup, with their own tab in Options),
   ordered playlists that skip offline stations, hand-picked groups, and **language groups** that
   gather every station in a language.
-- 🔎 **Filter, search and sort everywhere.** Every list (random mix, search results, favourites,
+- **Filter, search and sort everywhere.** Every list (random mix, search results, favourites,
   playlists, groups, your stations) can be filtered by text, language and source and sorted by
   name, country, language, quality or source.
-- 🔗 **Play anything.** Add any stream URL as your own station, or play a link or an audio file
+- **Play anything.** Add any stream URL as your own station, or play a link or an audio file
   once.
-- 🖥️ **Desktop view and website.** A full-window player that starts as soon as it opens, also at
+- **Desktop view and website.** A full-window player that starts as soon as it opens, also at
   [0xdolan.github.io/tajdin](https://0xdolan.github.io/tajdin/).
-- ⌨️ **Keyboard-first.** Media keys and browser-wide shortcuts, in-app keys, and keyboard
+- **Keyboard-first.** Media keys and browser-wide shortcuts, in-app keys, and keyboard
   reordering of playlists.
-- 💾 **Backup you control.** JSON export/import with a preview and merge or replace per section,
+- **Backup you control.** JSON export/import with a preview and merge or replace per section,
   between Chrome, Firefox and the web.
-- 🌙 Light, dark and system themes · accessible · right-to-left names · Kurdish Sorani fonts
-  included.
+- **Comfortable everywhere.** Light, dark and system themes, keyboard and screen-reader
+  accessible, right-to-left station names, and bundled Manrope and Sahel fonts for Latin and
+  Arabic script.
 
 <table>
   <tr>
