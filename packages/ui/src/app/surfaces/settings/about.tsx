@@ -23,9 +23,14 @@ export function AboutSettings() {
           </div>
           <div>
             <p className="text-lg font-semibold">Tajdîn · always by your side</p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Version {version} ·{' '}
-              <a className="underline-offset-2 hover:underline" href={LINKS.changelog} target="_blank" rel="noreferrer">
+              <a
+                className="underline-offset-2 hover:underline"
+                href={LINKS.changelog}
+                target="_blank"
+                rel="noreferrer"
+              >
                 What’s new
               </a>
             </p>
@@ -33,13 +38,23 @@ export function AboutSettings() {
         </div>
         <div className="flex flex-wrap gap-2">
           {links.map(({ href, label, icon: Icon }) => (
-            <Button key={href} variant="outline" size="sm" render={<a href={href} target="_blank" rel="noreferrer" />}>
+            <Button
+              key={href}
+              variant="outline"
+              size="sm"
+              render={<a href={href} target="_blank" rel="noreferrer" />}
+            >
               <Icon data-icon="inline-start" />
               {label}
             </Button>
           ))}
           {storeLinks.map((s) => (
-            <Button key={s.href} variant="outline" size="sm" render={<a href={s.href} target="_blank" rel="noreferrer" />}>
+            <Button
+              key={s.href}
+              variant="outline"
+              size="sm"
+              render={<a href={s.href} target="_blank" rel="noreferrer" />}
+            >
               {s.label}
             </Button>
           ))}
@@ -47,16 +62,21 @@ export function AboutSettings() {
       </Section>
 
       <Section title="Why Tajdîn?">
-        <div className="flex max-w-prose flex-col gap-3 text-sm leading-relaxed text-muted-foreground">
+        <div className="text-muted-foreground flex max-w-prose flex-col gap-3 text-sm leading-relaxed">
           <p>
-            Radio keeps people close to home. For Kurdish listeners spread across many countries, it’s often the easiest way to hear
-            their own language, news and music, but Kurdish stations are hard to find in big global directories.
+            Radio keeps people close to home. For Kurdish listeners spread across many countries,
+            it’s often the easiest way to hear their own language, news and music, but Kurdish
+            stations are hard to find in big global directories.
           </p>
           <p>
-            Tajdîn puts a hand-picked Kurdish station list next to the world’s open radio directories, in a player that stays with
-            you while you browse. Its logo is the <em>Roj</em>, the sun from Kurdish <em>deq</em> tattoos, a sign of life and light.
+            Tajdîn puts a hand-picked Kurdish station list next to the world’s open radio
+            directories, in a player that stays with you while you browse. Its logo is the{' '}
+            <em>Roj</em>, the sun from Kurdish <em>deq</em> tattoos, a sign of life and light.
           </p>
-          <p>No accounts, no tracking, no servers of our own. Everything you save stays in your browser.</p>
+          <p>
+            No accounts, no tracking, no servers of our own. Everything you save stays in your
+            browser.
+          </p>
         </div>
       </Section>
 
@@ -64,28 +84,50 @@ export function AboutSettings() {
         <ul className="flex flex-col gap-2 text-sm">
           <li>
             Station data from{' '}
-            <a className="font-medium underline-offset-2 hover:underline" href={LINKS.radioBrowser} target="_blank" rel="noreferrer">
+            <a
+              className="font-medium underline-offset-2 hover:underline"
+              href={LINKS.radioBrowser}
+              target="_blank"
+              rel="noreferrer"
+            >
               Radio Browser
             </a>
             , a free, community-run directory.
           </li>
           <li>
             Channels from{' '}
-            <a className="font-medium underline-offset-2 hover:underline" href={LINKS.somafm} target="_blank" rel="noreferrer">
+            <a
+              className="font-medium underline-offset-2 hover:underline"
+              href={LINKS.somafm}
+              target="_blank"
+              rel="noreferrer"
+            >
               SomaFM
             </a>{' '}
             (listener-supported; please consider donating) and{' '}
-            <a className="font-medium underline-offset-2 hover:underline" href={LINKS.lautfm} target="_blank" rel="noreferrer">
+            <a
+              className="font-medium underline-offset-2 hover:underline"
+              href={LINKS.lautfm}
+              target="_blank"
+              rel="noreferrer"
+            >
               laut.fm
             </a>
             .
           </li>
-          <li>Kurdish station list curated by the Tajdîn community. Missing a station? Open an issue.</li>
+          <li>
+            Kurdish station list curated by the Tajdîn community. Missing a station? Open an issue.
+          </li>
         </ul>
         <Separator />
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           Made with love by{' '}
-          <a className="underline-offset-2 hover:underline" href={LINKS.author} target="_blank" rel="noreferrer">
+          <a
+            className="underline-offset-2 hover:underline"
+            href={LINKS.author}
+            target="_blank"
+            rel="noreferrer"
+          >
             0xdolan
           </a>
           . Open source under the MIT licence.

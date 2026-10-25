@@ -9,7 +9,15 @@ const WAVE = 'M174.2 361.8 A90.3 90.3 0 0 1 337.8 361.8';
  * The deq Roj mark: half-sun arc, seven rays, broadcast arc and centre dot.
  * `live` lights the wave and dot green, echoing the animated toolbar icon.
  */
-export function RojMark({ className, live = false, title }: { className?: string; live?: boolean; title?: string }) {
+export function RojMark({
+  className,
+  live = false,
+  title,
+}: {
+  className?: string;
+  live?: boolean;
+  title?: string;
+}) {
   return (
     <svg
       viewBox="-10 130 532 304"
@@ -18,15 +26,30 @@ export function RojMark({ className, live = false, title }: { className?: string
       aria-hidden={title ? undefined : true}
       aria-label={title}
     >
-      <path d={SUN} fill="none" stroke="currentColor" strokeWidth="41.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d={SUN}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="41.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
       <path
         d={WAVE}
         fill="none"
         strokeWidth="29.3"
         strokeLinecap="round"
-        className={cn('transition-[stroke,opacity] duration-500', live ? 'stroke-live' : 'stroke-current opacity-50')}
+        className={cn(
+          'transition-[stroke,opacity] duration-500',
+          live ? 'stroke-live' : 'stroke-current opacity-50',
+        )}
       />
-      <circle cx="256" cy="400" r="29.3" className={cn('transition-[fill] duration-500', live ? 'fill-live' : 'fill-current')} />
+      <circle
+        cx="256"
+        cy="400"
+        r="29.3"
+        className={cn('transition-[fill] duration-500', live ? 'fill-live' : 'fill-current')}
+      />
     </svg>
   );
 }

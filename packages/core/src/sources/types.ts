@@ -60,14 +60,22 @@ export class SourceError extends Error {
   }
 }
 
-export async function fetchJson<T>(fetcher: FetchLike, url: string, signal?: AbortSignal): Promise<T> {
+export async function fetchJson<T>(
+  fetcher: FetchLike,
+  url: string,
+  signal?: AbortSignal,
+): Promise<T> {
   const res = await fetcher(url, { signal, headers: { Accept: 'application/json' } });
   if (!res.ok) throw Object.assign(new Error(`HTTP ${res.status}`), { status: res.status });
   return (await res.json()) as T;
 }
 
 /** Applies the client-side half of a search: regex matching and the https filter. */
-export function matchesQuery(station: Station, query: Pick<SearchQuery, 'text' | 'mode' | 'httpsOnly'>, regex: RegExp | null): boolean {
+export function matchesQuery(
+  station: Station,
+  query: Pick<SearchQuery, 'text' | 'mode' | 'httpsOnly'>,
+  regex: RegExp | null,
+): boolean {
   if (query.httpsOnly && !station.streamUrl.startsWith('https://')) return false;
   if (!query.text) return true;
   if (query.mode === 'regex') return regex ? regex.test(station.name) : false;

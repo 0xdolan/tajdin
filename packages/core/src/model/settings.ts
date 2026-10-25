@@ -24,7 +24,14 @@ export const SettingsSchema = z.object({
   /** Language pre-selected in Browse; empty means all languages. */
   defaultLanguage: z.string().max(40),
   searchMode: z.enum(['exact', 'regex']),
-  preferredBitrate: z.union([z.literal('auto'), z.literal(64), z.literal(128), z.literal(192), z.literal(256), z.literal(320)]),
+  preferredBitrate: z.union([
+    z.literal('auto'),
+    z.literal(64),
+    z.literal(128),
+    z.literal(192),
+    z.literal(256),
+    z.literal(320),
+  ]),
   /** Selecting a station starts it immediately (off: it only loads into the player). */
   playOnSelect: z.boolean(),
   /** Desktop view starts a station as soon as it opens (browsers may still require a click). */

@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 import { DEFAULT_SETTINGS, EMPTY_LIBRARY, type Library, type Settings } from '@tajdin/core';
 import { usePlatform } from './platform';
 
@@ -73,7 +81,11 @@ export function useSettings(): [Settings, (patch: Partial<Settings>) => Promise<
   return [settings, updateSettings, ready];
 }
 
-export function useLibrary(): [Library, (update: (l: Library) => Library) => Promise<Library>, boolean] {
+export function useLibrary(): [
+  Library,
+  (update: (l: Library) => Library) => Promise<Library>,
+  boolean,
+] {
   const { library, updateLibrary, ready } = useData();
   return [library, updateLibrary, ready];
 }

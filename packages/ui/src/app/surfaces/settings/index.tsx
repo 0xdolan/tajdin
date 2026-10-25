@@ -25,7 +25,12 @@ import { PlaybackSettings } from './playback';
 import { ShortcutsSettings } from './shortcuts';
 import { StationsSettings } from './stations';
 
-const TABS: { id: SettingsTab; label: string; icon: typeof InfoIcon; group: 'Settings' | 'Options' }[] = [
+const TABS: {
+  id: SettingsTab;
+  label: string;
+  icon: typeof InfoIcon;
+  group: 'Settings' | 'Options';
+}[] = [
   { id: 'general', label: 'General', icon: Settings2Icon, group: 'Settings' },
   { id: 'playback', label: 'Playback', icon: PlayCircleIcon, group: 'Settings' },
   { id: 'shortcuts', label: 'Shortcuts', icon: KeyboardIcon, group: 'Settings' },
@@ -63,7 +68,7 @@ export function SettingsApp({ hashPrefix = '' }: { hashPrefix?: string }) {
 
   return (
     <div className="flex min-h-svh flex-col">
-      <header className="sticky top-0 z-20 border-b bg-background/85 backdrop-blur">
+      <header className="bg-background/85 sticky top-0 z-20 border-b backdrop-blur">
         <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4">
           <RojMark className="h-5 w-auto" />
           <span className="font-semibold tracking-tight">Tajdîn</span>
@@ -86,10 +91,15 @@ export function SettingsApp({ hashPrefix = '' }: { hashPrefix?: string }) {
         onValueChange={(v) => select(v as SettingsTab)}
         className="mx-auto w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-6 md:flex-row"
       >
-        <TabsList variant="line" className="w-full shrink-0 flex-row flex-wrap items-stretch md:sticky md:top-20 md:w-52 md:flex-col md:self-start">
+        <TabsList
+          variant="line"
+          className="w-full shrink-0 flex-row flex-wrap items-stretch md:sticky md:top-20 md:w-52 md:flex-col md:self-start"
+        >
           {(['Settings', 'Options'] as const).map((group) => (
             <div key={group} className="contents md:flex md:flex-col md:gap-0.5">
-              <span className="hidden px-2 pt-3 pb-1 text-xs font-medium text-muted-foreground md:block">{group}</span>
+              <span className="text-muted-foreground hidden px-2 pt-3 pb-1 text-xs font-medium md:block">
+                {group}
+              </span>
               {TABS.filter((t) => t.group === group).map(({ id, label, icon: Icon }) => (
                 <TabsTrigger key={id} value={id} className="justify-start gap-2">
                   <Icon />
@@ -127,7 +137,7 @@ export function SettingsApp({ hashPrefix = '' }: { hashPrefix?: string }) {
         </div>
       </Tabs>
 
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t bg-card/90 backdrop-blur">
+      <div className="bg-card/90 fixed inset-x-0 bottom-0 z-20 border-t backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-2">
           <NowPlayingLine />
           <Player variant="full" />

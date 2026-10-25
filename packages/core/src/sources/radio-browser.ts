@@ -59,12 +59,15 @@ export function fromRadioBrowser(row: RadioBrowserRow): Station | undefined {
     languages: [...languages].slice(0, 12),
     tags: splitList(row.tags),
     codec: cleanText(row.codec, 20) || undefined,
-    bitrate: typeof row.bitrate === 'number' && row.bitrate > 0 ? Math.round(row.bitrate) : undefined,
+    bitrate:
+      typeof row.bitrate === 'number' && row.bitrate > 0 ? Math.round(row.bitrate) : undefined,
     hls: row.hls === 1,
   });
 }
 
-export function createRadioBrowserSource(fetcher: FetchLike = fetch.bind(globalThis)): StationSource {
+export function createRadioBrowserSource(
+  fetcher: FetchLike = fetch.bind(globalThis),
+): StationSource {
   let lastRequest = 0;
   let queue: Promise<unknown> = Promise.resolve();
 
@@ -135,7 +138,14 @@ export function createRadioBrowserSource(fetcher: FetchLike = fetch.bind(globalT
 
     async random(query: RandomQuery, signal) {
       const page = await this.search(
-        { ...query, text: '', mode: 'exact', offset: 0, limit: query.count, minBitrate: 0 } satisfies SearchQuery,
+        {
+          ...query,
+          text: '',
+          mode: 'exact',
+          offset: 0,
+          limit: query.count,
+          minBitrate: 0,
+        } satisfies SearchQuery,
         signal,
       );
       return page.stations;

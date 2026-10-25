@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import {
   DndContext,
@@ -9,7 +9,12 @@ import {
   useSensors,
   type DragEndEvent,
 } from '@dnd-kit/core';
-import { SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
   ArrowDownIcon,
@@ -49,7 +54,13 @@ import {
 } from '@tajdin/ui/components/alert-dialog';
 import { Badge } from '@tajdin/ui/components/badge';
 import { Button } from '@tajdin/ui/components/button';
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@tajdin/ui/components/empty';
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@tajdin/ui/components/empty';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@tajdin/ui/components/input-group';
 import { Item, ItemContent, ItemDescription, ItemTitle } from '@tajdin/ui/components/item';
 import { Spinner } from '@tajdin/ui/components/spinner';
@@ -81,17 +92,23 @@ function SortableStation({
   onMove: (from: number, to: number) => void;
   onRemove: () => void;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: station.id, disabled: !sortable });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: station.id,
+    disabled: !sortable,
+  });
   return (
     <li
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={cn('flex items-center gap-2 rounded-lg border bg-card px-2 py-1.5', isDragging && 'relative z-10 shadow-lg ring-2 ring-ring')}
+      className={cn(
+        'bg-card flex items-center gap-2 rounded-lg border px-2 py-1.5',
+        isDragging && 'ring-ring relative z-10 shadow-lg ring-2',
+      )}
     >
       {sortable && (
         <button
           type="button"
-          className="cursor-grab touch-none rounded p-1 text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring active:cursor-grabbing"
+          className="text-muted-foreground hover:text-foreground focus-visible:ring-ring cursor-grab touch-none rounded p-1 outline-none focus-visible:ring-2 active:cursor-grabbing"
           aria-label={`Reorder ${station.name}. Press space, then arrow keys to move.`}
           {...attributes}
           {...listeners}
@@ -99,27 +116,44 @@ function SortableStation({
           <GripVerticalIcon className="size-4" />
         </button>
       )}
-      <span className="w-6 text-right text-xs tabular-nums text-muted-foreground">{index + 1}</span>
+      <span className="text-muted-foreground w-6 text-right text-xs tabular-nums">{index + 1}</span>
       <StationArt station={station} className="size-8" />
       <div className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-sm font-medium" dir="auto">
           {station.name}
         </span>
-        <span className="truncate text-xs text-muted-foreground" dir="auto">
+        <span className="text-muted-foreground truncate text-xs" dir="auto">
           {stationMeta(station)}
         </span>
       </div>
       {sortable && (
         <>
-          <Button variant="ghost" size="icon-xs" aria-label="Move up" disabled={index === 0} onClick={() => onMove(index, index - 1)}>
+          <Button
+            variant="ghost"
+            size="icon-xs"
+            aria-label="Move up"
+            disabled={index === 0}
+            onClick={() => onMove(index, index - 1)}
+          >
             <ArrowUpIcon />
           </Button>
-          <Button variant="ghost" size="icon-xs" aria-label="Move down" disabled={index === total - 1} onClick={() => onMove(index, index + 1)}>
+          <Button
+            variant="ghost"
+            size="icon-xs"
+            aria-label="Move down"
+            disabled={index === total - 1}
+            onClick={() => onMove(index, index + 1)}
+          >
             <ArrowDownIcon />
           </Button>
         </>
       )}
-      <Button variant="ghost" size="icon-xs" aria-label={`Remove ${station.name}`} onClick={onRemove}>
+      <Button
+        variant="ghost"
+        size="icon-xs"
+        aria-label={`Remove ${station.name}`}
+        onClick={onRemove}
+      >
         <XIcon />
       </Button>
     </li>
@@ -131,7 +165,9 @@ function AddStations({ kind, collection }: { kind: Kind; collection: Playlist | 
   const [library, updateLibrary] = useLibrary();
   const [query, setQuery] = useState('');
   const text = useDebounced(cleanText(query, 200), 300);
-  const feed = useStationFeed(text ? { kind: 'search', text, mode: 'exact', language: '' } : { kind: 'custom' });
+  const feed = useStationFeed(
+    text ? { kind: 'search', text, mode: 'exact', language: '' } : { kind: 'custom' },
+  );
   const included = new Set(collection.stationIds);
   const results = feed.stations.slice(0, 40);
 
@@ -141,11 +177,19 @@ function AddStations({ kind, collection }: { kind: Kind; collection: Playlist | 
         <InputGroupAddon>
           <SearchIcon />
         </InputGroupAddon>
-        <InputGroupInput dir="auto" placeholder="Find stations to add…" value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Find stations to add" />
+        <InputGroupInput
+          dir="auto"
+          placeholder="Find stations to add…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          aria-label="Find stations to add"
+        />
       </InputGroup>
-      {!text && library.customStations.length > 0 && <p className="text-xs text-muted-foreground">Your stations:</p>}
+      {!text && library.customStations.length > 0 && (
+        <p className="text-muted-foreground text-xs">Your stations:</p>
+      )}
       {feed.status === 'loading' && text ? (
-        <div className="flex items-center gap-2 py-4 text-sm text-muted-foreground">
+        <div className="text-muted-foreground flex items-center gap-2 py-4 text-sm">
           <Spinner /> Searching…
         </div>
       ) : (
@@ -153,7 +197,10 @@ function AddStations({ kind, collection }: { kind: Kind; collection: Playlist | 
           {results.map((s) => {
             const has = included.has(s.id);
             return (
-              <li key={s.id} className="flex items-center gap-2 rounded-md px-1 py-1 hover:bg-accent">
+              <li
+                key={s.id}
+                className="hover:bg-accent flex items-center gap-2 rounded-md px-1 py-1"
+              >
                 <StationArt station={s} className="size-7" />
                 <span className="min-w-0 flex-1 truncate text-sm" dir="auto">
                   {s.name}
@@ -162,9 +209,13 @@ function AddStations({ kind, collection }: { kind: Kind; collection: Playlist | 
                   variant={has ? 'secondary' : 'outline'}
                   size="xs"
                   disabled={has}
-                  onClick={() => void updateLibrary((l) => addToCollection(l, kind, collection.id, [s]))}
+                  onClick={() =>
+                    void updateLibrary((l) => addToCollection(l, kind, collection.id, [s]))
+                  }
                 >
-                  {has ? 'Added' : (
+                  {has ? (
+                    'Added'
+                  ) : (
                     <>
                       <PlusIcon data-icon="inline-start" />
                       Add
@@ -174,7 +225,9 @@ function AddStations({ kind, collection }: { kind: Kind; collection: Playlist | 
               </li>
             );
           })}
-          {text && results.length === 0 && feed.status === 'ready' && <li className="py-3 text-sm text-muted-foreground">No matches.</li>}
+          {text && results.length === 0 && feed.status === 'ready' && (
+            <li className="text-muted-foreground py-3 text-sm">No matches.</li>
+          )}
         </ul>
       )}
     </div>
@@ -193,9 +246,13 @@ function Editor({ kind, collection }: { kind: Kind; collection: Playlist | Group
   // For language groups, the feed also contains the language's stations after the pinned ones.
   const pinned = feed.stations.slice(0, isLanguage ? pinnedCount : undefined);
   const sortable = kind === 'playlist';
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
 
-  const move = (from: number, to: number) => void updateLibrary((l) => moveInPlaylist(l, collection.id, from, to));
+  const move = (from: number, to: number) =>
+    void updateLibrary((l) => moveInPlaylist(l, collection.id, from, to));
   const onDragEnd = (e: DragEndEvent) => {
     if (!e.over || e.active.id === e.over.id) return;
     const ids = collection.stationIds;
@@ -204,41 +261,67 @@ function Editor({ kind, collection }: { kind: Kind; collection: Playlist | Group
 
   const remove = async () => {
     const before = library;
-    await updateLibrary((l) => (kind === 'playlist' ? deletePlaylist(l, collection.id) : deleteGroup(l, collection.id)));
-    toast(`Deleted “${collection.name}”`, { action: { label: 'Undo', onClick: () => void updateLibrary(() => before) }, duration: 8000 });
+    await updateLibrary((l) =>
+      kind === 'playlist' ? deletePlaylist(l, collection.id) : deleteGroup(l, collection.id),
+    );
+    toast(`Deleted “${collection.name}”`, {
+      action: { label: 'Undo', onClick: () => void updateLibrary(() => before) },
+      duration: 8000,
+    });
   };
 
   const play = () => {
     const first = feed.stations[0];
-    if (first) void send({ type: settings.playOnSelect ? 'play' : 'load', station: first, queue: feed.stations, context: feed.context });
+    if (first)
+      void send({
+        type: settings.playOnSelect ? 'play' : 'load',
+        station: first,
+        queue: feed.stations,
+        context: feed.context,
+      });
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex min-w-0 flex-col gap-5">
       <div className="flex flex-wrap items-start gap-3">
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <h3 className="flex items-center gap-2 text-lg font-semibold" dir="auto">
-            {collection.colour && <span className="size-3 rounded-full" style={{ backgroundColor: COLOUR_SWATCH[collection.colour] }} aria-hidden />}
+            {collection.colour && (
+              <span
+                className="size-3 rounded-full"
+                style={{ backgroundColor: COLOUR_SWATCH[collection.colour] }}
+                aria-hidden
+              />
+            )}
             <span className="truncate">{collection.name}</span>
-            {isLanguage && <Badge variant="secondary">{languageLabel((collection as Extract<Group, { kind: 'language' }>).language)}</Badge>}
+            {isLanguage && (
+              <Badge variant="secondary">
+                {languageLabel((collection as Extract<Group, { kind: 'language' }>).language)}
+              </Badge>
+            )}
           </h3>
           {'description' in collection && collection.description && (
-            <p className="text-sm text-muted-foreground" dir="auto">
+            <p className="text-muted-foreground text-sm" dir="auto">
               {collection.description}
             </p>
           )}
           {isLanguage && (
-            <p className="text-sm text-muted-foreground">
-              Fills itself with every station in this language. Stations you add below are pinned to the top.
+            <p className="text-muted-foreground text-sm">
+              Fills itself with every station in this language. Stations you add below are pinned to
+              the top.
             </p>
           )}
         </div>
-        <div className="flex gap-1">
+        <div className="flex flex-wrap gap-1">
           <Button size="sm" onClick={play} disabled={feed.stations.length === 0}>
             <PlayIcon data-icon="inline-start" />
             Play
           </Button>
-          <Button size="sm" variant="outline" onClick={() => openCollection({ mode: 'edit', kind, id: collection.id })}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => openCollection({ mode: 'edit', kind, id: collection.id })}
+          >
             <PencilIcon data-icon="inline-start" />
             Edit
           </Button>
@@ -249,22 +332,26 @@ function Editor({ kind, collection }: { kind: Kind; collection: Playlist | Group
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
         <div className="flex flex-col gap-2">
           <h4 className="text-sm font-medium">
-            {isLanguage ? 'Pinned stations' : 'Stations'} <span className="text-muted-foreground tabular-nums">({pinnedCount})</span>
+            {isLanguage ? 'Pinned stations' : 'Stations'}{' '}
+            <span className="text-muted-foreground tabular-nums">({pinnedCount})</span>
           </h4>
           {feed.status === 'loading' ? (
-            <div className="flex items-center gap-2 py-6 text-sm text-muted-foreground">
+            <div className="text-muted-foreground flex items-center gap-2 py-6 text-sm">
               <Spinner /> Loading…
             </div>
           ) : pinned.length === 0 ? (
-            <p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+            <p className="text-muted-foreground rounded-lg border border-dashed p-6 text-center text-sm">
               Nothing here yet. Find stations on the right, or use any station’s ⋮ menu.
             </p>
           ) : (
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-              <SortableContext items={pinned.map((s) => s.id)} strategy={verticalListSortingStrategy}>
+              <SortableContext
+                items={pinned.map((s) => s.id)}
+                strategy={verticalListSortingStrategy}
+              >
                 <ol className="flex flex-col gap-1">
                   {pinned.map((s, i) => (
                     <SortableStation
@@ -274,7 +361,11 @@ function Editor({ kind, collection }: { kind: Kind; collection: Playlist | Group
                       total={pinned.length}
                       sortable={sortable}
                       onMove={move}
-                      onRemove={() => void updateLibrary((l) => removeFromCollection(l, kind, collection.id, s.id))}
+                      onRemove={() =>
+                        void updateLibrary((l) =>
+                          removeFromCollection(l, kind, collection.id, s.id),
+                        )
+                      }
                     />
                   ))}
                 </ol>
@@ -282,7 +373,9 @@ function Editor({ kind, collection }: { kind: Kind; collection: Playlist | Group
             </DndContext>
           )}
           {pinned.length < pinnedCount && feed.status === 'ready' && (
-            <p className="text-xs text-muted-foreground">{pinnedCount - pinned.length} station(s) couldn’t be found any more and are hidden.</p>
+            <p className="text-muted-foreground text-xs">
+              {pinnedCount - pinned.length} station(s) couldn’t be found any more and are hidden.
+            </p>
           )}
         </div>
         <div className="flex flex-col gap-2">
@@ -295,7 +388,9 @@ function Editor({ kind, collection }: { kind: Kind; collection: Playlist | Group
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete “{collection.name}”?</AlertDialogTitle>
-            <AlertDialogDescription>The stations stay in your favourites and other lists. You can undo for a few seconds.</AlertDialogDescription>
+            <AlertDialogDescription>
+              The stations stay in your favourites and other lists. You can undo for a few seconds.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -316,11 +411,8 @@ export function CollectionsSettings({ kind }: { kind: Kind }) {
   const { surface } = usePlatform();
   const items: (Playlist | Group)[] = kind === 'playlist' ? library.playlists : library.groups;
   const [selected, setSelected] = useState<string | null>(null);
+  // A deleted selection falls back to the first item.
   const current = items.find((i) => i.id === selected) ?? items[0];
-
-  useEffect(() => {
-    if (selected && !items.some((i) => i.id === selected)) setSelected(null);
-  }, [items, selected]);
 
   const noun = kind === 'playlist' ? 'playlist' : 'group';
   const Icon = kind === 'playlist' ? ListMusicIcon : ShapesIcon;
@@ -336,7 +428,11 @@ export function CollectionsSettings({ kind }: { kind: Kind }) {
       action={
         <div className="flex gap-1">
           {kind === 'group' && (
-            <Button size="sm" variant="outline" onClick={() => openCollection({ mode: 'create', kind, groupKind: 'language' })}>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => openCollection({ mode: 'create', kind, groupKind: 'language' })}
+            >
               <LanguagesIcon data-icon="inline-start" />
               Language group
             </Button>
@@ -355,23 +451,34 @@ export function CollectionsSettings({ kind }: { kind: Kind }) {
               <Icon />
             </EmptyMedia>
             <EmptyTitle>No {noun}s yet</EmptyTitle>
-            <EmptyDescription>Create one here, or from any station’s ⋮ menu{surface === 'settings' ? ' in the popup' : ''}.</EmptyDescription>
+            <EmptyDescription>
+              Create one here, or from any station’s ⋮ menu
+              {surface === 'settings' ? ' in the popup' : ''}.
+            </EmptyDescription>
           </EmptyHeader>
         </Empty>
       ) : (
-        <div className="grid gap-6 md:grid-cols-[220px_1fr]">
+        <div className="grid gap-6 md:grid-cols-[200px_minmax(0,1fr)]">
           <nav aria-label={`${noun}s`} className="flex flex-col gap-1">
             {items.map((item) => (
               <Item
                 key={item.id}
                 size="xs"
                 variant={current?.id === item.id ? 'muted' : 'default'}
-                render={<button type="button" onClick={() => setSelected(item.id)} aria-current={current?.id === item.id ? 'true' : undefined} />}
-                className="cursor-pointer text-left hover:bg-accent"
+                render={
+                  <button
+                    type="button"
+                    onClick={() => setSelected(item.id)}
+                    aria-current={current?.id === item.id ? 'true' : undefined}
+                  />
+                }
+                className="hover:bg-accent cursor-pointer text-left"
               >
                 <ItemContent className="min-w-0">
                   <ItemTitle className="w-full truncate" dir="auto">
-                    {'kind' in item && item.kind === 'language' ? <LanguagesIcon className="size-3.5 shrink-0" /> : null}
+                    {'kind' in item && item.kind === 'language' ? (
+                      <LanguagesIcon className="size-3.5 shrink-0" />
+                    ) : null}
                     {item.name}
                   </ItemTitle>
                   <ItemDescription className="text-xs">

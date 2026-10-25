@@ -11,10 +11,17 @@ export function WelcomeTips({ className }: { className?: string }) {
     <Alert className={className}>
       <AlertTitle>Bi xêr hatî · Welcome to Tajdîn</AlertTitle>
       <AlertDescription className="text-xs">
-        A new random mix every time you open me. Pick a list from the menu above, tap ♥ to keep a station, and press <Kbd>Space</Kbd> to play or pause. Music keeps playing when this window closes.
+        A new random mix every time you open me. Pick a list from the menu above, tap ♥ to keep a
+        station, and press <Kbd>Space</Kbd> to play or pause. Music keeps playing when this window
+        closes.
       </AlertDescription>
       <AlertAction>
-        <Button variant="ghost" size="icon-xs" aria-label="Dismiss tips" onClick={() => void update({ welcomeDismissed: true })}>
+        <Button
+          variant="ghost"
+          size="icon-xs"
+          aria-label="Dismiss tips"
+          onClick={() => void update({ welcomeDismissed: true })}
+        >
           <XIcon />
         </Button>
       </AlertAction>

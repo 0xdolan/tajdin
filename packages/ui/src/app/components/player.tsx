@@ -15,7 +15,14 @@ import {
   Volume2Icon,
   VolumeXIcon,
 } from 'lucide-react';
-import { isLocalStation, RATES, supportsSpeed, toggleFavourite, type PlayerState, type Station } from '@tajdin/core';
+import {
+  isLocalStation,
+  RATES,
+  supportsSpeed,
+  toggleFavourite,
+  type PlayerState,
+  type Station,
+} from '@tajdin/core';
 import { Button } from '@tajdin/ui/components/button';
 import {
   DropdownMenu,
@@ -98,7 +105,12 @@ export function usePlayerHotkeys(enabled = true) {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
       if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
-      if (target?.closest('input, textarea, select, [contenteditable="true"], [role="menu"], [role="dialog"], [role="listbox"]')) return;
+      if (
+        target?.closest(
+          'input, textarea, select, [contenteditable="true"], [role="menu"], [role="dialog"], [role="listbox"]',
+        )
+      )
+        return;
       const actions: Record<string, () => void> = {
         ' ': () => void send({ type: 'toggle' }),
         k: () => void send({ type: 'toggle' }),
@@ -127,7 +139,10 @@ function VolumeControl({ inline }: { inline?: boolean }) {
   const level = state.muted ? 0 : state.volume;
   const Icon = level === 0 ? VolumeXIcon : level < 0.5 ? Volume1Icon : Volume2Icon;
   const onWheel = (e: WheelEvent) => {
-    void send({ type: 'setVolume', volume: Math.min(1, Math.max(0, level - Math.sign(e.deltaY) * 0.05)) });
+    void send({
+      type: 'setVolume',
+      volume: Math.min(1, Math.max(0, level - Math.sign(e.deltaY) * 0.05)),
+    });
   };
   const slider = (
     <Slider
@@ -135,14 +150,19 @@ function VolumeControl({ inline }: { inline?: boolean }) {
       value={[Math.round(level * 100)]}
       max={100}
       step={1}
-      onValueChange={(v) => void send({ type: 'setVolume', volume: (Array.isArray(v) ? v[0]! : v) / 100 })}
+      onValueChange={(v) =>
+        void send({ type: 'setVolume', volume: (Array.isArray(v) ? v[0]! : v) / 100 })
+      }
       className={inline ? 'w-24' : 'w-36'}
     />
   );
   if (inline) {
     return (
       <div className="flex items-center gap-2" onWheel={onWheel}>
-        <IconButton label={state.muted ? 'Unmute (M)' : 'Mute (M)'} onClick={() => void send({ type: 'toggleMute' })}>
+        <IconButton
+          label={state.muted ? 'Unmute (M)' : 'Mute (M)'}
+          onClick={() => void send({ type: 'toggleMute' })}
+        >
           <Icon />
         </IconButton>
         {slider}
@@ -152,16 +172,30 @@ function VolumeControl({ inline }: { inline?: boolean }) {
   return (
     <Popover>
       <PopoverTrigger
-        render={<Button variant="ghost" size="icon-sm" aria-label={`Volume ${Math.round(level * 100)}%`} onWheel={onWheel} />}
+        render={
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label={`Volume ${Math.round(level * 100)}%`}
+            onWheel={onWheel}
+          />
+        }
       >
         <Icon />
       </PopoverTrigger>
       <PopoverContent side="top" align="end" className="flex w-auto items-center gap-2 p-2">
-        <Button variant="ghost" size="icon-sm" aria-label={state.muted ? 'Unmute' : 'Mute'} onClick={() => void send({ type: 'toggleMute' })}>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          aria-label={state.muted ? 'Unmute' : 'Mute'}
+          onClick={() => void send({ type: 'toggleMute' })}
+        >
           <Icon />
         </Button>
         {slider}
-        <span className="w-8 text-right text-xs tabular-nums text-muted-foreground">{Math.round(level * 100)}</span>
+        <span className="text-muted-foreground w-8 text-right text-xs tabular-nums">
+          {Math.round(level * 100)}
+        </span>
       </PopoverContent>
     </Popover>
   );
@@ -170,20 +204,30 @@ function VolumeControl({ inline }: { inline?: boolean }) {
 function SpeedControl() {
   const { state, send } = usePlayer();
   const enabled = supportsSpeed(state.station);
-  const label = enabled ? `Speed ${state.rate}×` : 'Speed: live radio plays in real time. Available for local files.';
+  const label = enabled
+    ? `Speed ${state.rate}×`
+    : 'Speed: live radio plays in real time. Available for local files.';
   return (
     <DropdownMenu>
       <Tooltip>
         <TooltipTrigger
           render={
             <DropdownMenuTrigger
-              render={<Button variant="ghost" size="icon-sm" aria-label={label} disabled={!enabled} className="relative" />}
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={label}
+                  disabled={!enabled}
+                  className="relative"
+                />
+              }
             />
           }
         >
           <GaugeIcon />
           {enabled && state.rate !== 1 && (
-            <span className="absolute -top-0.5 -right-0.5 rounded bg-live px-0.5 text-[9px] leading-tight font-semibold text-live-foreground">
+            <span className="bg-live text-live-foreground absolute -top-0.5 -right-0.5 rounded px-0.5 text-[9px] leading-tight font-semibold">
               {state.rate}
             </span>
           )}
@@ -193,7 +237,10 @@ function SpeedControl() {
       <DropdownMenuContent side="top" align="end">
         <DropdownMenuGroup>
           <DropdownMenuLabel>Playback speed</DropdownMenuLabel>
-          <DropdownMenuRadioGroup value={String(state.rate)} onValueChange={(v) => void send({ type: 'setRate', rate: Number(v) })}>
+          <DropdownMenuRadioGroup
+            value={String(state.rate)}
+            onValueChange={(v) => void send({ type: 'setRate', rate: Number(v) })}
+          >
             {RATES.map((r) => (
               <DropdownMenuRadioItem key={r} value={String(r)}>
                 {r}×
@@ -212,11 +259,26 @@ export function NowPlayingLine({ className }: { className?: string }) {
   const [settings] = useSettings();
   if (!settings.showNowPlaying || !state.station) return null;
   const np = state.nowPlaying;
-  const text = np ? (np.artist ? `${np.artist} — ${np.title}` : np.title) : state.status === 'playing' ? 'No song info from this station' : '';
+  const text = np
+    ? np.artist
+      ? `${np.artist} — ${np.title}`
+      : np.title
+    : state.status === 'playing'
+      ? 'No song info from this station'
+      : '';
   if (!text) return null;
   return (
-    <div className={cn('flex min-w-0 items-center gap-2 text-xs', np ? 'text-foreground' : 'text-muted-foreground', className)} aria-live="polite">
-      <span className="shrink-0 rounded bg-brand/15 px-1.5 py-px text-[10px] font-semibold tracking-wide text-brand uppercase">On air</span>
+    <div
+      className={cn(
+        'flex min-w-0 items-center gap-2 text-xs',
+        np ? 'text-foreground' : 'text-muted-foreground',
+        className,
+      )}
+      aria-live="polite"
+    >
+      <span className="bg-brand/15 text-brand shrink-0 rounded px-1.5 py-px text-[10px] font-semibold tracking-wide uppercase">
+        On air
+      </span>
       <span className="truncate" dir="auto" title={text}>
         {text}
       </span>
@@ -224,7 +286,13 @@ export function NowPlayingLine({ className }: { className?: string }) {
   );
 }
 
-export function Player({ variant = 'compact', className }: { variant?: 'compact' | 'full'; className?: string }) {
+export function Player({
+  variant = 'compact',
+  className,
+}: {
+  variant?: 'compact' | 'full';
+  className?: string;
+}) {
   const { state, send } = usePlayer();
   const [library, updateLibrary] = useLibrary();
   const { station, status } = state;
@@ -237,7 +305,11 @@ export function Player({ variant = 'compact', className }: { variant?: 'compact'
 
   const RepeatGlyph = state.repeat === 'one' ? Repeat1Icon : RepeatIcon;
   const repeatLabel =
-    state.repeat === 'off' ? 'Repeat: off' : state.repeat === 'all' ? 'Repeat: whole list' : 'Repeat: this station (reconnects if it drops)';
+    state.repeat === 'off'
+      ? 'Repeat: off'
+      : state.repeat === 'all'
+        ? 'Repeat: whole list'
+        : 'Repeat: this station (reconnects if it drops)';
 
   const playButton = (
     <Button
@@ -247,30 +319,48 @@ export function Player({ variant = 'compact', className }: { variant?: 'compact'
       disabled={!station && state.queue.length === 0}
       className={cn('rounded-full', full ? 'size-12' : 'size-10')}
     >
-      {isLoading ? <LoaderCircleIcon className="animate-spin" /> : isPlaying ? <PauseIcon className="fill-current" /> : <PlayIcon className="fill-current" />}
+      {isLoading ? (
+        <LoaderCircleIcon className="animate-spin" />
+      ) : isPlaying ? (
+        <PauseIcon className="fill-current" />
+      ) : (
+        <PlayIcon className="fill-current" />
+      )}
     </Button>
   );
 
   const controls = (
     <div className={cn('flex items-center', full ? 'gap-2' : 'gap-1')}>
-      <IconButton label={repeatLabel} pressed={state.repeat !== 'off'} onClick={() => void send({ type: 'cycleRepeat' })}>
+      <IconButton
+        label={repeatLabel}
+        pressed={state.repeat !== 'off'}
+        onClick={() => void send({ type: 'cycleRepeat' })}
+      >
         <RepeatGlyph />
       </IconButton>
-      <IconButton label="Previous (P)" disabled={!canQueue} onClick={() => void send({ type: 'previous' })}>
+      <IconButton
+        label="Previous (P)"
+        disabled={!canQueue}
+        onClick={() => void send({ type: 'previous' })}
+      >
         <SkipBackIcon className="fill-current" />
       </IconButton>
       {playButton}
       <IconButton label="Next (N)" disabled={!canQueue} onClick={() => void send({ type: 'next' })}>
         <SkipForwardIcon className="fill-current" />
       </IconButton>
-      <IconButton label="Random from this list (R)" disabled={!canQueue} onClick={() => void send({ type: 'random' })}>
+      <IconButton
+        label="Random from this list (R)"
+        disabled={!canQueue}
+        onClick={() => void send({ type: 'random' })}
+      >
         <ShuffleIcon />
       </IconButton>
     </div>
   );
 
   const progress = seekable ? (
-    <div className="flex w-full items-center gap-2 text-[10px] tabular-nums text-muted-foreground">
+    <div className="text-muted-foreground flex w-full items-center gap-2 text-[10px] tabular-nums">
       <span>{formatTime(state.position)}</span>
       <Slider
         aria-label="Seek"
@@ -286,20 +376,25 @@ export function Player({ variant = 'compact', className }: { variant?: 'compact'
   const info = (
     <div className="flex min-w-0 flex-1 items-center gap-3">
       <div className="relative">
-        <StationArt station={station} className={full ? 'size-14 rounded-xl' : 'size-12 rounded-xl'} />
+        <StationArt
+          station={station}
+          className={full ? 'size-14 rounded-xl' : 'size-12 rounded-xl'}
+        />
         {isPlaying && !isLocalStation(station!) && (
-          <span className="absolute -top-1 -left-1 rounded bg-live px-1 text-[9px] leading-4 font-bold tracking-wider text-live-foreground">LIVE</span>
+          <span className="bg-live text-live-foreground absolute -top-1 -left-1 rounded px-1 text-[9px] leading-4 font-bold tracking-wider">
+            LIVE
+          </span>
         )}
       </div>
       <div className="flex min-w-0 flex-col">
         <span className="truncate text-sm font-semibold" dir="auto" title={station?.name}>
           {station?.name ?? 'Nothing playing'}
         </span>
-        <span className="truncate text-xs text-muted-foreground" dir="auto">
+        <span className="text-muted-foreground truncate text-xs" dir="auto">
           {subtitle(state)}
         </span>
         {state.context && state.context.kind !== 'single' && full && (
-          <span className="truncate text-[11px] text-muted-foreground/80" dir="auto">
+          <span className="text-muted-foreground/80 truncate text-[11px]" dir="auto">
             from {state.context.label}
           </span>
         )}
@@ -330,14 +425,17 @@ export function Player({ variant = 'compact', className }: { variant?: 'compact'
   );
 
   const error = state.error && (
-    <p role="alert" className="text-xs text-destructive">
+    <p role="alert" className="text-destructive text-xs">
       {state.error}
     </p>
   );
 
   if (full) {
     return (
-      <section aria-label="Player" className={cn('grid grid-cols-[1fr_auto_1fr] items-center gap-4', className)}>
+      <section
+        aria-label="Player"
+        className={cn('grid grid-cols-[1fr_auto_1fr] items-center gap-4', className)}
+      >
         <div className="flex min-w-0 items-center gap-2">
           {info}
           {stationActions}

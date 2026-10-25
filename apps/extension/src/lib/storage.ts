@@ -11,7 +11,10 @@ export function extensionArea(kind: 'local' | 'session'): StorageArea {
     set: (items) => area.set(items),
     remove: (keys) => area.remove(keys),
     onChanged(listener) {
-      const handler = (changes: Record<string, { newValue?: unknown; oldValue?: unknown }>, areaName: string) => {
+      const handler = (
+        changes: Record<string, { newValue?: unknown; oldValue?: unknown }>,
+        areaName: string,
+      ) => {
         if (areaName === kind) listener(changes as StorageChanges);
       };
       browser.storage.onChanged.addListener(handler);

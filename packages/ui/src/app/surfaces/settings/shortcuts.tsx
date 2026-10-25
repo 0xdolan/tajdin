@@ -40,13 +40,22 @@ export function ShortcutsSettings() {
             {(shortcuts ?? []).map((s) => (
               <div key={s.name} className="contents">
                 <dt>{s.description}</dt>
-                <dd>{s.shortcut ? <Kbd>{s.shortcut}</Kbd> : <span className="text-muted-foreground">Not set</span>}</dd>
+                <dd>
+                  {s.shortcut ? (
+                    <Kbd>{s.shortcut}</Kbd>
+                  ) : (
+                    <span className="text-muted-foreground">Not set</span>
+                  )}
+                </dd>
               </div>
             ))}
           </dl>
         </Section>
       )}
-      <Section title="In Tajdîn" description="While the popup or desktop view is focused (not while typing).">
+      <Section
+        title="In Tajdîn"
+        description="While the popup or desktop view is focused (not while typing)."
+      >
         <dl className="grid grid-cols-[1fr_auto] gap-x-6 gap-y-3 text-sm">
           {IN_APP.map(([keys, label]) => (
             <div key={label} className="contents">

@@ -6,8 +6,13 @@ import { Music4Icon } from 'lucide-react';
 const HUES = [20, 55, 85, 150, 200, 250, 290, 330];
 
 function initials(name: string): string {
-  const words = name.replace(/^(radio|radyo|fm)\s+/i, '').split(/\s+/).filter(Boolean);
-  return (words.length > 1 ? words[0]![0]! + words[1]![0]! : (words[0] ?? '?').slice(0, 2)).toUpperCase();
+  const words = name
+    .replace(/^(radio|radyo|fm)\s+/i, '')
+    .split(/\s+/)
+    .filter(Boolean);
+  return (
+    words.length > 1 ? words[0]![0]! + words[1]![0]! : (words[0] ?? '?').slice(0, 2)
+  ).toUpperCase();
 }
 
 function hueFor(id: string): number {
@@ -17,13 +22,24 @@ function hueFor(id: string): number {
 }
 
 /** Station logo with a stable coloured monogram when there's no logo or it fails to load. */
-export function StationArt({ station, className }: { station: AnyStation | null; className?: string }) {
+export function StationArt({
+  station,
+  className,
+}: {
+  station: AnyStation | null;
+  className?: string;
+}) {
   const [failed, setFailed] = useState<string | null>(null);
   const src = station?.favicon;
   const showImage = !!src && failed !== src;
   if (!station) {
     return (
-      <div className={cn('flex shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground', className)}>
+      <div
+        className={cn(
+          'bg-muted text-muted-foreground flex shrink-0 items-center justify-center rounded-lg',
+          className,
+        )}
+      >
         <Music4Icon className="size-1/2" aria-hidden />
       </div>
     );
@@ -31,7 +47,10 @@ export function StationArt({ station, className }: { station: AnyStation | null;
   const hue = hueFor(station.id);
   return (
     <div
-      className={cn('relative flex shrink-0 items-center justify-center overflow-hidden rounded-lg text-xs font-semibold', className)}
+      className={cn(
+        'relative flex shrink-0 items-center justify-center overflow-hidden rounded-lg text-xs font-semibold',
+        className,
+      )}
       style={{
         backgroundColor: showImage ? 'var(--muted)' : `oklch(0.62 0.12 ${hue} / 0.18)`,
         color: `oklch(0.62 0.14 ${hue})`,

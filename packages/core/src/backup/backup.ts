@@ -8,7 +8,13 @@ import { convertLegacy } from '../storage/legacy';
 export const BACKUP_FORMAT = 'tajdin-backup';
 export const BACKUP_VERSION = 2;
 
-export const SECTIONS = ['settings', 'favourites', 'playlists', 'groups', 'customStations'] as const;
+export const SECTIONS = [
+  'settings',
+  'favourites',
+  'playlists',
+  'groups',
+  'customStations',
+] as const;
 export type Section = (typeof SECTIONS)[number];
 
 export const SECTION_LABELS: Record<Section, string> = {
@@ -145,7 +151,9 @@ function firstIssue(error: z.ZodError): string {
 }
 
 export function presentSections(contents: BackupContents): Section[] {
-  return SECTIONS.filter((s) => (s === 'settings' ? contents.settings !== undefined : contents.library[s] !== undefined));
+  return SECTIONS.filter((s) =>
+    s === 'settings' ? contents.settings !== undefined : contents.library[s] !== undefined,
+  );
 }
 
 export type ImportMode = 'merge' | 'replace';
@@ -164,15 +172,24 @@ export interface SectionPreview {
 
 export function previewImport(contents: BackupContents, library: Library): SectionPreview[] {
   return presentSections(contents).map((section) => {
-    if (section === 'settings') return { section, added: 0, updated: 1, unchanged: 0, localOnly: 0 };
+    if (section === 'settings')
+      return { section, added: 0, updated: 1, unchanged: 0, localOnly: 0 };
     if (section === 'favourites') {
       const incoming = new Set(contents.library.favourites);
       const local = new Set(library.favourites);
       const both = [...incoming].filter((id) => local.has(id)).length;
-      return { section, added: incoming.size - both, updated: 0, unchanged: both, localOnly: local.size - both };
+      return {
+        section,
+        added: incoming.size - both,
+        updated: 0,
+        unchanged: both,
+        localOnly: local.size - both,
+      };
     }
     const incoming = (contents.library[section] ?? []) as { id: string }[];
-    const local = new Map((library[section] as { id: string }[]).map((x) => [x.id, JSON.stringify(x)]));
+    const local = new Map(
+      (library[section] as { id: string }[]).map((x) => [x.id, JSON.stringify(x)]),
+    );
     let added = 0;
     let updated = 0;
     let unchanged = 0;
@@ -212,9 +229,13 @@ export function applyImport(
   };
 
   if (use.has('favourites') && incoming.favourites) {
-    lib.favourites = mode === 'replace' ? incoming.favourites : [...new Set([...lib.favourites, ...incoming.favourites])];
+    lib.favourites =
+      mode === 'replace'
+        ? incoming.favourites
+        : [...new Set([...lib.favourites, ...incoming.favourites])];
   }
-  if (use.has('playlists') && incoming.playlists) lib.playlists = upsert(lib.playlists, incoming.playlists);
+  if (use.has('playlists') && incoming.playlists)
+    lib.playlists = upsert(lib.playlists, incoming.playlists);
   if (use.has('groups') && incoming.groups) lib.groups = upsert(lib.groups, incoming.groups);
   if (use.has('customStations') && incoming.customStations) {
     lib.customStations = upsert(lib.customStations, incoming.customStations);

@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { createCatalog, CURATED_STATIONS, fromRadioBrowser, literalHint, parseIcyBlock } from '../src';
+import {
+  createCatalog,
+  CURATED_STATIONS,
+  fromRadioBrowser,
+  literalHint,
+  parseIcyBlock,
+} from '../src';
 
-const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
 describe('curated list', () => {
   it('loads every bundled Kurdish station with a valid URL', () => {
@@ -26,7 +33,13 @@ describe('Radio Browser', () => {
       tags: 'News,news,Talk',
       favicon: 'javascript:alert(1)',
     });
-    expect(s).toMatchObject({ id: 'rb:u1', name: 'Radio One', streamUrl: 'https://b/stream', languages: ['ku', 'en'], tags: ['news', 'talk'] });
+    expect(s).toMatchObject({
+      id: 'rb:u1',
+      name: 'Radio One',
+      streamUrl: 'https://b/stream',
+      languages: ['ku', 'en'],
+      tags: ['news', 'talk'],
+    });
     expect(s?.favicon).toBeUndefined();
     expect(fromRadioBrowser({ stationuuid: 'u2', name: 'x', url: 'ftp://nope' })).toBeUndefined();
   });
@@ -36,10 +49,21 @@ describe('Radio Browser', () => {
     const catalog = createCatalog({
       fetch: async (url) => {
         hosts.push(new URL(url).host);
-        return hosts.length === 1 ? json({}, 503) : json([{ stationuuid: 'x', name: 'X', url: 'https://x' }]);
+        return hosts.length === 1
+          ? json({}, 503)
+          : json([{ stationuuid: 'x', name: 'X', url: 'https://x' }]);
       },
     });
-    const page = await catalog.sources['radio-browser'].search({ text: 'x', mode: 'exact', language: '', offset: 0, limit: 10, hideBroken: true, minBitrate: 0, httpsOnly: false });
+    const page = await catalog.sources['radio-browser'].search({
+      text: 'x',
+      mode: 'exact',
+      language: '',
+      offset: 0,
+      limit: 10,
+      hideBroken: true,
+      minBitrate: 0,
+      httpsOnly: false,
+    });
     expect(page.stations).toHaveLength(1);
     expect(hosts[0]).not.toBe(hosts[1]);
   });
@@ -48,14 +72,24 @@ describe('Radio Browser', () => {
 describe('catalog', () => {
   it('keeps working when one directory is down', async () => {
     const catalog = createCatalog({ fetch: async () => json({}, 500) });
-    const mix = await catalog.mix({ sources: ['curated', 'somafm'], language: '', count: 10, hideBroken: true });
+    const mix = await catalog.mix({
+      sources: ['curated', 'somafm'],
+      language: '',
+      count: 10,
+      hideBroken: true,
+    });
     expect(mix.length).toBeGreaterThan(0);
     expect(mix.every((s) => s.source === 'curated')).toBe(true);
   });
 
   it('only offers https streams on the web', async () => {
     const catalog = createCatalog({ httpsOnly: true, fetch: async () => json({}, 500) });
-    const mix = await catalog.mix({ sources: ['curated'], language: 'ku', count: 50, hideBroken: true });
+    const mix = await catalog.mix({
+      sources: ['curated'],
+      language: 'ku',
+      count: 50,
+      hideBroken: true,
+    });
     expect(mix.every((s) => s.streamUrl.startsWith('https://'))).toBe(true);
   });
 
@@ -63,7 +97,13 @@ describe('catalog', () => {
     let calls = 0;
     const catalog = createCatalog({ fetch: async () => (calls++, json([])) });
     const ku = CURATED_STATIONS[0]!;
-    const { stations } = await catalog.resolve([ku.id], { favourites: [], playlists: [], groups: [], customStations: [], stationCache: {} });
+    const { stations } = await catalog.resolve([ku.id], {
+      favourites: [],
+      playlists: [],
+      groups: [],
+      customStations: [],
+      stationCache: {},
+    });
     expect(stations).toEqual([ku]);
     expect(calls).toBe(0);
   });
@@ -77,7 +117,10 @@ describe('helpers', () => {
   ])('literal hint of %s is %s', (pattern, hint) => expect(literalHint(pattern)).toBe(hint));
 
   it('parses ICY titles', () => {
-    expect(parseIcyBlock("StreamTitle='Şivan Perwer - Kîne Em';StreamUrl='';")).toEqual({ artist: 'Şivan Perwer', title: 'Kîne Em' });
+    expect(parseIcyBlock("StreamTitle='Şivan Perwer - Kîne Em';StreamUrl='';")).toEqual({
+      artist: 'Şivan Perwer',
+      title: 'Kîne Em',
+    });
     expect(parseIcyBlock("StreamTitle='';")).toBeNull();
   });
 });

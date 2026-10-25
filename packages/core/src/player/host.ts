@@ -100,7 +100,8 @@ function updateMediaSession(state: PlayerState) {
     navigator.mediaSession.playbackState = 'none';
     return;
   }
-  const subtitle = station.country ?? (station.languages[0] ? languageLabel(station.languages[0]) : 'Tajdîn');
+  const subtitle =
+    station.country ?? (station.languages[0] ? languageLabel(station.languages[0]) : 'Tajdîn');
   navigator.mediaSession.metadata = new MediaMetadata({
     title: nowPlaying?.title ?? station.name,
     artist: nowPlaying ? (nowPlaying.artist ?? station.name) : subtitle,

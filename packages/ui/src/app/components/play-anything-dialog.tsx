@@ -2,8 +2,21 @@ import { useRef, useState, type FormEvent } from 'react';
 import { FileAudioIcon, LinkIcon, PlayIcon } from 'lucide-react';
 import { AUDIO_FILE_ACCEPT, isInsecureUrl, stationFromUrl, type Station } from '@tajdin/core';
 import { Button } from '@tajdin/ui/components/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@tajdin/ui/components/dialog';
-import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '@tajdin/ui/components/field';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@tajdin/ui/components/dialog';
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator,
+} from '@tajdin/ui/components/field';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@tajdin/ui/components/input-group';
 import { usePlayer } from '../hooks';
 import { usePlatform } from '../platform';
@@ -58,7 +71,9 @@ export function PlayAnythingDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Play a link or file</DialogTitle>
-          <DialogDescription>Tajdîn plays any audio stream URL or audio file on your computer.</DialogDescription>
+          <DialogDescription>
+            Tajdîn plays any audio stream URL or audio file on your computer.
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={playUrl}>
           <FieldGroup>
@@ -88,7 +103,10 @@ export function PlayAnythingDialog({
               {error ? (
                 <FieldDescription>{error}</FieldDescription>
               ) : !playsHttp && isInsecureUrl(url.trim()) ? (
-                <FieldDescription>This site is https, so http:// links are tried over https. If that fails, use the extension.</FieldDescription>
+                <FieldDescription>
+                  This site is https, so http:// links are tried over https. If that fails, use the
+                  extension.
+                </FieldDescription>
               ) : null}
             </Field>
             {last && (
@@ -110,7 +128,9 @@ export function PlayAnythingDialog({
                 <FileAudioIcon data-icon="inline-start" />
                 Choose an audio file…
               </Button>
-              <FieldDescription>Files play for this session only and aren’t saved or uploaded anywhere.</FieldDescription>
+              <FieldDescription>
+                Files play for this session only and aren’t saved or uploaded anywhere.
+              </FieldDescription>
             </Field>
           </FieldGroup>
         </form>

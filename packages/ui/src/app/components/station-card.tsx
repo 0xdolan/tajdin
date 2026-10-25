@@ -26,8 +26,8 @@ export const StationCard = memo(function StationCard({
   return (
     <div
       className={cn(
-        'group/card relative flex flex-col gap-3 rounded-xl border bg-card p-3 transition-[background-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:bg-accent hover:shadow-md',
-        active && 'ring-2 ring-live',
+        'group/card bg-card hover:bg-accent relative flex flex-col gap-3 rounded-xl border p-3 transition-[background-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-md',
+        active && 'ring-live ring-2',
       )}
     >
       <button
@@ -35,31 +35,41 @@ export const StationCard = memo(function StationCard({
         onClick={() => onPlay(station)}
         aria-label={`${active && playing ? 'Playing' : 'Play'} ${station.name}`}
         aria-current={active ? 'true' : undefined}
-        className="relative aspect-square w-full overflow-hidden rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="focus-visible:ring-ring relative aspect-square w-full overflow-hidden rounded-lg outline-none focus-visible:ring-2"
       >
         <StationArt station={station} className="size-full rounded-lg text-2xl" />
         <span
           className={cn(
-            'absolute right-2 bottom-2 flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-[opacity,transform] duration-200',
-            active ? 'opacity-100' : 'translate-y-1 opacity-0 group-hover/card:translate-y-0 group-hover/card:opacity-100 group-focus-within/card:opacity-100',
+            'bg-primary text-primary-foreground absolute right-2 bottom-2 flex size-10 items-center justify-center rounded-full shadow-lg transition-[opacity,transform] duration-200',
+            active
+              ? 'opacity-100'
+              : 'translate-y-1 opacity-0 group-focus-within/card:opacity-100 group-hover/card:translate-y-0 group-hover/card:opacity-100',
           )}
           aria-hidden
         >
-          {active && playing ? <PauseIcon className="size-4 fill-current" /> : <PlayIcon className="size-4 fill-current" />}
+          {active && playing ? (
+            <PauseIcon className="size-4 fill-current" />
+          ) : (
+            <PlayIcon className="size-4 fill-current" />
+          )}
         </span>
         {active && (
-          <span className="absolute top-2 left-2 rounded-md bg-background/85 p-1.5 backdrop-blur">
+          <span className="bg-background/85 absolute top-2 left-2 rounded-md p-1.5 backdrop-blur">
             <Equalizer playing={playing} />
           </span>
         )}
       </button>
       <div className="flex items-start gap-1">
         <div className="flex min-w-0 flex-1 flex-col">
-          <span className={cn('truncate text-sm font-semibold', active && 'text-live')} dir="auto" title={station.name}>
+          <span
+            className={cn('truncate text-sm font-semibold', active && 'text-live')}
+            dir="auto"
+            title={station.name}
+          >
             {station.name}
           </span>
-          <span className="truncate text-xs text-muted-foreground" dir="auto">
-            {stationMeta(station) || ' '}
+          <span className="text-muted-foreground truncate text-xs" dir="auto">
+            {stationMeta(station) || '\u00a0'}
           </span>
         </div>
         <Button
