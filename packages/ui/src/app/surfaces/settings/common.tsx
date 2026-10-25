@@ -1,8 +1,24 @@
 import type { ReactNode } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@tajdin/ui/components/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@tajdin/ui/components/card';
 import { Field, FieldContent, FieldDescription, FieldLabel } from '@tajdin/ui/components/field';
 
-export function Section({ title, description, children, action }: { title: string; description?: string; children: ReactNode; action?: ReactNode }) {
+export function Section({
+  title,
+  description,
+  children,
+  action,
+}: {
+  title: string;
+  description?: string;
+  children: ReactNode;
+  action?: ReactNode;
+}) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-start justify-between gap-4">
@@ -18,7 +34,17 @@ export function Section({ title, description, children, action }: { title: strin
 }
 
 /** A label + description on the left, the control on the right. */
-export function SettingRow({ id, label, description, children }: { id?: string; label: string; description?: ReactNode; children: ReactNode }) {
+export function SettingRow({
+  id,
+  label,
+  description,
+  children,
+}: {
+  id?: string;
+  label: string;
+  description?: ReactNode;
+  children: ReactNode;
+}) {
   return (
     <Field orientation="horizontal" className="items-center justify-between gap-6">
       <FieldContent>

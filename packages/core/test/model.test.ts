@@ -35,6 +35,8 @@ describe('languages', () => {
     ['en-US', 'en'],
     ['Kurdî', 'ku'],
     ['Old Norse', 'old-norse'],
+    ['eng', 'en'],
+    ['per', 'fa'],
   ])('%s → %s', (raw, code) => expect(normaliseLanguage(raw)).toBe(code));
 });
 
@@ -49,7 +51,10 @@ describe('settings', () => {
 
 describe('library', () => {
   it('drops invalid items and keeps valid ones', () => {
-    const lib = parseLibrary({ favourites: ['rb:a', 'rb:a', 3], customStations: [{ bad: true }, station('custom:x', 'custom')] });
+    const lib = parseLibrary({
+      favourites: ['rb:a', 'rb:a', 3],
+      customStations: [{ bad: true }, station('custom:x', 'custom')],
+    });
     expect(lib.favourites).toEqual(['rb:a']);
     expect(lib.customStations).toHaveLength(1);
   });
@@ -66,7 +71,11 @@ describe('library', () => {
   it('reorders playlists and dedupes additions', () => {
     const { library, playlist } = createPlaylist(EMPTY_LIBRARY, { name: ' Morning ' });
     expect(playlist.name).toBe('Morning');
-    let lib = addToCollection(library, 'playlist', playlist.id, [station('rb:1'), station('rb:2'), station('rb:3')]);
+    let lib = addToCollection(library, 'playlist', playlist.id, [
+      station('rb:1'),
+      station('rb:2'),
+      station('rb:3'),
+    ]);
     lib = addToCollection(lib, 'playlist', playlist.id, [station('rb:2')]);
     lib = moveInPlaylist(lib, playlist.id, 0, 2);
     expect(lib.playlists[0]!.stationIds).toEqual(['rb:2', 'rb:3', 'rb:1']);
@@ -74,7 +83,10 @@ describe('library', () => {
 
   it('removes a deleted custom station everywhere', () => {
     const custom = makeCustomStation({ name: 'Mine', streamUrl: 'https://s.example/live' });
-    const { library, group } = createGroup({ ...EMPTY_LIBRARY, customStations: [custom] }, { kind: 'manual', name: 'G' });
+    const { library, group } = createGroup(
+      { ...EMPTY_LIBRARY, customStations: [custom] },
+      { kind: 'manual', name: 'G' },
+    );
     let lib = addToCollection(library, 'group', group.id, [custom]);
     lib = toggleFavourite(lib, custom);
     lib = deleteCustomStation(lib, custom.id);
@@ -84,7 +96,11 @@ describe('library', () => {
   });
 
   it('creates language groups', () => {
-    const { group } = createGroup(EMPTY_LIBRARY, { kind: 'language', name: 'Kurdish', language: 'ku' });
+    const { group } = createGroup(EMPTY_LIBRARY, {
+      kind: 'language',
+      name: 'Kurdish',
+      language: 'ku',
+    });
     expect(group).toMatchObject({ kind: 'language', language: 'ku' });
   });
 });
@@ -92,11 +108,19 @@ describe('library', () => {
 describe('station factories', () => {
   it('rejects non-http schemes', () => {
     expect(() => makeCustomStation({ name: 'x', streamUrl: 'javascript:alert(1)' })).toThrow();
-    expect(() => makeCustomStation({ name: 'x', streamUrl: 'https://ok.example', favicon: 'data:image/png;base64,AA' })).toThrow();
+    expect(() =>
+      makeCustomStation({
+        name: 'x',
+        streamUrl: 'https://ok.example',
+        favicon: 'data:image/png;base64,AA',
+      }),
+    ).toThrow();
     expect(stationFromUrl('ftp://x')).toBeUndefined();
   });
 
   it('names link stations after their host', () => {
-    expect(stationFromUrl('https://radio.example.com/live.mp3')?.name).toBe('radio.example.com · live.mp3');
+    expect(stationFromUrl('https://radio.example.com/live.mp3')?.name).toBe(
+      'radio.example.com · live.mp3',
+    );
   });
 });

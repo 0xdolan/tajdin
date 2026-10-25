@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import {
   CustomStationInputSchema,
@@ -9,10 +9,24 @@ import {
   type Station,
 } from '@tajdin/core';
 import { Button } from '@tajdin/ui/components/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@tajdin/ui/components/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@tajdin/ui/components/dialog';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@tajdin/ui/components/field';
 import { Input } from '@tajdin/ui/components/input';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@tajdin/ui/components/select';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@tajdin/ui/components/select';
 import { useLibrary } from '../data';
 import { useSessionState } from '../hooks';
 import { usePlatform } from '../platform';
@@ -27,7 +41,10 @@ interface Draft {
 }
 
 const EMPTY: Draft = { name: '', streamUrl: '', favicon: '', homepage: '', language: '', tags: '' };
-const LANGUAGE_ITEMS = [{ value: '', label: 'Not set' }, ...LANGUAGES.map((l) => ({ value: l.code, label: l.name }))];
+const LANGUAGE_ITEMS = [
+  { value: '', label: 'Not set' },
+  ...LANGUAGES.map((l) => ({ value: l.code, label: l.name })),
+];
 
 /**
  * Add or edit a station of the user's own. Unsaved input for a new station is kept for the
@@ -42,35 +59,40 @@ export function CustomStationDialog({
   initial?: Partial<Station>;
   onClose: () => void;
 }) {
+  return (
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
+        {open && <StationForm initial={initial} onClose={onClose} />}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function fromStation(initial: Partial<Station>): Draft {
+  return {
+    name: initial.name ?? '',
+    streamUrl: initial.streamUrl ?? '',
+    favicon: initial.favicon ?? '',
+    homepage: initial.homepage ?? '',
+    language: initial.languages?.[0] ?? '',
+    tags: initial.tags?.join(', ') ?? '',
+  };
+}
+
+function StationForm({ initial, onClose }: { initial?: Partial<Station>; onClose: () => void }) {
   const { surface } = usePlatform();
   const [, updateLibrary] = useLibrary();
   const editingId = initial?.source === 'custom' ? initial.id : undefined;
-  const [draft, setDraft] = useSessionState<Draft>(`tajdin.v2.draft.${surface}`, EMPTY);
-  const [form, setForm] = useState<Draft>(EMPTY);
+  const prefilled = !!(initial?.streamUrl || initial?.name);
+  const [draft, setDraft, draftReady] = useSessionState<Draft>(`tajdin.v2.draft.${surface}`, EMPTY);
+  const [edited, setEdited] = useState<Draft | null>(prefilled ? fromStation(initial!) : null);
+  // Until the user types, a new station shows the saved draft (it loads asynchronously).
+  const form = edited ?? draft;
   const [errors, setErrors] = useState<Partial<Record<keyof Draft, string>>>({});
-
-  useEffect(() => {
-    if (!open) return;
-    setErrors({});
-    if (initial?.streamUrl || initial?.name) {
-      setForm({
-        name: initial.name ?? '',
-        streamUrl: initial.streamUrl ?? '',
-        favicon: initial.favicon ?? '',
-        homepage: initial.homepage ?? '',
-        language: initial.languages?.[0] ?? '',
-        tags: initial.tags?.join(', ') ?? '',
-      });
-    } else {
-      setForm(draft);
-    }
-    // Load once per opening; the draft is written back as the user types.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, initial]);
 
   const change = (key: keyof Draft, value: string) => {
     const next = { ...form, [key]: value };
-    setForm(next);
+    setEdited(next);
     if (!editingId) setDraft(next);
   };
 
@@ -94,11 +116,18 @@ export function CustomStationDialog({
     const station = makeCustomStation(input, editingId);
     await updateLibrary((l) => upsertCustomStation(l, station));
     if (!editingId) setDraft(EMPTY);
-    toast.success(editingId ? `Saved “${station.name}”` : `Added “${station.name}” to your stations`);
+    toast.success(
+      editingId ? `Saved “${station.name}”` : `Added “${station.name}” to your stations`,
+    );
     onClose();
   };
 
-  const field = (key: keyof Draft, label: string, props: React.ComponentProps<typeof Input>, hint?: string) => (
+  const field = (
+    key: keyof Draft,
+    label: string,
+    props: React.ComponentProps<typeof Input>,
+    hint?: string,
+  ) => (
     <Field data-invalid={errors[key] ? true : undefined}>
       <FieldLabel htmlFor={`station-${key}`}>{label}</FieldLabel>
       <Input
@@ -112,48 +141,64 @@ export function CustomStationDialog({
     </Field>
   );
 
+  if (!draftReady && !prefilled) return null;
   return (
-    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
-        <form onSubmit={submit} className="flex flex-col gap-4" noValidate>
-          <DialogHeader>
-            <DialogTitle>{editingId ? 'Edit station' : 'Add a station'}</DialogTitle>
-            <DialogDescription>
-              Any stream that isn’t in the directories. It’s saved in this browser and included in backups.
-            </DialogDescription>
-          </DialogHeader>
-          <FieldGroup>
-            {field('name', 'Name', { dir: 'auto', autoFocus: true, maxLength: 200, placeholder: 'Dengê Welat' })}
-            {field('streamUrl', 'Stream URL', { type: 'url', inputMode: 'url', placeholder: 'https://example.com/live.mp3' }, 'MP3, AAC, Ogg or HLS (.m3u8).')}
-            {field('favicon', 'Cover image URL', { type: 'url', inputMode: 'url', placeholder: 'Optional' })}
-            {field('homepage', 'Website', { type: 'url', inputMode: 'url', placeholder: 'Optional' })}
-            <Field>
-              <FieldLabel>Language</FieldLabel>
-              <Select items={LANGUAGE_ITEMS} value={form.language} onValueChange={(v) => change('language', (v as string) ?? '')}>
-                <SelectTrigger className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {LANGUAGE_ITEMS.map((l) => (
-                      <SelectItem key={l.value || 'none'} value={l.value}>
-                        {l.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </Field>
-            {field('tags', 'Tags', { placeholder: 'news, music' }, 'Comma-separated, used by search.')}
-          </FieldGroup>
-          <DialogFooter>
-            <Button type="button" variant="ghost" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit">{editingId ? 'Save' : 'Add station'}</Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <form onSubmit={submit} className="flex flex-col gap-4" noValidate>
+      <DialogHeader>
+        <DialogTitle>{editingId ? 'Edit station' : 'Add a station'}</DialogTitle>
+        <DialogDescription>
+          Any stream that isn’t in the directories. It’s saved in this browser and included in
+          backups.
+        </DialogDescription>
+      </DialogHeader>
+      <FieldGroup>
+        {field('name', 'Name', {
+          dir: 'auto',
+          autoFocus: true,
+          maxLength: 200,
+          placeholder: 'Dengê Welat',
+        })}
+        {field(
+          'streamUrl',
+          'Stream URL',
+          { type: 'url', inputMode: 'url', placeholder: 'https://example.com/live.mp3' },
+          'MP3, AAC, Ogg or HLS (.m3u8).',
+        )}
+        {field('favicon', 'Cover image URL', {
+          type: 'url',
+          inputMode: 'url',
+          placeholder: 'Optional',
+        })}
+        {field('homepage', 'Website', { type: 'url', inputMode: 'url', placeholder: 'Optional' })}
+        <Field>
+          <FieldLabel>Language</FieldLabel>
+          <Select
+            items={LANGUAGE_ITEMS}
+            value={form.language}
+            onValueChange={(v) => change('language', (v as string) ?? '')}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {LANGUAGE_ITEMS.map((l) => (
+                  <SelectItem key={l.value || 'none'} value={l.value}>
+                    {l.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </Field>
+        {field('tags', 'Tags', { placeholder: 'news, music' }, 'Comma-separated, used by search.')}
+      </FieldGroup>
+      <DialogFooter>
+        <Button type="button" variant="ghost" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button type="submit">{editingId ? 'Save' : 'Add station'}</Button>
+      </DialogFooter>
+    </form>
   );
 }

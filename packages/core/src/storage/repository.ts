@@ -81,7 +81,8 @@ export function createRepository(local: StorageArea): Repository {
       serial(async () => {
         const current = await local.get([KEYS.schema, ...ALL_LEGACY_KEYS]);
         if (current[KEYS.schema] === SCHEMA_VERSION) return;
-        const pick = (keys: readonly string[]) => keys.map((k) => current[k]).find((v) => v !== undefined);
+        const pick = (keys: readonly string[]) =>
+          keys.map((k) => current[k]).find((v) => v !== undefined);
         const legacy: LegacyData = {
           settings: pick(LEGACY_LOCAL_KEYS.settings),
           favouriteIds: pick(LEGACY_LOCAL_KEYS.favouriteIds),

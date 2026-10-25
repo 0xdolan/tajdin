@@ -38,7 +38,10 @@ export function fromLautFm(raw: LautStation): Station | undefined {
     favicon: raw.images?.station_120x120 ?? raw.images?.station_80x80,
     description: cleanText(raw.description || raw.format, 2000) || undefined,
     country: raw.location ? cleanText(raw.location, 100) : undefined,
-    tags: (raw.genres ?? []).slice(0, 12).map((g) => cleanText(g, 40).toLowerCase()).filter(Boolean),
+    tags: (raw.genres ?? [])
+      .slice(0, 12)
+      .map((g) => cleanText(g, 40).toLowerCase())
+      .filter(Boolean),
     codec: 'MP3',
   });
 }
@@ -87,14 +90,20 @@ export function createLautFmSource(fetcher: FetchLike = fetch.bind(globalThis)):
     async random(query, signal) {
       if (query.language) return [];
       const offset = Math.floor(Math.random() * Math.max(1, total - query.count));
-      const page = await fetchJson<LautPage>(fetcher, `${API}/stations?limit=${query.count}&offset=${offset}`, signal);
+      const page = await fetchJson<LautPage>(
+        fetcher,
+        `${API}/stations?limit=${query.count}&offset=${offset}`,
+        signal,
+      );
       if (typeof page.total === 'number' && page.total > 0) total = page.total;
       return toStations(page.items ?? []);
     },
 
     async getByIds(ids, signal) {
       const results = await Promise.allSettled(
-        ids.map((id) => fetchJson<LautStation>(fetcher, `${API}/station/${encodeURIComponent(id)}`, signal)),
+        ids.map((id) =>
+          fetchJson<LautStation>(fetcher, `${API}/station/${encodeURIComponent(id)}`, signal),
+        ),
       );
       return toStations(results.flatMap((r) => (r.status === 'fulfilled' ? [r.value] : [])));
     },

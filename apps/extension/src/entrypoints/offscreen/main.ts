@@ -23,13 +23,17 @@ browser.runtime.onMessage.addListener((raw, _sender, sendResponse) => {
 });
 
 void (async () => {
-  const hello = (await browser.runtime.sendMessage({ type: 'host:hello' } satisfies BackgroundMessage)) as HostHello;
+  const hello = (await browser.runtime.sendMessage({
+    type: 'host:hello',
+  } satisfies BackgroundMessage)) as HostHello;
   resolveHost(
     startAudioHost({
       initial: hello.state,
       showNowPlaying: hello.showNowPlaying,
       publish: (state) =>
-        void browser.runtime.sendMessage({ type: 'host:state', state } satisfies BackgroundMessage).catch(() => undefined),
+        void browser.runtime
+          .sendMessage({ type: 'host:state', state } satisfies BackgroundMessage)
+          .catch(() => undefined),
     }),
   );
 })();

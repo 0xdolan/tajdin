@@ -11,9 +11,17 @@ const brand = (f) => join(root, 'assets/brand', f);
 
 const targets = [
   // Extension: manifest icons and toolbar states (see apps/extension/src/lib/toolbar-icon.ts)
-  ...[16, 32, 48, 96, 128].map((n) => [brand('tajdin-icon.svg'), `apps/extension/public/icon/${n}.png`, n]),
+  ...[16, 32, 48, 96, 128].map((n) => [
+    brand('tajdin-icon.svg'),
+    `apps/extension/public/icon/${n}.png`,
+    n,
+  ]),
   ...['idle', 'paused', 'play-1', 'play-2'].flatMap((state) =>
-    [16, 32].map((n) => [brand(`toolbar-${state}.svg`), `apps/extension/public/icon/toolbar-${state}-${n}.png`, n]),
+    [16, 32].map((n) => [
+      brand(`toolbar-${state}.svg`),
+      `apps/extension/public/icon/toolbar-${state}-${n}.png`,
+      n,
+    ]),
   ),
   // Website: favicons and install icons
   [brand('tajdin-icon.svg'), 'apps/web/public/favicon-32.png', 32],

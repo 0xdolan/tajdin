@@ -51,9 +51,15 @@ function legacyStation(row: unknown): Station | undefined {
 }
 
 const array = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
-const ids = (v: unknown) => array(v).filter((x): x is string => typeof x === 'string' && x.length > 0).map(legacyId);
+const ids = (v: unknown) =>
+  array(v)
+    .filter((x): x is string => typeof x === 'string' && x.length > 0)
+    .map(legacyId);
 
-export function convertLegacy(data: LegacyData): { settings?: Settings; library: Partial<Library> } {
+export function convertLegacy(data: LegacyData): {
+  settings?: Settings;
+  library: Partial<Library>;
+} {
   const library: Partial<Library> = {};
   const now = new Date().toISOString();
 
@@ -103,7 +109,8 @@ export function convertLegacy(data: LegacyData): { settings?: Settings; library:
     const old = data.settings as Record<string, unknown>;
     settings = parseSettings({
       theme: old.theme,
-      defaultLanguage: typeof old.defaultLanguageCode === 'string' ? old.defaultLanguageCode : undefined,
+      defaultLanguage:
+        typeof old.defaultLanguageCode === 'string' ? old.defaultLanguageCode : undefined,
       searchMode: old.searchMode === 'fuzzy' ? 'exact' : old.searchMode,
       preferredBitrate: old.preferredBitrateKbps,
       playOnSelect: old.playbackAutostart,

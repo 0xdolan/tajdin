@@ -18,7 +18,15 @@ import {
 import { Alert, AlertDescription, AlertTitle } from '@tajdin/ui/components/alert';
 import { Button } from '@tajdin/ui/components/button';
 import { Checkbox } from '@tajdin/ui/components/checkbox';
-import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel, FieldLegend, FieldSet } from '@tajdin/ui/components/field';
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from '@tajdin/ui/components/field';
 import { RadioGroup, RadioGroupItem } from '@tajdin/ui/components/radio-group';
 import { useLibrary, useSettings } from '../../data';
 import { usePlatform } from '../../platform';
@@ -91,7 +99,12 @@ export function BackupSettings() {
   };
 
   const doExport = () => {
-    const backup = createBackup({ settings, library, sections: [...exportSections], appVersion: version });
+    const backup = createBackup({
+      settings,
+      library,
+      sections: [...exportSections],
+      appVersion: version,
+    });
     download(backupFileName(), JSON.stringify(backup, null, 2));
     toast.success('Backup downloaded');
   };
@@ -121,7 +134,9 @@ export function BackupSettings() {
     // One write for everything, so a failure can't leave half an import behind.
     // Every open page (this one included) picks the change up from storage events.
     await repository.replaceAll(result);
-    toast.success(mode === 'merge' ? 'Backup merged into your library' : 'Library replaced from backup');
+    toast.success(
+      mode === 'merge' ? 'Backup merged into your library' : 'Library replaced from backup',
+    );
     setImported(null);
   };
 
@@ -129,10 +144,19 @@ export function BackupSettings() {
 
   return (
     <div className="flex flex-col gap-6">
-      <Section title="Export" description="Everything is stored only in this browser. Export a backup to keep it safe or move it to another browser or computer.">
+      <Section
+        title="Export"
+        description="Everything is stored only in this browser. Export a backup to keep it safe or move it to another browser or computer."
+      >
         <FieldSet>
           <FieldLegend variant="label">Include</FieldLegend>
-          <SectionChecklist available={SECTIONS} selected={exportSections} onChange={setExportSections} counts={counts} idPrefix="export" />
+          <SectionChecklist
+            available={SECTIONS}
+            selected={exportSections}
+            onChange={setExportSections}
+            counts={counts}
+            idPrefix="export"
+          />
         </FieldSet>
         <div>
           <Button onClick={doExport} disabled={exportSections.size === 0}>
@@ -142,8 +166,18 @@ export function BackupSettings() {
         </div>
       </Section>
 
-      <Section title="Import" description="Restore a backup from Tajdîn (any version), the website or another browser. Nothing changes until you confirm.">
-        <input ref={fileInput} type="file" accept="application/json,.json" className="sr-only" tabIndex={-1} onChange={(e) => void onFile(e.target.files?.[0])} />
+      <Section
+        title="Import"
+        description="Restore a backup from Tajdîn (any version), the website or another browser. Nothing changes until you confirm."
+      >
+        <input
+          ref={fileInput}
+          type="file"
+          accept="application/json,.json"
+          className="sr-only"
+          tabIndex={-1}
+          onChange={(e) => void onFile(e.target.files?.[0])}
+        />
         <div>
           <Button variant="outline" onClick={() => fileInput.current?.click()}>
             <UploadIcon data-icon="inline-start" />
@@ -159,7 +193,7 @@ export function BackupSettings() {
         {imported && (
           <div className="flex flex-col gap-5 rounded-lg border p-4">
             <div className="flex items-center gap-2 text-sm">
-              <FileJsonIcon className="size-4 text-muted-foreground" />
+              <FileJsonIcon className="text-muted-foreground size-4" />
               <span className="font-medium">{imported.name}</span>
               <span className="text-muted-foreground">
                 · exported {new Date(imported.contents.exportedAt).toLocaleString()}
@@ -169,23 +203,33 @@ export function BackupSettings() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <caption className="sr-only">What the import will change</caption>
-                <thead className="text-left text-xs text-muted-foreground">
+                <thead className="text-muted-foreground text-left text-xs">
                   <tr>
                     <th className="py-1 font-medium">Section</th>
                     <th className="py-1 text-right font-medium">New</th>
                     <th className="py-1 text-right font-medium">Updated</th>
                     <th className="py-1 text-right font-medium">Same</th>
-                    <th className="py-1 text-right font-medium">{mode === 'merge' ? 'Kept (only here)' : 'Removed'}</th>
+                    <th className="py-1 text-right font-medium">
+                      {mode === 'merge' ? 'Kept (only here)' : 'Removed'}
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="tabular-nums">
                   {preview.map((p) => (
                     <tr key={p.section} className="border-t">
                       <td className="py-1.5">{SECTION_LABELS[p.section]}</td>
-                      <td className="py-1.5 text-right">{p.section === 'settings' ? '—' : p.added}</td>
-                      <td className="py-1.5 text-right">{p.section === 'settings' ? 'replaced' : p.updated}</td>
-                      <td className="py-1.5 text-right">{p.section === 'settings' ? '—' : p.unchanged}</td>
-                      <td className="py-1.5 text-right">{p.section === 'settings' ? '—' : p.localOnly}</td>
+                      <td className="py-1.5 text-right">
+                        {p.section === 'settings' ? '—' : p.added}
+                      </td>
+                      <td className="py-1.5 text-right">
+                        {p.section === 'settings' ? 'replaced' : p.updated}
+                      </td>
+                      <td className="py-1.5 text-right">
+                        {p.section === 'settings' ? '—' : p.unchanged}
+                      </td>
+                      <td className="py-1.5 text-right">
+                        {p.section === 'settings' ? '—' : p.localOnly}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -193,7 +237,12 @@ export function BackupSettings() {
             </div>
             <FieldSet>
               <FieldLegend variant="label">Sections to import</FieldLegend>
-              <SectionChecklist available={presentSections(imported.contents)} selected={importSections} onChange={setImportSections} idPrefix="import" />
+              <SectionChecklist
+                available={presentSections(imported.contents)}
+                selected={importSections}
+                onChange={setImportSections}
+                idPrefix="import"
+              />
             </FieldSet>
             <FieldSet>
               <FieldLegend variant="label">How</FieldLegend>
@@ -202,20 +251,28 @@ export function BackupSettings() {
                   <RadioGroupItem value="merge" id="mode-merge" />
                   <FieldContent>
                     <FieldLabel htmlFor="mode-merge">Merge</FieldLabel>
-                    <FieldDescription>Add what’s new and update matching items. Nothing on this device is removed.</FieldDescription>
+                    <FieldDescription>
+                      Add what’s new and update matching items. Nothing on this device is removed.
+                    </FieldDescription>
                   </FieldContent>
                 </Field>
                 <Field orientation="horizontal">
                   <RadioGroupItem value="replace" id="mode-replace" />
                   <FieldContent>
                     <FieldLabel htmlFor="mode-replace">Replace</FieldLabel>
-                    <FieldDescription>Make the chosen sections exactly like the backup.</FieldDescription>
+                    <FieldDescription>
+                      Make the chosen sections exactly like the backup.
+                    </FieldDescription>
                   </FieldContent>
                 </Field>
               </RadioGroup>
             </FieldSet>
             <div className="flex gap-2">
-              <Button onClick={() => void doImport()} disabled={importSections.size === 0} variant={mode === 'replace' ? 'destructive' : 'default'}>
+              <Button
+                onClick={() => void doImport()}
+                disabled={importSections.size === 0}
+                variant={mode === 'replace' ? 'destructive' : 'default'}
+              >
                 {mode === 'merge' ? 'Merge backup' : 'Replace with backup'}
               </Button>
               <Button variant="ghost" onClick={() => setImported(null)}>

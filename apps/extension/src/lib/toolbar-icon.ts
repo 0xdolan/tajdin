@@ -4,10 +4,13 @@ import type { PlayerState } from '@tajdin/core';
 type Frame = 'idle' | 'paused' | 'play-1' | 'play-2';
 
 const FRAME_MS = 650;
-const action = () => browser.action ?? (browser as unknown as { browserAction: typeof browser.action }).browserAction;
+const action = () =>
+  browser.action ?? (browser as unknown as { browserAction: typeof browser.action }).browserAction;
 
 function setFrame(frame: Frame) {
-  void action().setIcon({ path: { 16: `/icon/toolbar-${frame}-16.png`, 32: `/icon/toolbar-${frame}-32.png` } });
+  void action().setIcon({
+    path: { 16: `/icon/toolbar-${frame}-16.png`, 32: `/icon/toolbar-${frame}-32.png` },
+  });
 }
 
 /**
@@ -21,12 +24,15 @@ export class ToolbarIcon {
 
   update(state: PlayerState, animated: boolean) {
     const { status, station } = state;
-    const title =
-      !station ? 'Tajdîn'
-      : status === 'playing' ? `Tajdîn · Playing ${station.name}`
-      : status === 'loading' ? `Tajdîn · Connecting to ${station.name}`
-      : status === 'error' ? `Tajdîn · Couldn’t play ${station.name}`
-      : `Tajdîn · Paused: ${station.name}`;
+    const title = !station
+      ? 'Tajdîn'
+      : status === 'playing'
+        ? `Tajdîn · Playing ${station.name}`
+        : status === 'loading'
+          ? `Tajdîn · Connecting to ${station.name}`
+          : status === 'error'
+            ? `Tajdîn · Couldn’t play ${station.name}`
+            : `Tajdîn · Paused: ${station.name}`;
     if (title !== this.title) {
       this.title = title;
       void action().setTitle({ title });

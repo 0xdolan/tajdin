@@ -22,7 +22,10 @@ export function DialogProvider({ children }: { children: ReactNode }) {
   const openCollection = useCallback((s: CollectionDialogState) => setCollection(s), []);
   const openCustomStation = useCallback((station?: Partial<Station>) => setCustom({ station }), []);
   const openPlayAnything = useCallback(() => setPlayAnything(true), []);
-  const value = useMemo(() => ({ openCollection, openCustomStation, openPlayAnything }), [openCollection, openCustomStation, openPlayAnything]);
+  const value = useMemo(
+    () => ({ openCollection, openCustomStation, openPlayAnything }),
+    [openCollection, openCustomStation, openPlayAnything],
+  );
 
   return (
     <DialogContext.Provider value={value}>

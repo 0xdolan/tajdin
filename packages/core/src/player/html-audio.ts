@@ -20,7 +20,12 @@ export interface HtmlAudioOptions {
 const STALL_TIMEOUT_MS = 20_000;
 const NOW_PLAYING_INTERVAL_MS = 20_000;
 
-type HlsInstance = { destroy(): void; loadSource(src: string): void; attachMedia(el: HTMLMediaElement): void; on(event: string, cb: (e: unknown, data: { fatal?: boolean }) => void): void };
+type HlsInstance = {
+  destroy(): void;
+  loadSource(src: string): void;
+  attachMedia(el: HTMLMediaElement): void;
+  on(event: string, cb: (e: unknown, data: { fatal?: boolean }) => void): void;
+};
 
 /** {@link AudioBackend} on an HTMLAudioElement, with hls.js loaded on demand for .m3u8 streams. */
 export class HtmlAudioBackend implements AudioBackend {
@@ -54,7 +59,8 @@ export class HtmlAudioBackend implements AudioBackend {
       if (a.getAttribute('src') || this.hls) this.fail();
     });
     a.addEventListener('timeupdate', () => {
-      if (Number.isFinite(a.duration)) this.emit({ type: 'time', position: a.currentTime, duration: a.duration });
+      if (Number.isFinite(a.duration))
+        this.emit({ type: 'time', position: a.currentTime, duration: a.duration });
     });
   }
 
@@ -103,7 +109,8 @@ export class HtmlAudioBackend implements AudioBackend {
   }
 
   seek(position: number) {
-    if (Number.isFinite(this.audio.duration)) this.audio.currentTime = Math.max(0, Math.min(position, this.audio.duration));
+    if (Number.isFinite(this.audio.duration))
+      this.audio.currentTime = Math.max(0, Math.min(position, this.audio.duration));
   }
 
   setNowPlayingEnabled(enabled: boolean) {
@@ -113,7 +120,8 @@ export class HtmlAudioBackend implements AudioBackend {
   }
 
   private sourceUrl(station: AnyStation): string {
-    if (isLocalStation(station)) return this.options.resolveLocal(station.streamUrl.slice('local:'.length)) ?? '';
+    if (isLocalStation(station))
+      return this.options.resolveLocal(station.streamUrl.slice('local:'.length)) ?? '';
     return this.options.httpsOnly ? upgradeToHttps(station.streamUrl) : station.streamUrl;
   }
 
@@ -127,17 +135,20 @@ export class HtmlAudioBackend implements AudioBackend {
     const station = this.station;
     const isHls = !!station && !isLocalStation(station) && (station.hls || looksLikeHls(url));
     if (isHls && !this.audio.canPlayType('application/vnd.apple.mpegurl')) {
-      void import('hls.js').then(({ default: Hls }) => {
-        if (token !== this.loadToken) return;
-        if (!Hls.isSupported()) return this.fail();
-        const hls = new Hls({ lowLatencyMode: true }) as unknown as HlsInstance;
-        hls.on(Hls.Events.ERROR, (_e, data) => {
-          if (data.fatal) this.fail();
-        });
-        hls.loadSource(url);
-        hls.attachMedia(this.audio);
-        this.hls = hls;
-      }, () => this.fail());
+      void import('hls.js').then(
+        ({ default: Hls }) => {
+          if (token !== this.loadToken) return;
+          if (!Hls.isSupported()) return this.fail();
+          const hls = new Hls({ lowLatencyMode: true }) as unknown as HlsInstance;
+          hls.on(Hls.Events.ERROR, (_e, data) => {
+            if (data.fatal) this.fail();
+          });
+          hls.loadSource(url);
+          hls.attachMedia(this.audio);
+          this.hls = hls;
+        },
+        () => this.fail(),
+      );
       return;
     }
     this.audio.src = url;

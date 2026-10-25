@@ -3,7 +3,17 @@ import { StationSchema } from './station';
 
 const isoDate = z.string().refine((v) => !Number.isNaN(Date.parse(v)), 'Expected an ISO-8601 date');
 
-export const COLOURS = ['slate', 'red', 'orange', 'amber', 'green', 'teal', 'sky', 'violet', 'pink'] as const;
+export const COLOURS = [
+  'slate',
+  'red',
+  'orange',
+  'amber',
+  'green',
+  'teal',
+  'sky',
+  'violet',
+  'pink',
+] as const;
 export const ColourSchema = z.enum(COLOURS);
 export type Colour = z.infer<typeof ColourSchema>;
 
@@ -73,10 +83,12 @@ export const EMPTY_LIBRARY: Library = {
 export function parseLibrary(input: unknown): Library {
   const raw = (typeof input === 'object' && input !== null ? input : {}) as Record<string, unknown>;
   const list = <T>(value: unknown, schema: z.ZodType<T>): T[] =>
-    Array.isArray(value) ? value.flatMap((item) => {
-      const r = schema.safeParse(item);
-      return r.success ? [r.data] : [];
-    }) : [];
+    Array.isArray(value)
+      ? value.flatMap((item) => {
+          const r = schema.safeParse(item);
+          return r.success ? [r.data] : [];
+        })
+      : [];
   const cache: Library['stationCache'] = {};
   if (raw.stationCache && typeof raw.stationCache === 'object') {
     for (const [id, value] of Object.entries(raw.stationCache)) {

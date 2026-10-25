@@ -3,7 +3,14 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { RadioIcon, RefreshCwIcon, WifiOffIcon } from 'lucide-react';
 import type { Station } from '@tajdin/core';
 import { Button } from '@tajdin/ui/components/button';
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@tajdin/ui/components/empty';
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@tajdin/ui/components/empty';
 import { Skeleton } from '@tajdin/ui/components/skeleton';
 import { Spinner } from '@tajdin/ui/components/spinner';
 import { cn } from '@tajdin/ui/lib/utils';
@@ -37,7 +44,8 @@ export function StationList({ feed, onPlay, empty, className, dense }: StationLi
   const last = items[items.length - 1];
 
   useEffect(() => {
-    if (last && last.index >= feed.stations.length - 5 && feed.hasMore && !feed.loadingMore) feed.loadMore();
+    if (last && last.index >= feed.stations.length - 5 && feed.hasMore && !feed.loadingMore)
+      feed.loadMore();
   }, [last, feed]);
 
   // A new feed starts at the top.
@@ -47,7 +55,11 @@ export function StationList({ feed, onPlay, empty, className, dense }: StationLi
 
   if (feed.status === 'loading') {
     return (
-      <div className={cn('flex flex-col gap-0.5 overflow-hidden px-2', className)} aria-busy="true" aria-label="Loading stations">
+      <div
+        className={cn('flex flex-col gap-0.5 overflow-hidden px-2', className)}
+        aria-busy="true"
+        aria-label="Loading stations"
+      >
         {Array.from({ length: 8 }, (_, i) => (
           <div key={i} className="flex items-center gap-3 px-2" style={{ height: rowHeight }}>
             <Skeleton className={dense ? 'size-9' : 'size-10'} />
@@ -69,7 +81,9 @@ export function StationList({ feed, onPlay, empty, className, dense }: StationLi
             <WifiOffIcon />
           </EmptyMedia>
           <EmptyTitle>Couldn’t load stations</EmptyTitle>
-          <EmptyDescription>{feed.error ?? 'Check your connection and try again.'}</EmptyDescription>
+          <EmptyDescription>
+            {feed.error ?? 'Check your connection and try again.'}
+          </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
           <Button variant="outline" size="sm" onClick={feed.reload}>
@@ -97,7 +111,12 @@ export function StationList({ feed, onPlay, empty, className, dense }: StationLi
   }
 
   return (
-    <div ref={scrollRef} className={cn('overflow-y-auto overscroll-contain px-2', className)} role="list" aria-label={feed.context.label}>
+    <div
+      ref={scrollRef}
+      className={cn('overflow-y-auto overscroll-contain px-2', className)}
+      role="list"
+      aria-label={feed.context.label}
+    >
       <div className="relative w-full" style={{ height: virtualizer.getTotalSize() }}>
         {items.map((item) => {
           const station = feed.stations[item.index];
@@ -118,7 +137,10 @@ export function StationList({ feed, onPlay, empty, className, dense }: StationLi
                   dense={dense}
                 />
               ) : (
-                <div className="flex h-full items-center justify-center text-xs text-muted-foreground" aria-live="polite">
+                <div
+                  className="text-muted-foreground flex h-full items-center justify-center text-xs"
+                  aria-live="polite"
+                >
                   <Spinner className="mr-2" /> Loading more…
                 </div>
               )}
