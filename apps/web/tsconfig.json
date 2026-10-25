@@ -1,5 +1,5 @@
 {
-  "extends": "@tajdin/tsconfig/base.json",
+  "extends": "../../packages/tsconfig/base.json",
   "compilerOptions": {
     "types": ["vite/client", "node"],
     "paths": { "@tajdin/ui/*": ["../../packages/ui/src/*"] }
