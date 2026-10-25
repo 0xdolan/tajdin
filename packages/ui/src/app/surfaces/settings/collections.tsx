@@ -1,25 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import {
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  closestCenter,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  GripVerticalIcon,
   LanguagesIcon,
   ListMusicIcon,
   PencilIcon,
@@ -28,11 +9,11 @@ import {
   SearchIcon,
   ShapesIcon,
   Trash2Icon,
-  XIcon,
 } from 'lucide-react';
 import {
   addToCollection,
   cleanText,
+  foldKey,
   deleteGroup,
   deletePlaylist,
   languageLabel,
@@ -40,7 +21,6 @@ import {
   removeFromCollection,
   type Group,
   type Playlist,
-  type Station,
 } from '@tajdin/core';
 import {
   AlertDialog,
@@ -63,10 +43,16 @@ import {
 } from '@tajdin/ui/components/empty';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@tajdin/ui/components/input-group';
 import { Item, ItemContent, ItemDescription, ItemTitle } from '@tajdin/ui/components/item';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@tajdin/ui/components/select';
 import { Spinner } from '@tajdin/ui/components/spinner';
-import { cn } from '@tajdin/ui/lib/utils';
 import { StationArt } from '../../components/station-art';
-import { stationMeta } from '../../components/station-row';
 import { COLOUR_SWATCH } from '../../components/collection-dialog';
 import { useLibrary, useSettings } from '../../data';
 import { useDialogs } from '../../dialogs';
@@ -74,90 +60,31 @@ import { useStationFeed } from '../../feed';
 import { useDebounced, usePlayer } from '../../hooks';
 import { usePlatform } from '../../platform';
 import { Section } from './common';
+import { StationEditorList } from './station-editor-list';
 
 type Kind = 'playlist' | 'group';
 
-function SortableStation({
-  station,
-  index,
-  total,
-  sortable,
-  onMove,
-  onRemove,
-}: {
-  station: Station;
-  index: number;
-  total: number;
-  sortable: boolean;
-  onMove: (from: number, to: number) => void;
-  onRemove: () => void;
-}) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: station.id,
-    disabled: !sortable,
-  });
-  return (
-    <li
-      ref={setNodeRef}
-      style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={cn(
-        'bg-card flex items-center gap-2 rounded-lg border px-2 py-1.5',
-        isDragging && 'ring-ring relative z-10 shadow-lg ring-2',
-      )}
-    >
-      {sortable && (
-        <button
-          type="button"
-          className="text-muted-foreground hover:text-foreground focus-visible:ring-ring cursor-grab touch-none rounded p-1 outline-none focus-visible:ring-2 active:cursor-grabbing"
-          aria-label={`Reorder ${station.name}. Press space, then arrow keys to move.`}
-          {...attributes}
-          {...listeners}
-        >
-          <GripVerticalIcon className="size-4" />
-        </button>
-      )}
-      <span className="text-muted-foreground w-6 text-right text-xs tabular-nums">{index + 1}</span>
-      <StationArt station={station} className="size-8" />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate text-sm font-medium" dir="auto">
-          {station.name}
-        </span>
-        <span className="text-muted-foreground truncate text-xs" dir="auto">
-          {stationMeta(station)}
-        </span>
-      </div>
-      {sortable && (
-        <>
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            aria-label="Move up"
-            disabled={index === 0}
-            onClick={() => onMove(index, index - 1)}
-          >
-            <ArrowUpIcon />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            aria-label="Move down"
-            disabled={index === total - 1}
-            onClick={() => onMove(index, index + 1)}
-          >
-            <ArrowDownIcon />
-          </Button>
-        </>
-      )}
-      <Button
-        variant="ghost"
-        size="icon-xs"
-        aria-label={`Remove ${station.name}`}
-        onClick={onRemove}
-      >
-        <XIcon />
-      </Button>
-    </li>
-  );
+const COLLECTION_ORDERS = [
+  { value: 'created', label: 'Order created' },
+  { value: 'name', label: 'Name A–Z' },
+  { value: 'updated', label: 'Recently changed' },
+  { value: 'size', label: 'Most stations' },
+] as const;
+type CollectionOrder = (typeof COLLECTION_ORDERS)[number]['value'];
+
+function sortCollections<T extends Playlist | Group>(items: T[], order: CollectionOrder): T[] {
+  switch (order) {
+    case 'name':
+      return [...items].sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }),
+      );
+    case 'updated':
+      return [...items].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+    case 'size':
+      return [...items].sort((a, b) => b.stationIds.length - a.stationIds.length);
+    default:
+      return items;
+  }
 }
 
 /** Search all directories to add stations, independent of the popup's search. */
@@ -245,19 +172,8 @@ function Editor({ kind, collection }: { kind: Kind; collection: Playlist | Group
   const pinnedCount = collection.stationIds.length;
   // For language groups, the feed also contains the language's stations after the pinned ones.
   const pinned = feed.stations.slice(0, isLanguage ? pinnedCount : undefined);
-  const sortable = kind === 'playlist';
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
-  );
-
   const move = (from: number, to: number) =>
     void updateLibrary((l) => moveInPlaylist(l, collection.id, from, to));
-  const onDragEnd = (e: DragEndEvent) => {
-    if (!e.over || e.active.id === e.over.id) return;
-    const ids = collection.stationIds;
-    move(ids.indexOf(String(e.active.id)), ids.indexOf(String(e.over.id)));
-  };
 
   const remove = async () => {
     const before = library;
@@ -338,40 +254,24 @@ function Editor({ kind, collection }: { kind: Kind; collection: Playlist | Group
             {isLanguage ? 'Pinned stations' : 'Stations'}{' '}
             <span className="text-muted-foreground tabular-nums">({pinnedCount})</span>
           </h4>
-          {feed.status === 'loading' ? (
-            <div className="text-muted-foreground flex items-center gap-2 py-6 text-sm">
-              <Spinner /> Loading…
-            </div>
-          ) : pinned.length === 0 ? (
-            <p className="text-muted-foreground rounded-lg border border-dashed p-6 text-center text-sm">
-              Nothing here yet. Find stations on the right, or use any station’s ⋮ menu.
-            </p>
-          ) : (
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-              <SortableContext
-                items={pinned.map((s) => s.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                <ol className="flex flex-col gap-1">
-                  {pinned.map((s, i) => (
-                    <SortableStation
-                      key={s.id}
-                      station={s}
-                      index={i}
-                      total={pinned.length}
-                      sortable={sortable}
-                      onMove={move}
-                      onRemove={() =>
-                        void updateLibrary((l) =>
-                          removeFromCollection(l, kind, collection.id, s.id),
-                        )
-                      }
-                    />
-                  ))}
-                </ol>
-              </SortableContext>
-            </DndContext>
-          )}
+          <StationEditorList
+            stations={pinned}
+            loading={feed.status === 'loading'}
+            reorderable={kind === 'playlist'}
+            onMove={move}
+            onRemove={(station) =>
+              void updateLibrary((l) => removeFromCollection(l, kind, collection.id, station.id))
+            }
+            onPlay={(station, queue) =>
+              void send({
+                type: settings.playOnSelect ? 'play' : 'load',
+                station,
+                queue,
+                context: feed.context,
+              })
+            }
+            empty="Nothing here yet. Find stations on the right, or use any station’s ⋮ menu."
+          />
           {pinned.length < pinnedCount && feed.status === 'ready' && (
             <p className="text-muted-foreground text-xs">
               {pinnedCount - pinned.length} station(s) couldn’t be found any more and are hidden.
@@ -409,10 +309,16 @@ export function CollectionsSettings({ kind }: { kind: Kind }) {
   const [library] = useLibrary();
   const { openCollection } = useDialogs();
   const { surface } = usePlatform();
-  const items: (Playlist | Group)[] = kind === 'playlist' ? library.playlists : library.groups;
+  const all: (Playlist | Group)[] = kind === 'playlist' ? library.playlists : library.groups;
   const [selected, setSelected] = useState<string | null>(null);
+  const [find, setFind] = useState('');
+  const [order, setOrder] = useState<CollectionOrder>('created');
+  const items = sortCollections(
+    all.filter((i) => foldKey(i.name).includes(foldKey(find.trim()))),
+    order,
+  );
   // A deleted selection falls back to the first item.
-  const current = items.find((i) => i.id === selected) ?? items[0];
+  const current = all.find((i) => i.id === selected) ?? items[0] ?? all[0];
 
   const noun = kind === 'playlist' ? 'playlist' : 'group';
   const Icon = kind === 'playlist' ? ListMusicIcon : ShapesIcon;
@@ -444,7 +350,7 @@ export function CollectionsSettings({ kind }: { kind: Kind }) {
         </div>
       }
     >
-      {items.length === 0 ? (
+      {all.length === 0 ? (
         <Empty className="border border-dashed">
           <EmptyHeader>
             <EmptyMedia variant="icon">
@@ -460,6 +366,43 @@ export function CollectionsSettings({ kind }: { kind: Kind }) {
       ) : (
         <div className="grid gap-6 md:grid-cols-[200px_minmax(0,1fr)]">
           <nav aria-label={`${noun}s`} className="flex flex-col gap-1">
+            {all.length > 3 && (
+              <div className="mb-1 flex flex-col gap-1.5">
+                <InputGroup className="h-8">
+                  <InputGroupAddon>
+                    <SearchIcon />
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    dir="auto"
+                    placeholder={`Find a ${noun}…`}
+                    aria-label={`Find a ${noun}`}
+                    value={find}
+                    onChange={(e) => setFind(e.target.value)}
+                  />
+                </InputGroup>
+                <Select
+                  items={COLLECTION_ORDERS}
+                  value={order}
+                  onValueChange={(v) => setOrder(v as CollectionOrder)}
+                >
+                  <SelectTrigger size="sm" className="w-full" aria-label={`Sort ${noun}s`}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {COLLECTION_ORDERS.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>
+                          {o.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            {items.length === 0 && (
+              <p className="text-muted-foreground px-2 py-3 text-xs">No {noun}s match.</p>
+            )}
             {items.map((item) => (
               <Item
                 key={item.id}
