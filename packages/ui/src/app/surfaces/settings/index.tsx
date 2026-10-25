@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   DatabaseBackupIcon,
+  HeartIcon,
   InfoIcon,
   KeyboardIcon,
   ListMusicIcon,
@@ -20,6 +21,7 @@ import { ThemeMenu } from '../../shell';
 import { AboutSettings } from './about';
 import { BackupSettings } from './backup';
 import { CollectionsSettings } from './collections';
+import { FavouritesSettings } from './favourites';
 import { GeneralSettings } from './general';
 import { PlaybackSettings } from './playback';
 import { ShortcutsSettings } from './shortcuts';
@@ -34,6 +36,7 @@ const TABS: {
   { id: 'general', label: 'General', icon: Settings2Icon, group: 'Settings' },
   { id: 'playback', label: 'Playback', icon: PlayCircleIcon, group: 'Settings' },
   { id: 'shortcuts', label: 'Shortcuts', icon: KeyboardIcon, group: 'Settings' },
+  { id: 'favourites', label: 'Favourites', icon: HeartIcon, group: 'Options' },
   { id: 'stations', label: 'My stations', icon: RadioTowerIcon, group: 'Options' },
   { id: 'playlists', label: 'Playlists', icon: ListMusicIcon, group: 'Options' },
   { id: 'groups', label: 'Groups', icon: ShapesIcon, group: 'Options' },
@@ -119,6 +122,9 @@ export function SettingsApp({ hashPrefix = '' }: { hashPrefix?: string }) {
           <TabsContent value="shortcuts">
             <ShortcutsSettings />
           </TabsContent>
+          <TabsContent value="favourites">
+            <FavouritesSettings />
+          </TabsContent>
           <TabsContent value="stations">
             <StationsSettings />
           </TabsContent>
@@ -138,11 +144,11 @@ export function SettingsApp({ hashPrefix = '' }: { hashPrefix?: string }) {
       </Tabs>
 
       <div className="bg-card/90 fixed inset-x-0 bottom-0 z-20 border-t backdrop-blur">
-        <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-2">
+        <div className="mx-auto flex max-w-6xl flex-col gap-1.5 px-6 py-3">
           <NowPlayingLine />
           <Player variant="full" />
-          {kind === 'extension' && <Footer className="pt-1" />}
         </div>
+        {kind === 'extension' && <Footer className="border-t py-1.5" />}
       </div>
     </div>
   );

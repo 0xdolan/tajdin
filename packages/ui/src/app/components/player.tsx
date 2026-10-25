@@ -144,18 +144,11 @@ function VolumeControl({ inline }: { inline?: boolean }) {
       volume: Math.min(1, Math.max(0, level - Math.sign(e.deltaY) * 0.05)),
     });
   };
-  const slider = (
-    <Slider
-      aria-label="Volume"
-      value={[Math.round(level * 100)]}
-      max={100}
-      step={1}
-      onValueChange={(v) =>
-        void send({ type: 'setVolume', volume: (Array.isArray(v) ? v[0]! : v) / 100 })
-      }
-      className={inline ? 'w-24' : 'w-36'}
-    />
-  );
+  const percent = Math.round(level * 100);
+  const setFromSlider = (v: number | readonly number[]) =>
+    void send({ type: 'setVolume', volume: (Array.isArray(v) ? v[0]! : (v as number)) / 100 });
+
+  // Wide players (desktop view, settings) show a horizontal slider next to the button.
   if (inline) {
     return (
       <div className="flex items-center gap-2" onWheel={onWheel}>
@@ -165,10 +158,19 @@ function VolumeControl({ inline }: { inline?: boolean }) {
         >
           <Icon />
         </IconButton>
-        {slider}
+        <Slider
+          aria-label="Volume"
+          value={[percent]}
+          max={100}
+          step={1}
+          onValueChange={setFromSlider}
+          className="w-24"
+        />
       </div>
     );
   }
+
+  // The narrow popup opens a slim vertical slider above the button instead.
   return (
     <Popover>
       <PopoverTrigger
@@ -176,26 +178,40 @@ function VolumeControl({ inline }: { inline?: boolean }) {
           <Button
             variant="ghost"
             size="icon-sm"
-            aria-label={`Volume ${Math.round(level * 100)}%`}
+            aria-label={`Volume ${percent}%`}
             onWheel={onWheel}
           />
         }
       >
         <Icon />
       </PopoverTrigger>
-      <PopoverContent side="top" align="end" className="flex w-auto items-center gap-2 p-2">
+      <PopoverContent
+        side="top"
+        align="center"
+        className="flex w-12 flex-col items-center gap-2 px-1 py-3"
+        onWheel={onWheel}
+      >
+        <span className="text-xs font-medium tabular-nums" aria-hidden>
+          {percent}
+        </span>
+        <Slider
+          aria-label="Volume"
+          orientation="vertical"
+          value={[percent]}
+          max={100}
+          step={1}
+          onValueChange={setFromSlider}
+          className="h-40"
+        />
         <Button
           variant="ghost"
           size="icon-sm"
           aria-label={state.muted ? 'Unmute' : 'Mute'}
+          aria-pressed={state.muted}
           onClick={() => void send({ type: 'toggleMute' })}
         >
           <Icon />
         </Button>
-        {slider}
-        <span className="text-muted-foreground w-8 text-right text-xs tabular-nums">
-          {Math.round(level * 100)}
-        </span>
       </PopoverContent>
     </Popover>
   );
@@ -317,7 +333,7 @@ export function Player({
       aria-label={isPlaying || isLoading ? 'Pause (Space)' : 'Play (Space)'}
       onClick={() => void send({ type: 'toggle' })}
       disabled={!station && state.queue.length === 0}
-      className={cn('rounded-full', full ? 'size-12' : 'size-10')}
+      className={cn('rounded-full', full ? 'size-12' : 'size-9')}
     >
       {isLoading ? (
         <LoaderCircleIcon className="animate-spin" />
@@ -374,14 +390,21 @@ export function Player({
   ) : null;
 
   const info = (
-    <div className="flex min-w-0 flex-1 items-center gap-3">
+    <div className={cn('flex min-w-0 flex-1 items-center', full ? 'gap-3' : 'gap-2.5')}>
       <div className="relative">
         <StationArt
           station={station}
-          className={full ? 'size-14 rounded-xl' : 'size-12 rounded-xl'}
+          className={full ? 'size-14 rounded-xl' : 'size-10 rounded-lg'}
         />
         {isPlaying && !isLocalStation(station!) && (
-          <span className="bg-live text-live-foreground absolute -top-1 -left-1 rounded px-1 text-[9px] leading-4 font-bold tracking-wider">
+          <span
+            className={cn(
+              'bg-live text-live-foreground absolute rounded font-bold tracking-wider',
+              full
+                ? '-top-1 -left-1 px-1 text-[9px] leading-4'
+                : '-top-1.5 -left-1.5 px-0.5 text-[8px] leading-3',
+            )}
+          >
             LIVE
           </span>
         )}
@@ -454,14 +477,14 @@ export function Player({
   }
 
   return (
-    <section aria-label="Player" className={cn('flex flex-col gap-2', className)}>
+    <section aria-label="Player" className={cn('flex flex-col gap-1', className)}>
       <div className="flex items-center gap-2">
         {info}
         {stationActions}
       </div>
       {progress}
       {error}
-      <div className="flex items-center justify-between">
+      <div className="flex h-9 items-center justify-between">
         <div className="w-16" />
         {controls}
         <div className="flex w-16 items-center justify-end">

@@ -31,6 +31,24 @@ tattoos, a sign of life and light, here broadcasting.
 
 No accounts. No tracking. No servers of our own. Everything you save stays in your browser.
 
+## The name: Tajdîn, from _Mem û Zîn_
+
+<img src="assets/images/mem-u-zin.webp" width="180" align="right" alt="Cover art of Mem û Zîn: the lovers Mem and Zîn in Kurdish dress beneath the trees" />
+
+The name comes from **[_Mem û Zîn_](https://en.wikipedia.org/wiki/Mem_and_Zin)**, the great Kurdish
+love epic written in 1692 by [Ehmedê Xanî](https://en.wikipedia.org/wiki/Ahmad_Khani). It tells of
+Mem and Zîn, two lovers kept apart by the jealous Beko, and it is often called the national epic of
+Kurdish literature.
+
+**Tajdîn** (Tacdîn) is Mem's best friend. He stands by Mem to the very end, and when Beko's treachery
+comes to light, it is Tajdîn who avenges him. A loyal companion who never leaves your side: that's
+what this radio wants to be. Hence the motto, _always by your side_.
+
+📖 Read the epic: [_Mem û Zîn_ (Kurdish edition)](https://www.amazon.com/Mem-%C3%BC-Zin-kurdiya-Dost/dp/9944382515) ·
+[Mem û Zîn on Wikipedia](https://en.wikipedia.org/wiki/Mem_and_Zin)
+
+<br clear="right" />
+
 ## Features
 
 - 🎲 **A fresh mix every time.** The popup opens on new random stations, or on your favourites, a
@@ -43,8 +61,12 @@ No accounts. No tracking. No servers of our own. Everything you save stays in yo
   speed for local files, and an optional "On air" song line.
 - 🌞 **A living toolbar icon.** The Roj is grey when idle, amber when paused, and its wave pulses
   green while playing.
-- 📚 **Your library.** Favourites, ordered playlists that skip offline stations, hand-picked
-  groups, and **language groups** that gather every station in a language.
+- 📚 **Your library.** Favourites (one tap away in the popup, with their own tab in Options),
+  ordered playlists that skip offline stations, hand-picked groups, and **language groups** that
+  gather every station in a language.
+- 🔎 **Filter, search and sort everywhere.** Every list (random mix, search results, favourites,
+  playlists, groups, your stations) can be filtered by text, language and source and sorted by
+  name, country, language, quality or source.
 - 🔗 **Play anything.** Add any stream URL as your own station, or play a link or an audio file
   once.
 - 🖥️ **Desktop view and website.** A full-window player that starts as soon as it opens, also at
@@ -73,11 +95,19 @@ No accounts. No tracking. No servers of our own. Everything you save stays in yo
     <td align="center"><sub>Light theme</sub></td>
     <td align="center"><sub>Backup: export and import with preview</sub></td>
   </tr>
+  <tr>
+    <td><img src="assets/screenshots/settings-favourites-dark.png" alt="Favourites in Options" /></td>
+    <td><img src="assets/screenshots/settings-about-light.png" alt="About: the story behind the name" /></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Favourites: filter, sort, drag to reorder</sub></td>
+    <td align="center"><sub>About: why the name, from <i>Mem û Zîn</i></sub></td>
+  </tr>
 </table>
 
 <p align="center">
   <img src="assets/screenshots/popup-mix-light.png" width="260" alt="Popup, light theme, first run" />
-  <img src="assets/screenshots/popup-search-dark.png" width="260" alt="Popup search" />
+  <img src="assets/screenshots/popup-filter-dark.png" width="260" alt="Popup with sort and filter" />
   <img src="assets/screenshots/web-mobile-dark.png" width="200" alt="Website on a phone" />
 </p>
 

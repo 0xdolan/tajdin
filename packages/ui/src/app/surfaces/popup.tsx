@@ -1,6 +1,8 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import {
   FileAudioIcon,
+  HeartIcon,
+  ListFilterIcon,
   LibraryIcon,
   MonitorIcon,
   PauseIcon,
@@ -28,12 +30,14 @@ import { RojMark } from '../components/brand';
 import { SearchBar, ShuffleButton, useBrowse, ViewPicker } from '../components/browse';
 import { Footer } from '../components/footer';
 import { NowPlayingLine, Player, usePlayerHotkeys } from '../components/player';
+import { ListToolbar } from '../components/list-toolbar';
 import { StationList } from '../components/station-list';
 import { WelcomeTips } from '../components/welcome';
 import { useSettings } from '../data';
 import { useDialogs } from '../dialogs';
 import { useStationFeed } from '../feed';
 import { usePlayer } from '../hooks';
+import { useListTools } from '../list-tools';
 import { usePlatform } from '../platform';
 import { ThemeMenu } from '../shell';
 
@@ -66,6 +70,8 @@ export function PopupApp() {
   const { openPlayAnything, openCustomStation } = useDialogs();
   const browse = useBrowse('tajdin.v2.ui.popup');
   const feed = useStationFeed(browse.view);
+  const list = useListTools(feed.stations, JSON.stringify(browse.view));
+  const [toolsOpen, setToolsOpen] = useState(false);
   usePlayerHotkeys();
 
   const playing = player.status === 'playing' || player.status === 'loading';
@@ -74,10 +80,10 @@ export function PopupApp() {
       void send({
         type: settings.playOnSelect ? 'play' : 'load',
         station,
-        queue: feed.stations,
+        queue: list.shown,
         context: feed.context,
       }),
-    [send, settings.playOnSelect, feed.stations, feed.context],
+    [send, settings.playOnSelect, list.shown, feed.context],
   );
 
   const searchOpen = browse.state.searchOpen || !!browse.state.query;
@@ -128,7 +134,37 @@ export function PopupApp() {
             </HeaderButton>
           )}
           <HeaderButton
-            label={searchOpen ? 'Close search' : 'Search'}
+            label={browse.view.kind === 'favourites' ? 'Back to the random mix' : 'Favourites'}
+            onClick={() =>
+              browse.setView(
+                browse.view.kind === 'favourites'
+                  ? { kind: 'mix', language: '' }
+                  : { kind: 'favourites' },
+              )
+            }
+          >
+            <HeartIcon
+              className={cn(
+                browse.view.kind === 'favourites' && 'fill-destructive text-destructive',
+              )}
+            />
+          </HeaderButton>
+          <HeaderButton
+            label={toolsOpen || list.active ? 'Hide sort and filter' : 'Sort and filter this list'}
+            onClick={() => {
+              if (toolsOpen) list.reset();
+              setToolsOpen(!toolsOpen);
+            }}
+          >
+            <span className="relative">
+              <ListFilterIcon />
+              {list.active > 0 && (
+                <span className="bg-primary absolute -top-1 -right-1 size-2 rounded-full" />
+              )}
+            </span>
+          </HeaderButton>
+          <HeaderButton
+            label={searchOpen ? 'Close search' : 'Search all stations'}
             onClick={() =>
               browse.setState((s) => ({
                 ...s,
@@ -162,17 +198,28 @@ export function PopupApp() {
       </div>
 
       {searchOpen && <SearchBar browse={browse} autoFocus className="shrink-0 px-3 pt-1 pb-1" />}
-      {!settings.welcomeDismissed && <WelcomeTips className="mx-3 mt-1" />}
+      {(toolsOpen || list.active > 0) && (
+        <ListToolbar
+          list={list}
+          className="shrink-0 px-3 pt-1 pb-1"
+          count={{ shown: list.shown.length, total: feed.stations.length }}
+        />
+      )}
+      {!settings.welcomeDismissed && (
+        <div className="shrink-0 px-3 pt-1">
+          <WelcomeTips />
+        </div>
+      )}
 
       <StationList
-        feed={browse.ready ? feed : { ...feed, status: 'loading' }}
+        feed={browse.ready ? { ...feed, stations: list.shown } : { ...feed, status: 'loading' }}
         onPlay={onPlay}
         dense
         className="mt-1 min-h-0 flex-1"
         empty={emptyFor(browse.view.kind, openCustomStation)}
       />
 
-      <div className={cn('bg-card/60 shrink-0 border-t px-3 pt-2 pb-1.5 backdrop-blur')}>
+      <div className="bg-card/60 shrink-0 border-t px-3 py-1.5 backdrop-blur">
         {settings.nowPlayingPosition === 'top' && <NowPlayingLine className="mb-1.5" />}
         <Player />
         {settings.nowPlayingPosition === 'bottom' && <NowPlayingLine className="mt-1" />}

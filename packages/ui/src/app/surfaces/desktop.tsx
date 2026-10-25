@@ -34,11 +34,13 @@ import { COLOUR_SWATCH } from '../components/collection-dialog';
 import { Footer } from '../components/footer';
 import { NowPlayingLine, Player, usePlayerHotkeys } from '../components/player';
 import { StationArt } from '../components/station-art';
+import { ListToolbar } from '../components/list-toolbar';
 import { StationCard } from '../components/station-card';
 import { useLibrary, useSettings } from '../data';
 import { useDialogs } from '../dialogs';
 import { useStationFeed, viewLabel, type View } from '../feed';
 import { usePlayer } from '../hooks';
+import { useListTools } from '../list-tools';
 import { usePlatform } from '../platform';
 import { ThemeMenu } from '../shell';
 
@@ -324,6 +326,7 @@ export function DesktopApp() {
   const { state: player, send } = usePlayer();
   const browse = useBrowse(`tajdin.v2.ui.desktop`);
   const feed = useStationFeed(browse.view);
+  const list = useListTools(feed.stations, JSON.stringify(browse.view));
   const [needsTap, setNeedsTap] = useState(false);
   const autoplayed = useRef(false);
   usePlayerHotkeys();
@@ -337,11 +340,11 @@ export function DesktopApp() {
         void send({
           type: settings.playOnSelect ? 'play' : 'load',
           station,
-          queue: feed.stations,
+          queue: list.shown,
           context: feed.context,
         });
     },
-    [send, settings.playOnSelect, feed.stations, feed.context, player.station?.id, player.status],
+    [send, settings.playOnSelect, list.shown, feed.context, player.station?.id, player.status],
   );
 
   // Start a station as soon as the first list is in, unless something is already playing.
@@ -457,29 +460,41 @@ export function DesktopApp() {
                   <RefreshCwIcon />
                 </Button>
               )}
-              {feed.stations.length > 0 && (
+              {list.shown.length > 0 && (
                 <Button
                   size="sm"
                   variant="secondary"
                   className="ml-auto"
-                  onClick={() => feed.stations[0] && onPlay(feed.stations[0])}
+                  onClick={() => list.shown[0] && onPlay(list.shown[0])}
                 >
                   <PlayIcon data-icon="inline-start" />
                   Play all
                 </Button>
               )}
             </div>
-            <Grid feed={browse.ready ? feed : { ...feed, status: 'loading' }} onPlay={onPlay} />
+            {feed.status === 'ready' && feed.stations.length > 0 && (
+              <ListToolbar
+                list={list}
+                className="max-w-2xl"
+                count={{ shown: list.shown.length, total: feed.stations.length }}
+              />
+            )}
+            <Grid
+              feed={
+                browse.ready ? { ...feed, stations: list.shown } : { ...feed, status: 'loading' }
+              }
+              onPlay={onPlay}
+            />
           </div>
         </main>
       </div>
 
       <footer className="bg-card/80 border-t backdrop-blur">
-        <div className="flex flex-col gap-1 px-4 pt-3 pb-1">
+        <div className="px-4 py-2 md:px-6 md:py-3">
           <Player variant="full" className="hidden md:grid" />
           <Player className="md:hidden" />
-          <Footer className="py-1" />
         </div>
+        <Footer className="border-t py-1.5" />
       </footer>
 
       {needsTap && player.station && player.status !== 'playing' && player.status !== 'loading' && (

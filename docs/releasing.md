@@ -48,6 +48,9 @@ environment, store submission waits for your approval in the Actions tab.
 **Hotfix:** `git switch -c hotfix/x.y.z main`, fix, `pnpm version:bump patch`, update
 CHANGELOG.md, commit, then `pnpm release:finish`.
 
+**Check store credentials** without uploading: Actions → Release → Run workflow (branch `develop`)
+→ tick _Only check the store credentials_. Each configured store signs in and reports success.
+
 **Re-run store submission** without a new tag: Actions → Release → Run workflow → tick _Submit to
 the stores_.
 

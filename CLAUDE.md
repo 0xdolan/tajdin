@@ -20,6 +20,8 @@ Turborepo monorepo. Read `docs/architecture.md` before larger changes.
 
 ## Rules
 
+- Never add AI attribution to commits (no `Co-authored-by`/`Made-with` lines for tools); CI rejects
+  them (`scripts/attribution.mjs`).
 - Conventional Commits with lower-case subjects (enforced by commitlint). Branch from `develop`
   (gitflow); never commit straight to `main`.
 - Keep permissions, network destinations and stored data minimal. Update

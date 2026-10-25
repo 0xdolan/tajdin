@@ -3,6 +3,33 @@
 All notable changes to Tajdîn. The format follows [Keep a Changelog](https://keepachangelog.com/),
 and versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.1](https://github.com/0xdolan/tajdin/releases/tag/v0.1.1) · 2026-10-25
+
+### Features
+
+- **Favourites, one tap away.** A ♥ button in the popup opens your favourites, and a new
+  **Options → Favourites** tab lists every station you've hearted, with play all, reordering and
+  remove with undo.
+- **Filter, search and sort on every list:** popup, desktop view, favourites, playlists, groups
+  and your stations. Filter by text, language or source; sort by name, country, language,
+  quality or source. The playlist and group lists in Options can be searched and sorted too.
+- **About and README:** "Why Tajdîn?" and the story behind the name, from the Kurdish epic
+  _Mem û Zîn_, with links to Wikipedia and the book. "Made with ♥" now shows the heart.
+- **New fonts:** Manrope for Latin text and Sahel for Arabic script (Kurdish Sorani, Arabic,
+  Persian), chosen per character and bundled with the extension.
+
+### Fixes
+
+- The volume control in the popup is now a slim vertical slider that fits the popup; wider
+  players keep the horizontal slider.
+- The language submenu in the popup fully covers the menu behind it.
+- The popup's desktop-view and settings buttons work on the first click (the popup closed
+  before the tab finished opening).
+- A more compact popup player, better padding for the desktop and settings player bars, and a
+  centred welcome box in the popup.
+- The release sources zip is built with `git archive`, so building no longer prints a warning
+  per file.
+
 ## [0.1.0](https://github.com/0xdolan/tajdin/releases/tag/v0.1.0) · 2026-10-25
 
 Tajdîn has been rebuilt from scratch, with a new design, a new logo and a Firefox version.

@@ -1,8 +1,8 @@
 {
   "name": "tajdin-monorepo",
   "private": true,
-  "version": "0.1.0",
-  "description": "Tajd\u00een \u2014 always by your side. Internet radio for your browser and the web.",
+  "version": "0.1.1",
+  "description": "Tajdîn — always by your side. Internet radio for your browser and the web.",
   "license": "MIT",
   "author": "0xdolan",
   "homepage": "https://0xdolan.github.io/tajdin/",
@@ -21,7 +21,7 @@
     "dev:firefox": "pnpm --filter @tajdin/extension dev:firefox",
     "dev:web": "turbo run dev --filter=@tajdin/web",
     "build": "turbo run build",
-    "build:extension": "pnpm --filter @tajdin/extension zip && pnpm --filter @tajdin/extension zip:firefox",
+    "build:extension": "pnpm --filter @tajdin/extension zip && pnpm --filter @tajdin/extension zip:firefox && node scripts/zip-sources.mjs",
     "build:web": "turbo run build --filter=@tajdin/web",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -39,7 +39,8 @@
     "prepare": "husky",
     "release:start": "node scripts/release.mjs start",
     "release:finish": "node scripts/release.mjs finish",
-    "store-images": "node scripts/store-images.mjs"
+    "store-images": "node scripts/store-images.mjs",
+    "zip:sources": "node scripts/zip-sources.mjs"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.0.0",
@@ -58,7 +59,7 @@
     "turbo": "^2.11.10",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.72.0",
-    "wait-on": "^8.0.0"
+    "wait-on": "^9.5.1"
   },
   "lint-staged": {
     "*.{ts,tsx,js,mjs}": [
