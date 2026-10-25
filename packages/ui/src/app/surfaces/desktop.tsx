@@ -387,7 +387,7 @@ export function DesktopApp() {
   const title = viewLabel(browse.view, library);
 
   return (
-    <div className="bg-background grid h-svh grid-rows-[auto_1fr_auto]">
+    <div className="bg-background grid h-svh grid-cols-1 grid-rows-[auto_1fr_auto]">
       <header className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b px-4 py-3 md:h-16 md:flex-nowrap md:py-0">
         <div className="flex shrink-0 items-center gap-2.5 md:w-56">
           <RojMark className="h-6 w-auto" live={player.status === 'playing'} />

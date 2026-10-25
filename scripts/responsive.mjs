@@ -65,12 +65,17 @@ for (const name of DEVICES) {
         }
         return false;
       };
-      const overflow = [...document.querySelectorAll('body *')]
-        .filter((el) => {
+      const offenders = [...document.querySelectorAll('body *')].filter((el) => {
+        const box = el.getBoundingClientRect();
+        return box.width > 0 && (box.right > width + 1 || box.left < -1) && !inScroller(el);
+      });
+      // Report the innermost ones (the cause), not every container they stretch.
+      const overflow = offenders
+        .filter((el) => !offenders.some((other) => other !== el && el.contains(other)))
+        .map((el) => {
           const box = el.getBoundingClientRect();
-          return box.width > 0 && (box.right > width + 1 || box.left < -1) && !inScroller(el);
-        })
-        .map(describe);
+          return `${describe(el)} [${Math.round(box.left)}..${Math.round(box.right)}px]`;
+        });
       const typed =
         'input:not([type]), input[type=text], input[type=search], input[type=url], input[type=email], input[type=number], input[type=password], input[type=tel], textarea, select';
       const zoomy = [...document.querySelectorAll(typed)]
@@ -78,14 +83,16 @@ for (const name of DEVICES) {
         .filter((el) => parseFloat(getComputedStyle(el).fontSize) < 16)
         .map(describe);
       return {
-        scroll: document.scrollingElement.scrollWidth > width,
+        scroll:
+          document.scrollingElement.scrollWidth > width && document.scrollingElement.scrollWidth,
+        width,
         overflow: [...new Set(overflow)].slice(0, 5),
         zoomy: [...new Set(zoomy)].slice(0, 5),
       };
     });
     const label = `${name} ${path || 'desktop'}`;
     const problems = [
-      ...(report.scroll ? ['page scrolls sideways'] : []),
+      ...(report.scroll ? [`page is ${report.scroll}px wide on a ${report.width}px screen`] : []),
       ...report.overflow.map((el) => `sticks out: ${el}`),
       ...report.zoomy.map((el) => `text field under 16px (iOS zooms): ${el}`),
     ];
