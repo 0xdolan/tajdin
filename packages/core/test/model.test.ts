@@ -6,6 +6,7 @@ import {
   deleteCustomStation,
   EMPTY_LIBRARY,
   makeCustomStation,
+  moveFavourite,
   moveInPlaylist,
   normaliseLanguage,
   parseLibrary,
@@ -79,6 +80,13 @@ describe('library', () => {
     lib = addToCollection(lib, 'playlist', playlist.id, [station('rb:2')]);
     lib = moveInPlaylist(lib, playlist.id, 0, 2);
     expect(lib.playlists[0]!.stationIds).toEqual(['rb:2', 'rb:3', 'rb:1']);
+  });
+
+  it('reorders favourites', () => {
+    let lib = EMPTY_LIBRARY;
+    for (const id of ['rb:1', 'rb:2', 'rb:3']) lib = toggleFavourite(lib, station(id));
+    expect(moveFavourite(lib, 2, 0).favourites).toEqual(['rb:3', 'rb:1', 'rb:2']);
+    expect(moveFavourite(lib, 1, 1)).toBe(lib);
   });
 
   it('removes a deleted custom station everywhere', () => {
