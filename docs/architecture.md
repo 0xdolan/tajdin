@@ -120,7 +120,9 @@ host over a `BroadcastChannel`.
 - shadcn/ui with Base UI primitives (`packages/ui/src/components`, added with the shadcn CLI). Its
   theme tokens live in `packages/ui/src/styles/globals.css`: midnight indigo, deq-sun amber
   (`--brand`) and Kurdistan green (`--live`).
-- Fonts are bundled: Manrope for Latin and other scripts, Sahel for Arabic script (Sorani, Arabic, Persian) via `unicode-range`. There are no remote assets.
+- Fonts are bundled: Manrope for Latin and other scripts, Sahel for Arabic script (Sorani, Arabic, Persian) via `unicode-range`. There are no remote assets. Chrome injects a system font on `<body>` in
+  extension pages (and Sonner sets one on toasts), so `globals.css` re-applies the font with an
+  unlayered rule; the website's `/docs` pages bundle the same fonts.
 - `AppShell` provides the platform, data (settings + library, synced across pages through storage
   events), theme, tooltips, dialogs and toasts.
 - `useStationFeed(view)` loads any view (mix, search, language, favourites, playlist, group, own
