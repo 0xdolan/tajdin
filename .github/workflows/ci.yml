@@ -2,76 +2,81 @@ name: CI
 
 on:
   push:
-    branches: [main, develop, "release/**"]
+    branches: [develop, main, 'release/**', 'hotfix/**']
   pull_request:
-    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  validate-repo:
-    name: Validate repository metadata
+  check:
+    name: Lint, types, tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Validate Task Master JSON
-        run: |
-          set -euo pipefail
-          for f in .taskmaster/tasks/tasks.json .taskmaster/config.json .taskmaster/state.json; do
-            if [ -f "$f" ]; then
-              echo "Checking $f"
-              jq empty "$f"
-            fi
-          done
-
-      - name: Detect Node project
-        id: pkg
-        run: |
-          if [ -f package.json ]; then
-            echo "present=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "present=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Setup Node.js
-        if: steps.pkg.outputs.present == 'true'
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
-          node-version: "22"
-          cache: npm
-          cache-dependency-path: package-lock.json
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm typecheck
+      - run: pnpm test
 
-      - name: Install dependencies
-        if: steps.pkg.outputs.present == 'true' && hashFiles('package-lock.json') != ''
-        run: npm ci
+  build:
+    name: Build extension and website
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build and zip Chrome + Firefox
+        run: pnpm build:extension
+      - name: Lint the Firefox build (Mozilla's validator)
+        run: pnpm --filter @tajdin/extension lint:firefox
+      - name: Check the zips
+        run: pnpm verify:release
+      - run: pnpm build:web
+      - uses: actions/upload-artifact@v7
+        with:
+          name: tajdin-extension-${{ github.sha }}
+          path: apps/extension/.output/*.zip
+          if-no-files-found: error
+          include-hidden-files: true
 
-      - name: npm audit (high or above)
-        if: steps.pkg.outputs.present == 'true' && hashFiles('package-lock.json') != ''
-        run: npm audit --audit-level=high
-
-      - name: Lint
-        if: steps.pkg.outputs.present == 'true'
-        run: npm run lint --if-present
-
-      - name: Typecheck
-        if: steps.pkg.outputs.present == 'true'
-        run: npm run typecheck --if-present
-
-      - name: Test
-        if: steps.pkg.outputs.present == 'true'
-        run: npm test --if-present
-
-      - name: Build
-        if: steps.pkg.outputs.present == 'true'
-        run: npm run build --if-present
-
-      - name: Verify extension dist
-        if: steps.pkg.outputs.present == 'true'
-        run: npm run verify:dist --if-present
-
-      - name: Node project not yet initialized
-        if: steps.pkg.outputs.present == 'false'
-        run: echo "No package.json yet; skipping Node lint/test/build until the extension scaffold lands."
+  e2e:
+    name: Smoke test in Chromium
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm build:extension && pnpm build:web
+      - name: Drive the extension and site, fail on page errors
+        run: |
+          pnpm --filter @tajdin/web preview &
+          npx wait-on http://localhost:4319/tajdin/
+          pnpm screenshots --theme=dark --out=test-results/screenshots
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: screenshots-${{ github.sha }}
+          path: test-results/screenshots

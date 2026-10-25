@@ -1,41 +1,18 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-dev-debug.log
-
-# Build output (load unpacked extension from dist/ after npm run build)
-dist/
-
-# Release zip output (see npm run pack:zip)
-artifacts/
-
-# Dependency directories
 node_modules/
-
-# Environment variables
+dist/
+.output/
+.wxt/
+.turbo/
+coverage/
+*.log
 .env
-
-# Editor directories and files
-.idea
-.vscode/*
-!.vscode/settings.json
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# OS specific
+.env.*
+!.env.example
 .DS_Store
-
-# Accidental nested copies under repo root (do not commit)
-Documents/
-
-# Task Master: generated markdown exports (tasks.json is source of truth)
-.taskmaster/tasks/task_*.md
-
-# cursor
-.cursor/mcp.json
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+playwright-report/
+test-results/
+web-ext-artifacts/

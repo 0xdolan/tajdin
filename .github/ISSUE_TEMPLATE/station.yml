@@ -1,0 +1,29 @@
+name: Suggest or fix a Kurdish station
+description: Add a station to the curated Kurdish list, or report a broken one
+labels: [stations]
+title: 'Station: '
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Request
+      options: [Add a station, Fix a broken station, Remove a station]
+    validations: { required: true }
+  - type: input
+    id: name
+    attributes:
+      label: Station name
+    validations: { required: true }
+  - type: input
+    id: url
+    attributes:
+      label: Stream link
+      description: A direct audio stream (.mp3 / .aac / .m3u8), ideally https
+  - type: input
+    id: logo
+    attributes:
+      label: Logo link (optional)
+  - type: input
+    id: website
+    attributes:
+      label: Station website (optional)
