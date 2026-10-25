@@ -5,11 +5,19 @@ and versions follow [Semantic Versioning](https://semver.org/).
 
 ## Unreleased
 
+### Changes
+
+- The About page and README write Tajdîn's name in Kurdish script, Tajdîn (تاژدین), rendered in
+  Sahel and isolated as right-to-left text so punctuation stays in place.
+- The README feature list no longer uses emojis.
+
 ### Fixes
 
 - Manrope and Sahel now apply everywhere. Chrome injects a system font into extension pages and
   the toast library sets its own, so most text (including Arabic-script names in menus) showed in
   Arial. The documentation pages on the website use the same fonts too.
+- Store releases: a new version now replaces a Chrome Web Store submission that is still waiting
+  for review, instead of the upload being refused.
 
 ## [0.1.1](https://github.com/0xdolan/tajdin/releases/tag/v0.1.1) · 2026-10-25
 
