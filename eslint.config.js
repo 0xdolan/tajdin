@@ -23,12 +23,19 @@ export default tseslint.config(
     languageOptions: { globals: { ...globals.browser, ...globals.webextensions } },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
       '@typescript-eslint/consistent-type-imports': 'error',
     },
   },
   {
     files: ['**/*.{js,mjs}'],
     languageOptions: { globals: { ...globals.node } },
+  },
+  {
+    files: ['apps/*/public/**/*.js'],
+    languageOptions: { globals: { ...globals.browser } },
   },
 );

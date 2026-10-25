@@ -6,7 +6,10 @@ import { stationId, StationSchema, type LocalStation, type Station } from './sta
 
 export const CustomStationInputSchema = z.object({
   name: z.string().trim().min(1, 'Give the station a name').max(200),
-  streamUrl: z.string().trim().refine((v) => !!toHttpUrl(v), 'Use an http:// or https:// stream URL'),
+  streamUrl: z
+    .string()
+    .trim()
+    .refine((v) => !!toHttpUrl(v), 'Use an http:// or https:// stream URL'),
   favicon: z
     .string()
     .trim()
@@ -41,7 +44,9 @@ export function makeCustomStation(input: CustomStationInput, existingId?: string
 export function stationFromUrl(url: string): Station | undefined {
   const href = toHttpUrl(url);
   if (!href) return undefined;
-  const name = decodeURIComponent(new URL(href).pathname.split('/').filter(Boolean).pop() ?? '') || hostOf(href);
+  const name =
+    decodeURIComponent(new URL(href).pathname.split('/').filter(Boolean).pop() ?? '') ||
+    hostOf(href);
   return StationSchema.parse({
     id: stationId('url', href),
     source: 'url',

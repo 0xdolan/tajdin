@@ -20,7 +20,14 @@ function fakeBackend() {
   return backend;
 }
 
-const st = (id: string): Station => ({ id, source: 'radio-browser', name: id, streamUrl: `https://x/${id}`, languages: [], tags: [] });
+const st = (id: string): Station => ({
+  id,
+  source: 'radio-browser',
+  name: id,
+  streamUrl: `https://x/${id}`,
+  languages: [],
+  tags: [],
+});
 const queue = [st('a'), st('b'), st('c')];
 const flush = () => new Promise((r) => setTimeout(r, 0));
 
@@ -28,7 +35,12 @@ describe('PlayerService', () => {
   it('moves through the queue and wraps when the user asks', async () => {
     const backend = fakeBackend();
     const player = new PlayerService({ backend });
-    await player.dispatch({ type: 'play', station: queue[2]!, queue, context: { kind: 'playlist', label: 'P' } });
+    await player.dispatch({
+      type: 'play',
+      station: queue[2]!,
+      queue,
+      context: { kind: 'playlist', label: 'P' },
+    });
     await player.dispatch({ type: 'next' });
     expect(player.getState().station?.id).toBe('a');
     await player.dispatch({ type: 'previous' });
@@ -38,7 +50,12 @@ describe('PlayerService', () => {
   it('skips failed stations in a list and reports when none work', async () => {
     const backend = fakeBackend();
     const player = new PlayerService({ backend });
-    await player.dispatch({ type: 'play', station: queue[0]!, queue, context: { kind: 'playlist', label: 'Drive' } });
+    await player.dispatch({
+      type: 'play',
+      station: queue[0]!,
+      queue,
+      context: { kind: 'playlist', label: 'Drive' },
+    });
     backend.emit({ type: 'error', message: 'x' });
     await flush();
     expect(player.getState().station?.id).toBe('b');
@@ -92,7 +109,10 @@ describe('PlayerService', () => {
 
   it('restored sessions come back paused, never auto-playing', () => {
     const backend = fakeBackend();
-    const player = new PlayerService({ backend, initial: { station: queue[0]!, status: 'playing' } });
+    const player = new PlayerService({
+      backend,
+      initial: { station: queue[0]!, status: 'playing' },
+    });
     expect(player.getState().status).toBe('paused');
     expect(backend.play).not.toHaveBeenCalled();
   });

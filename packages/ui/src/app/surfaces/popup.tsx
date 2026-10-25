@@ -37,10 +37,22 @@ import { usePlayer } from '../hooks';
 import { usePlatform } from '../platform';
 import { ThemeMenu } from '../shell';
 
-function HeaderButton({ label, onClick, children }: { label: string; onClick?: () => void; children: React.ReactNode }) {
+function HeaderButton({
+  label,
+  onClick,
+  children,
+}: {
+  label: string;
+  onClick?: () => void;
+  children: React.ReactNode;
+}) {
   return (
     <Tooltip>
-      <TooltipTrigger render={<Button variant="ghost" size="icon-sm" aria-label={label} onClick={onClick} />}>{children}</TooltipTrigger>
+      <TooltipTrigger
+        render={<Button variant="ghost" size="icon-sm" aria-label={label} onClick={onClick} />}
+      >
+        {children}
+      </TooltipTrigger>
       <TooltipContent side="bottom">{label}</TooltipContent>
     </Tooltip>
   );
@@ -59,7 +71,12 @@ export function PopupApp() {
   const playing = player.status === 'playing' || player.status === 'loading';
   const onPlay = useCallback(
     (station: Station) =>
-      void send({ type: settings.playOnSelect ? 'play' : 'load', station, queue: feed.stations, context: feed.context }),
+      void send({
+        type: settings.playOnSelect ? 'play' : 'load',
+        station,
+        queue: feed.stations,
+        context: feed.context,
+      }),
     [send, settings.playOnSelect, feed.stations, feed.context],
   );
 
@@ -67,21 +84,31 @@ export function PopupApp() {
   const isMix = browse.view.kind === 'mix';
 
   return (
-    <div className="flex h-full flex-col bg-background">
+    <div className="bg-background flex h-full flex-col">
       <header className="flex h-12 shrink-0 items-center gap-1 border-b px-3">
         <h1 className="flex items-center gap-2">
           <RojMark className="h-[18px] w-auto" live={player.status === 'playing'} />
           <span className="text-[15px] font-semibold tracking-tight">Tajdîn</span>
         </h1>
         <div className="ml-auto flex items-center">
-          <HeaderButton label={playing ? 'Pause' : 'Play'} onClick={() => void send({ type: 'toggle' })}>
-            {playing ? <PauseIcon className="fill-current" /> : <PlayIcon className="fill-current" />}
+          <HeaderButton
+            label={playing ? 'Pause' : 'Play'}
+            onClick={() => void send({ type: 'toggle' })}
+          >
+            {playing ? (
+              <PauseIcon className="fill-current" />
+            ) : (
+              <PlayIcon className="fill-current" />
+            )}
           </HeaderButton>
           <ThemeMenu />
           <HeaderButton label="Desktop view" onClick={platform.openDesktop}>
             <MonitorIcon />
           </HeaderButton>
-          <HeaderButton label="Options: stations, playlists, groups, backup" onClick={() => platform.openSettings?.('stations')}>
+          <HeaderButton
+            label="Options: stations, playlists, groups, backup"
+            onClick={() => platform.openSettings?.('stations')}
+          >
             <LibraryIcon />
           </HeaderButton>
           <HeaderButton label="Settings" onClick={() => platform.openSettings?.('general')}>
@@ -93,19 +120,29 @@ export function PopupApp() {
       <div className="flex shrink-0 items-center gap-1 px-2 pt-2">
         <ViewPicker view={browse.view} onChange={browse.setView} className="max-w-[210px]" />
         <div className="ml-auto flex items-center">
-          {isMix ? <ShuffleButton onClick={feed.reload} /> : (
+          {isMix ? (
+            <ShuffleButton onClick={feed.reload} />
+          ) : (
             <HeaderButton label="Reload" onClick={feed.reload}>
               <RefreshCwIcon />
             </HeaderButton>
           )}
           <HeaderButton
             label={searchOpen ? 'Close search' : 'Search'}
-            onClick={() => browse.setState((s) => ({ ...s, searchOpen: !searchOpen, query: searchOpen ? '' : s.query }))}
+            onClick={() =>
+              browse.setState((s) => ({
+                ...s,
+                searchOpen: !searchOpen,
+                query: searchOpen ? '' : s.query,
+              }))
+            }
           >
             {searchOpen ? <XIcon /> : <SearchIcon />}
           </HeaderButton>
           <DropdownMenu>
-            <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" aria-label="Add or play" />}>
+            <DropdownMenuTrigger
+              render={<Button variant="ghost" size="icon-sm" aria-label="Add or play" />}
+            >
               <PlusIcon />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-52">
@@ -135,7 +172,7 @@ export function PopupApp() {
         empty={emptyFor(browse.view.kind, openCustomStation)}
       />
 
-      <div className={cn('shrink-0 border-t bg-card/60 px-3 pt-2 pb-1.5 backdrop-blur')}>
+      <div className={cn('bg-card/60 shrink-0 border-t px-3 pt-2 pb-1.5 backdrop-blur')}>
         {settings.nowPlayingPosition === 'top' && <NowPlayingLine className="mb-1.5" />}
         <Player />
         {settings.nowPlayingPosition === 'bottom' && <NowPlayingLine className="mt-1" />}
@@ -149,7 +186,10 @@ export function PopupApp() {
 function emptyFor(kind: string, addStation: () => void) {
   switch (kind) {
     case 'favourites':
-      return { title: 'No favourites yet', description: 'Tap the heart on any station to keep it here.' };
+      return {
+        title: 'No favourites yet',
+        description: 'Tap the heart on any station to keep it here.',
+      };
     case 'playlist':
       return { title: 'This playlist is empty', description: 'Use a station’s ⋮ menu to add it.' };
     case 'group':
@@ -166,7 +206,10 @@ function emptyFor(kind: string, addStation: () => void) {
         ),
       };
     case 'search':
-      return { title: 'No matches', description: 'Try fewer words, another language, or regex mode.' };
+      return {
+        title: 'No matches',
+        description: 'Try fewer words, another language, or regex mode.',
+      };
     default:
       return { title: 'No stations found' };
   }

@@ -1,6 +1,12 @@
 import { supportsSpeed, type AnyStation } from '../model/station';
 import { pickOne } from '../util/random';
-import { INITIAL_PLAYER_STATE, type AudioBackend, type PlayerCommand, type PlayerState, type QueueContext } from './types';
+import {
+  INITIAL_PLAYER_STATE,
+  type AudioBackend,
+  type PlayerCommand,
+  type PlayerState,
+  type QueueContext,
+} from './types';
 
 const MAX_QUEUE = 500;
 /** How often repeat-one reconnects a dropped live stream before giving up. */
@@ -89,20 +95,36 @@ export class PlayerService {
       case 'play':
       case 'load': {
         const queue = (command.queue ?? [command.station]).slice(0, MAX_QUEUE);
-        const index = Math.max(0, queue.findIndex((s) => s.id === command.station.id));
+        const index = Math.max(
+          0,
+          queue.findIndex((s) => s.id === command.station.id),
+        );
         this.failedInRow = 0;
-        this.set({ queue, index, context: command.context ?? { kind: 'single', label: command.station.name } });
+        this.set({
+          queue,
+          index,
+          context: command.context ?? { kind: 'single', label: command.station.name },
+        });
         return this.start(command.station, command.type === 'play');
       }
       case 'toggle':
-        return this.state.status === 'playing' || this.state.status === 'loading' ? this.pause() : this.resume();
+        return this.state.status === 'playing' || this.state.status === 'loading'
+          ? this.pause()
+          : this.resume();
       case 'resume':
         return this.resume();
       case 'pause':
         return this.pause();
       case 'stop':
         this.backend.stop();
-        this.set({ status: 'idle', station: null, error: null, nowPlaying: null, position: 0, duration: 0 });
+        this.set({
+          status: 'idle',
+          station: null,
+          error: null,
+          nowPlaying: null,
+          position: 0,
+          duration: 0,
+        });
         return;
       case 'next':
         return this.step(1, true);
@@ -140,7 +162,9 @@ export class PlayerService {
         this.set({ repeat: command.repeat });
         return;
       case 'cycleRepeat':
-        this.set({ repeat: this.state.repeat === 'off' ? 'all' : this.state.repeat === 'all' ? 'one' : 'off' });
+        this.set({
+          repeat: this.state.repeat === 'off' ? 'all' : this.state.repeat === 'all' ? 'one' : 'off',
+        });
         return;
       case 'seek':
         this.backend.seek(command.position);
@@ -153,7 +177,14 @@ export class PlayerService {
   }
 
   private async start(station: AnyStation, autoplay: boolean) {
-    this.set({ station, status: autoplay ? 'loading' : 'paused', error: null, nowPlaying: null, position: 0, duration: 0 });
+    this.set({
+      station,
+      status: autoplay ? 'loading' : 'paused',
+      error: null,
+      nowPlaying: null,
+      position: 0,
+      duration: 0,
+    });
     this.backend.load(station);
     this.backend.setRate(supportsSpeed(station) ? this.state.rate : 1);
     if (autoplay) await this.backend.play().catch(() => undefined);

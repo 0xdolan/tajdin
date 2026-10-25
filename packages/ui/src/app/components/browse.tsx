@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   CheckIcon,
   ChevronDownIcon,
@@ -30,8 +30,20 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@tajdin/ui/components/dropdown-menu';
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@tajdin/ui/components/input-group';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@tajdin/ui/components/select';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from '@tajdin/ui/components/input-group';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@tajdin/ui/components/select';
 import { Toggle } from '@tajdin/ui/components/toggle';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@tajdin/ui/components/tooltip';
 import { cn } from '@tajdin/ui/lib/utils';
@@ -51,7 +63,13 @@ export interface SearchState {
   initialised: boolean;
 }
 
-const INITIAL: SearchState = { query: '', mode: 'exact', language: '', searchOpen: false, initialised: false };
+const INITIAL: SearchState = {
+  query: '',
+  mode: 'exact',
+  language: '',
+  searchOpen: false,
+  initialised: false,
+};
 
 /**
  * Browse state for the popup or desktop view. Every opening starts on the start view from
@@ -60,36 +78,52 @@ const INITIAL: SearchState = { query: '', mode: 'exact', language: '', searchOpe
 export function useBrowse(key: string) {
   const [settings, , settingsReady] = useSettings();
   const [library, , libraryReady] = useLibrary();
-  const [state, setState, sessionReady] = useSessionState<SearchState>(key, INITIAL);
-  const [view, setViewState] = useState<View | null>(null);
+  const [stored, setStored, sessionReady] = useSessionState<SearchState>(key, INITIAL);
+  const [chosen, setChosen] = useState<View | null>(null);
   const ready = settingsReady && libraryReady && sessionReady;
 
-  useEffect(() => {
-    if (!ready || view) return;
-    setViewState(startViewToView(settings, library));
-    if (!state.initialised) {
-      setState((s) => ({ ...s, initialised: true, mode: settings.searchMode, language: settings.defaultLanguage }));
-    }
-  }, [ready, view, settings, library, state.initialised, setState]);
+  // Until the user picks something, the view and search defaults follow settings.
+  const startView = useMemo(() => startViewToView(settings, library), [settings, library]);
+  const view = chosen ?? startView;
+  const withDefaults = useCallback(
+    (s: SearchState): SearchState =>
+      s.initialised
+        ? s
+        : {
+            ...s,
+            initialised: true,
+            mode: settings.searchMode,
+            language: settings.defaultLanguage,
+          },
+    [settings.searchMode, settings.defaultLanguage],
+  );
+  const state = withDefaults(stored);
+  const setState = useCallback(
+    (update: SearchState | ((s: SearchState) => SearchState)) =>
+      setStored((prev) =>
+        withDefaults(typeof update === 'function' ? update(withDefaults(prev)) : update),
+      ),
+    [setStored, withDefaults],
+  );
 
   const query = useDebounced(cleanText(state.query, 200), 300);
   const validQuery = isValidSearch(query, state.mode);
-  const baseView = view ?? { kind: 'mix', language: '' };
   const effectiveView: View = useMemo(
-    () => (query && validQuery ? { kind: 'search', text: query, mode: state.mode, language: state.language } : baseView),
-    // baseView is derived from view.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    () =>
+      query && validQuery
+        ? { kind: 'search', text: query, mode: state.mode, language: state.language }
+        : view,
     [query, validQuery, state.mode, state.language, view],
   );
 
   return {
     state,
     setState,
-    ready: ready && !!view,
+    ready,
     view: effectiveView,
     validQuery: isValidSearch(state.query.trim(), state.mode),
     setView: (next: View) => {
-      setViewState(next);
+      setChosen(next);
       setState((s) => ({ ...s, query: '', searchOpen: false }));
     },
   };
@@ -104,7 +138,11 @@ function viewIcon(view: View, library: Library) {
     case 'playlist':
       return <ListMusicIcon />;
     case 'group':
-      return library.groups.find((g) => g.id === view.id)?.kind === 'language' ? <LanguagesIcon /> : <ShapesIcon />;
+      return library.groups.find((g) => g.id === view.id)?.kind === 'language' ? (
+        <LanguagesIcon />
+      ) : (
+        <ShapesIcon />
+      );
     case 'language':
       return <GlobeIcon />;
     case 'custom':
@@ -115,7 +153,15 @@ function viewIcon(view: View, library: Library) {
 }
 
 /** One dropdown to switch between the random mix, favourites, own stations, playlists, groups and languages. */
-export function ViewPicker({ view, onChange, className }: { view: View; onChange: (v: View) => void; className?: string }) {
+export function ViewPicker({
+  view,
+  onChange,
+  className,
+}: {
+  view: View;
+  onChange: (v: View) => void;
+  className?: string;
+}) {
   const [library] = useLibrary();
   const { openCollection } = useDialogs();
   const same = (v: View) => JSON.stringify(v) === JSON.stringify(view);
@@ -129,12 +175,19 @@ export function ViewPicker({ view, onChange, className }: { view: View; onChange
       {same(v) && <CheckIcon className="text-live" />}
     </DropdownMenuItem>
   );
-  const count = (n: number) => <span className="text-xs text-muted-foreground tabular-nums">{n}</span>;
+  const count = (n: number) => (
+    <span className="text-muted-foreground text-xs tabular-nums">{n}</span>
+  );
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={<Button variant="ghost" className={cn('min-w-0 justify-start gap-2 px-2 font-semibold', className)} />}
+        render={
+          <Button
+            variant="ghost"
+            className={cn('min-w-0 justify-start gap-2 px-2 font-semibold', className)}
+          />
+        }
       >
         {viewIcon(view, library)}
         <span className="truncate" dir="auto">
@@ -155,11 +208,14 @@ export function ViewPicker({ view, onChange, className }: { view: View; onChange
             <DropdownMenuSubContent className="max-h-80 w-56 overflow-y-auto">
               <DropdownMenuGroup>
                 {LANGUAGES.map((l) =>
-                  item({ kind: 'language', language: l.code }, l.name, <span className="w-4 text-[10px] font-semibold uppercase">{l.code}</span>, (
-                    <span className="truncate text-xs text-muted-foreground" dir="auto">
+                  item(
+                    { kind: 'language', language: l.code },
+                    l.name,
+                    <span className="w-4 text-[10px] font-semibold uppercase">{l.code}</span>,
+                    <span className="text-muted-foreground truncate text-xs" dir="auto">
                       {l.native}
-                    </span>
-                  )),
+                    </span>,
+                  ),
                 )}
               </DropdownMenuGroup>
             </DropdownMenuSubContent>
@@ -168,14 +224,29 @@ export function ViewPicker({ view, onChange, className }: { view: View; onChange
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuLabel>Library</DropdownMenuLabel>
-          {item({ kind: 'favourites' }, 'Favourites', <HeartIcon />, count(library.favourites.length))}
-          {item({ kind: 'custom' }, 'My stations', <RadioTowerIcon />, count(library.customStations.length))}
+          {item(
+            { kind: 'favourites' },
+            'Favourites',
+            <HeartIcon />,
+            count(library.favourites.length),
+          )}
+          {item(
+            { kind: 'custom' },
+            'My stations',
+            <RadioTowerIcon />,
+            count(library.customStations.length),
+          )}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuLabel>Playlists</DropdownMenuLabel>
           {library.playlists.map((p) =>
-            item({ kind: 'playlist', id: p.id }, p.name, <ListMusicIcon style={p.colour ? { color: COLOUR_SWATCH[p.colour] } : undefined} />, count(p.stationIds.length)),
+            item(
+              { kind: 'playlist', id: p.id },
+              p.name,
+              <ListMusicIcon style={p.colour ? { color: COLOUR_SWATCH[p.colour] } : undefined} />,
+              count(p.stationIds.length),
+            ),
           )}
           <DropdownMenuItem onClick={() => openCollection({ mode: 'create', kind: 'playlist' })}>
             <ListPlusIcon />
@@ -189,8 +260,18 @@ export function ViewPicker({ view, onChange, className }: { view: View; onChange
             item(
               { kind: 'group', id: g.id },
               g.name,
-              g.kind === 'language' ? <LanguagesIcon style={g.colour ? { color: COLOUR_SWATCH[g.colour] } : undefined} /> : <ShapesIcon style={g.colour ? { color: COLOUR_SWATCH[g.colour] } : undefined} />,
-              g.kind === 'manual' ? count(g.stationIds.length) : <span className="text-[10px] font-semibold text-muted-foreground uppercase">{g.language}</span>,
+              g.kind === 'language' ? (
+                <LanguagesIcon style={g.colour ? { color: COLOUR_SWATCH[g.colour] } : undefined} />
+              ) : (
+                <ShapesIcon style={g.colour ? { color: COLOUR_SWATCH[g.colour] } : undefined} />
+              ),
+              g.kind === 'manual' ? (
+                count(g.stationIds.length)
+              ) : (
+                <span className="text-muted-foreground text-[10px] font-semibold uppercase">
+                  {g.language}
+                </span>
+              ),
             ),
           )}
           <DropdownMenuItem onClick={() => openCollection({ mode: 'create', kind: 'group' })}>
@@ -203,11 +284,26 @@ export function ViewPicker({ view, onChange, className }: { view: View; onChange
   );
 }
 
-const LANGUAGE_ITEMS = [{ value: '', label: 'All languages' }, ...LANGUAGES.map((l) => ({ value: l.code, label: l.name }))];
+const LANGUAGE_ITEMS = [
+  { value: '', label: 'All languages' },
+  ...LANGUAGES.map((l) => ({ value: l.code, label: l.name })),
+];
 
-export function LanguageSelect({ value, onChange, className }: { value: string; onChange: (v: string) => void; className?: string }) {
+export function LanguageSelect({
+  value,
+  onChange,
+  className,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  className?: string;
+}) {
   return (
-    <Select items={LANGUAGE_ITEMS} value={value} onValueChange={(v) => onChange((v as string) ?? '')}>
+    <Select
+      items={LANGUAGE_ITEMS}
+      value={value}
+      onValueChange={(v) => onChange((v as string) ?? '')}
+    >
       <SelectTrigger size="sm" className={className} aria-label="Language">
         <SelectValue />
       </SelectTrigger>
@@ -256,12 +352,18 @@ export function SearchBar({
           value={state.query}
           maxLength={200}
           onChange={(e) => setState((s) => ({ ...s, query: e.target.value }))}
-          onKeyDown={(e) => e.key === 'Escape' && setState((s) => ({ ...s, query: '', searchOpen: false }))}
+          onKeyDown={(e) =>
+            e.key === 'Escape' && setState((s) => ({ ...s, query: '', searchOpen: false }))
+          }
           className={cn(regex && 'font-mono text-xs')}
         />
         <InputGroupAddon align="inline-end">
           {state.query && (
-            <InputGroupButton size="icon-xs" aria-label="Clear search" onClick={() => setState((s) => ({ ...s, query: '' }))}>
+            <InputGroupButton
+              size="icon-xs"
+              aria-label="Clear search"
+              onClick={() => setState((s) => ({ ...s, query: '' }))}
+            >
               <XIcon />
             </InputGroupButton>
           )}
@@ -279,11 +381,17 @@ export function SearchBar({
             >
               <RegexIcon />
             </TooltipTrigger>
-            <TooltipContent>{regex ? 'Regex search (case-insensitive)' : 'Use a regular expression'}</TooltipContent>
+            <TooltipContent>
+              {regex ? 'Regex search (case-insensitive)' : 'Use a regular expression'}
+            </TooltipContent>
           </Tooltip>
         </InputGroupAddon>
       </InputGroup>
-      <LanguageSelect value={state.language} onChange={(language) => setState((s) => ({ ...s, language }))} className="w-32" />
+      <LanguageSelect
+        value={state.language}
+        onChange={(language) => setState((s) => ({ ...s, language }))}
+        className="w-32"
+      />
       {!validQuery && (
         <span role="alert" className="sr-only">
           Invalid regular expression
@@ -293,10 +401,18 @@ export function SearchBar({
   );
 }
 
-export function ShuffleButton({ onClick, label = 'New random mix' }: { onClick: () => void; label?: string }) {
+export function ShuffleButton({
+  onClick,
+  label = 'New random mix',
+}: {
+  onClick: () => void;
+  label?: string;
+}) {
   return (
     <Tooltip>
-      <TooltipTrigger render={<Button variant="ghost" size="icon-sm" aria-label={label} onClick={onClick} />}>
+      <TooltipTrigger
+        render={<Button variant="ghost" size="icon-sm" aria-label={label} onClick={onClick} />}
+      >
         <DicesIcon />
       </TooltipTrigger>
       <TooltipContent>{label}</TooltipContent>

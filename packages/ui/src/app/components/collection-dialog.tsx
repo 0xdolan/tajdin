@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import {
   addToCollection,
@@ -12,17 +12,36 @@ import {
   type Station,
 } from '@tajdin/core';
 import { Button } from '@tajdin/ui/components/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@tajdin/ui/components/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@tajdin/ui/components/dialog';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@tajdin/ui/components/field';
 import { Input } from '@tajdin/ui/components/input';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@tajdin/ui/components/select';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@tajdin/ui/components/select';
 import { Textarea } from '@tajdin/ui/components/textarea';
 import { ToggleGroup, ToggleGroupItem } from '@tajdin/ui/components/toggle-group';
 import { cn } from '@tajdin/ui/lib/utils';
 import { useLibrary } from '../data';
 
 export type CollectionDialogState =
-  | { mode: 'create'; kind: 'playlist' | 'group'; addStation?: Station; groupKind?: 'manual' | 'language' }
+  | {
+      mode: 'create';
+      kind: 'playlist' | 'group';
+      addStation?: Station;
+      groupKind?: 'manual' | 'language';
+    }
   | { mode: 'edit'; kind: 'playlist' | 'group'; id: string };
 
 export const COLOUR_SWATCH: Record<Colour, string> = {
@@ -39,37 +58,43 @@ export const COLOUR_SWATCH: Record<Colour, string> = {
 
 const LANGUAGE_ITEMS = LANGUAGES.map((l) => ({ value: l.code, label: `${l.name} · ${l.native}` }));
 
-export function CollectionDialog({ state, onClose }: { state: CollectionDialogState | null; onClose: () => void }) {
+export function CollectionDialog({
+  state,
+  onClose,
+}: {
+  state: CollectionDialogState | null;
+  onClose: () => void;
+}) {
+  if (!state) return null;
+  // Keyed so each opening starts from fresh values.
+  return <CollectionForm key={JSON.stringify(state)} state={state} onClose={onClose} />;
+}
+
+function CollectionForm({ state, onClose }: { state: CollectionDialogState; onClose: () => void }) {
   const [library, updateLibrary] = useLibrary();
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [colour, setColour] = useState<Colour | undefined>();
-  const [groupKind, setGroupKind] = useState<'manual' | 'language'>('manual');
-  const [language, setLanguage] = useState('ku');
+  const existing =
+    state.mode === 'edit'
+      ? state.kind === 'playlist'
+        ? library.playlists.find((p) => p.id === state.id)
+        : library.groups.find((g) => g.id === state.id)
+      : undefined;
+  const [name, setName] = useState(existing?.name ?? '');
+  const [description, setDescription] = useState(
+    existing && 'description' in existing ? (existing.description ?? '') : '',
+  );
+  const [colour, setColour] = useState<Colour | undefined>(existing?.colour);
+  const [groupKind, setGroupKind] = useState<'manual' | 'language'>(
+    existing && 'kind' in existing
+      ? existing.kind
+      : state.mode === 'create'
+        ? (state.groupKind ?? 'manual')
+        : 'manual',
+  );
+  const [language, setLanguage] = useState(
+    existing && 'language' in existing ? existing.language : 'ku',
+  );
   const [touched, setTouched] = useState(false);
 
-  useEffect(() => {
-    if (!state) return;
-    setTouched(false);
-    if (state.mode === 'edit') {
-      const item = state.kind === 'playlist' ? library.playlists.find((p) => p.id === state.id) : library.groups.find((g) => g.id === state.id);
-      setName(item?.name ?? '');
-      setDescription(item && 'description' in item ? (item.description ?? '') : '');
-      setColour(item?.colour);
-      setGroupKind(item && 'kind' in item ? item.kind : 'manual');
-      setLanguage(item && 'language' in item ? item.language : 'ku');
-    } else {
-      setName('');
-      setDescription('');
-      setColour(undefined);
-      setGroupKind(state.groupKind ?? 'manual');
-      setLanguage('ku');
-    }
-    // Only reset when the dialog opens for a new target.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state]);
-
-  if (!state) return null;
   const isPlaylist = state.kind === 'playlist';
   const noun = isPlaylist ? 'playlist' : 'group';
   const invalid = !name.trim();
@@ -81,19 +106,38 @@ export function CollectionDialog({ state, onClose }: { state: CollectionDialogSt
     if (state.mode === 'edit') {
       await updateLibrary((l) =>
         isPlaylist
-          ? updatePlaylist(l, state.id, { name: name.trim(), description: description.trim() || undefined, colour })
-          : updateGroup(l, state.id, { name: name.trim(), colour, language: groupKind === 'language' ? language : undefined }),
+          ? updatePlaylist(l, state.id, {
+              name: name.trim(),
+              description: description.trim() || undefined,
+              colour,
+            })
+          : updateGroup(l, state.id, {
+              name: name.trim(),
+              colour,
+              language: groupKind === 'language' ? language : undefined,
+            }),
       );
       toast.success(`Saved “${name.trim()}”`);
     } else {
       await updateLibrary((l) => {
         const created = isPlaylist
           ? createPlaylist(l, { name, description, colour })
-          : createGroup(l, groupKind === 'language' ? { kind: 'language', name, colour, language } : { kind: 'manual', name, colour });
+          : createGroup(
+              l,
+              groupKind === 'language'
+                ? { kind: 'language', name, colour, language }
+                : { kind: 'manual', name, colour },
+            );
         const id = 'playlist' in created ? created.playlist.id : created.group.id;
-        return state.addStation ? addToCollection(created.library, state.kind, id, [state.addStation]) : created.library;
+        return state.addStation
+          ? addToCollection(created.library, state.kind, id, [state.addStation])
+          : created.library;
       });
-      toast.success(state.addStation ? `Added to new ${noun} “${name.trim()}”` : `Created ${noun} “${name.trim()}”`);
+      toast.success(
+        state.addStation
+          ? `Added to new ${noun} “${name.trim()}”`
+          : `Created ${noun} “${name.trim()}”`,
+      );
     }
     onClose();
   };
@@ -117,7 +161,9 @@ export function CollectionDialog({ state, onClose }: { state: CollectionDialogSt
                 <ToggleGroup
                   variant="outline"
                   value={[groupKind]}
-                  onValueChange={(v: string[]) => v[0] && setGroupKind(v[0] as 'manual' | 'language')}
+                  onValueChange={(v: string[]) =>
+                    v[0] && setGroupKind(v[0] as 'manual' | 'language')
+                  }
                   disabled={state.mode === 'edit'}
                 >
                   <ToggleGroupItem value="manual">Hand-picked</ToggleGroupItem>
@@ -135,14 +181,20 @@ export function CollectionDialog({ state, onClose }: { state: CollectionDialogSt
                 value={name}
                 aria-invalid={touched && invalid}
                 onChange={(e) => setName(e.target.value)}
-                placeholder={isPlaylist ? 'Morning drive' : groupKind === 'language' ? 'Kurdish radio' : 'News'}
+                placeholder={
+                  isPlaylist ? 'Morning drive' : groupKind === 'language' ? 'Kurdish radio' : 'News'
+                }
               />
               {touched && invalid && <FieldDescription>Give it a name.</FieldDescription>}
             </Field>
             {!isPlaylist && groupKind === 'language' && (
               <Field>
                 <FieldLabel>Language</FieldLabel>
-                <Select items={LANGUAGE_ITEMS} value={language} onValueChange={(v) => v && setLanguage(v as string)}>
+                <Select
+                  items={LANGUAGE_ITEMS}
+                  value={language}
+                  onValueChange={(v) => v && setLanguage(v as string)}
+                >
                   <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
@@ -184,8 +236,8 @@ export function CollectionDialog({ state, onClose }: { state: CollectionDialogSt
                     aria-label={c}
                     onClick={() => setColour(colour === c ? undefined : c)}
                     className={cn(
-                      'size-6 rounded-full ring-offset-2 ring-offset-background transition focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
-                      colour === c && 'ring-2 ring-foreground',
+                      'ring-offset-background focus-visible:ring-ring size-6 rounded-full ring-offset-2 transition focus-visible:ring-2 focus-visible:outline-none',
+                      colour === c && 'ring-foreground ring-2',
                     )}
                     style={{ backgroundColor: COLOUR_SWATCH[c] }}
                   />

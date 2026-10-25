@@ -37,7 +37,14 @@ interface StationRowProps {
 }
 
 /** One station in a list. Click or Enter plays it; the heart and the menu don't. */
-export const StationRow = memo(function StationRow({ station, active, playing, onPlay, warnInsecure, dense }: StationRowProps) {
+export const StationRow = memo(function StationRow({
+  station,
+  active,
+  playing,
+  onPlay,
+  warnInsecure,
+  dense,
+}: StationRowProps) {
   const [library, updateLibrary] = useLibrary();
   const favourite = library.favourites.includes(station.id);
   const meta = stationMeta(station);
@@ -47,7 +54,7 @@ export const StationRow = memo(function StationRow({ station, active, playing, o
   return (
     <div
       className={cn(
-        'group/row flex w-full items-center gap-1 rounded-lg pr-1 transition-colors duration-150 hover:bg-accent',
+        'group/row hover:bg-accent flex w-full items-center gap-1 rounded-lg pr-1 transition-colors duration-150',
         dense ? 'h-12' : 'h-14',
         active && 'bg-accent',
       )}
@@ -57,42 +64,53 @@ export const StationRow = memo(function StationRow({ station, active, playing, o
         aria-current={active ? 'true' : undefined}
         aria-label={`Play ${station.name}${meta ? `, ${meta}` : ''}`}
         onClick={() => onPlay(station)}
-        className="flex h-full min-w-0 flex-1 items-center gap-3 rounded-lg pl-2 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="focus-visible:ring-ring flex h-full min-w-0 flex-1 items-center gap-3 rounded-lg pl-2 text-left outline-none focus-visible:ring-2"
       >
-      <div className="relative">
-        <StationArt station={station} className={dense ? 'size-9' : 'size-10'} />
-        {active && (
-          <span className="absolute -right-1 -bottom-1 flex size-4 items-center justify-center rounded-full bg-background ring-1 ring-border">
-            <Equalizer playing={playing} className="h-2 gap-px [&>span]:w-[2px]" />
+        <div className="relative">
+          <StationArt station={station} className={dense ? 'size-9' : 'size-10'} />
+          {active && (
+            <span className="bg-background ring-border absolute -right-1 -bottom-1 flex size-4 items-center justify-center rounded-full ring-1">
+              <Equalizer playing={playing} className="h-2 gap-px [&>span]:w-[2px]" />
+            </span>
+          )}
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <span className={cn('truncate text-sm font-medium', active && 'text-live')} dir="auto">
+            {station.name}
           </span>
-        )}
-      </div>
-      <div className="flex min-w-0 flex-1 flex-col">
-        <span className={cn('truncate text-sm font-medium', active && 'text-live')} dir="auto">
-          {station.name}
-        </span>
-        <span className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
-          {source && <span className="shrink-0 rounded bg-muted px-1 py-px text-[10px] font-medium">{source}</span>}
-          <span className="truncate" dir="auto">
-            {meta}
+          <span className="text-muted-foreground flex min-w-0 items-center gap-1.5 text-xs">
+            {source && (
+              <span className="bg-muted shrink-0 rounded px-1 py-px text-[10px] font-medium">
+                {source}
+              </span>
+            )}
+            <span className="truncate" dir="auto">
+              {meta}
+            </span>
           </span>
-        </span>
-      </div>
+        </div>
       </button>
       {insecure && (
         <Tooltip>
-          <TooltipTrigger render={<span className="px-1 text-muted-foreground" />}>
+          <TooltipTrigger render={<span className="text-muted-foreground px-1" />}>
             <ShieldAlertIcon className="size-4" aria-label="Insecure stream" />
           </TooltipTrigger>
-          <TooltipContent>http-only stream: it may not play on the website. The extension plays it.</TooltipContent>
+          <TooltipContent>
+            http-only stream: it may not play on the website. The extension plays it.
+          </TooltipContent>
         </Tooltip>
       )}
       <Button
         variant="ghost"
         size="icon-sm"
-        aria-label={favourite ? `Remove ${station.name} from favourites` : `Add ${station.name} to favourites`}
+        aria-label={
+          favourite ? `Remove ${station.name} from favourites` : `Add ${station.name} to favourites`
+        }
         aria-pressed={favourite}
-        className={cn(!favourite && 'opacity-0 group-hover/row:opacity-100 group-focus-within/row:opacity-100 focus-visible:opacity-100')}
+        className={cn(
+          !favourite &&
+            'opacity-0 group-focus-within/row:opacity-100 group-hover/row:opacity-100 focus-visible:opacity-100',
+        )}
         onClick={() => void updateLibrary((l) => toggleFavourite(l, station))}
       >
         <HeartIcon className={cn(favourite && 'fill-destructive text-destructive')} />

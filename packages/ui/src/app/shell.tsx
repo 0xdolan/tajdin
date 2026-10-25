@@ -44,20 +44,29 @@ export function AppShell({ platform, children }: { platform: Platform; children:
   );
 }
 
-const THEME_ICON: Record<Theme, typeof SunIcon> = { system: LaptopIcon, light: SunIcon, dark: MoonIcon };
+const THEME_ICON: Record<Theme, typeof SunIcon> = {
+  system: LaptopIcon,
+  light: SunIcon,
+  dark: MoonIcon,
+};
 
 export function ThemeMenu() {
   const [settings, update] = useSettings();
   const Icon = THEME_ICON[settings.theme];
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" aria-label={`Theme: ${settings.theme}`} />}>
+      <DropdownMenuTrigger
+        render={<Button variant="ghost" size="icon-sm" aria-label={`Theme: ${settings.theme}`} />}
+      >
         <Icon />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
         <DropdownMenuGroup>
           <DropdownMenuLabel>Theme</DropdownMenuLabel>
-          <DropdownMenuRadioGroup value={settings.theme} onValueChange={(v) => void update({ theme: v as Theme })}>
+          <DropdownMenuRadioGroup
+            value={settings.theme}
+            onValueChange={(v) => void update({ theme: v as Theme })}
+          >
             <DropdownMenuRadioItem value="system">
               <LaptopIcon />
               System

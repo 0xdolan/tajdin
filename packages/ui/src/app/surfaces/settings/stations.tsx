@@ -2,8 +2,23 @@ import { toast } from 'sonner';
 import { CopyIcon, PencilIcon, PlayIcon, PlusIcon, RadioTowerIcon, Trash2Icon } from 'lucide-react';
 import { deleteCustomStation } from '@tajdin/core';
 import { Button } from '@tajdin/ui/components/button';
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@tajdin/ui/components/empty';
-import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from '@tajdin/ui/components/item';
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@tajdin/ui/components/empty';
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemGroup,
+  ItemMedia,
+  ItemTitle,
+} from '@tajdin/ui/components/item';
 import { useLibrary } from '../../data';
 import { useDialogs } from '../../dialogs';
 import { usePlayer } from '../../hooks';
@@ -35,7 +50,9 @@ export function StationsSettings() {
               <RadioTowerIcon />
             </EmptyMedia>
             <EmptyTitle>No stations yet</EmptyTitle>
-            <EmptyDescription>Paste a stream URL from your favourite station’s website to add it.</EmptyDescription>
+            <EmptyDescription>
+              Paste a stream URL from your favourite station’s website to add it.
+            </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <Button size="sm" variant="outline" onClick={() => openCustomStation()}>
@@ -54,16 +71,40 @@ export function StationsSettings() {
                 <ItemTitle className="truncate" dir="auto">
                   {s.name}
                 </ItemTitle>
-                <ItemDescription className="truncate font-mono text-xs">{s.streamUrl}</ItemDescription>
+                <ItemDescription className="truncate font-mono text-xs">
+                  {s.streamUrl}
+                </ItemDescription>
               </ItemContent>
               <ItemActions>
-                <Button variant="ghost" size="icon-sm" aria-label={`Play ${s.name}`} onClick={() => void send({ type: 'play', station: s, queue: stations, context: { kind: 'search', label: 'My stations' } })}>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={`Play ${s.name}`}
+                  onClick={() =>
+                    void send({
+                      type: 'play',
+                      station: s,
+                      queue: stations,
+                      context: { kind: 'search', label: 'My stations' },
+                    })
+                  }
+                >
                   <PlayIcon />
                 </Button>
-                <Button variant="ghost" size="icon-sm" aria-label={`Copy URL of ${s.name}`} onClick={() => void copyStreamUrl(s)}>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={`Copy URL of ${s.name}`}
+                  onClick={() => void copyStreamUrl(s)}
+                >
                   <CopyIcon />
                 </Button>
-                <Button variant="ghost" size="icon-sm" aria-label={`Edit ${s.name}`} onClick={() => openCustomStation(s)}>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={`Edit ${s.name}`}
+                  onClick={() => openCustomStation(s)}
+                >
                   <PencilIcon />
                 </Button>
                 <Button
@@ -73,7 +114,9 @@ export function StationsSettings() {
                   onClick={async () => {
                     const before = library;
                     await updateLibrary((l) => deleteCustomStation(l, s.id));
-                    toast(`Deleted “${s.name}”`, { action: { label: 'Undo', onClick: () => void updateLibrary(() => before) } });
+                    toast(`Deleted “${s.name}”`, {
+                      action: { label: 'Undo', onClick: () => void updateLibrary(() => before) },
+                    });
                   }}
                 >
                   <Trash2Icon />

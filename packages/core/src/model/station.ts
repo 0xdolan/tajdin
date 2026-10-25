@@ -1,7 +1,15 @@
 import { z } from 'zod';
 import { toHttpUrl } from '../util/url';
 
-export const SOURCE_IDS = ['curated', 'radio-browser', 'somafm', 'lautfm', 'custom', 'url', 'local'] as const;
+export const SOURCE_IDS = [
+  'curated',
+  'radio-browser',
+  'somafm',
+  'lautfm',
+  'custom',
+  'url',
+  'local',
+] as const;
 export const SourceIdSchema = z.enum(SOURCE_IDS);
 export type SourceId = z.infer<typeof SourceIdSchema>;
 

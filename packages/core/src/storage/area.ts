@@ -19,7 +19,9 @@ export function createMemoryArea(initial: Record<string, unknown> = {}): Storage
   const emit = (changes: StorageChanges) => listeners.forEach((l) => l(changes));
   return {
     async get(keys) {
-      return Object.fromEntries(keys.filter((k) => data.has(k)).map((k) => [k, structuredClone(data.get(k))]));
+      return Object.fromEntries(
+        keys.filter((k) => data.has(k)).map((k) => [k, structuredClone(data.get(k))]),
+      );
     },
     async set(items) {
       const changes: StorageChanges = {};

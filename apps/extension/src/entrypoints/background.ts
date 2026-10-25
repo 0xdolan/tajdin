@@ -1,5 +1,13 @@
 import { browser } from 'wxt/browser';
-import { createRepository, INITIAL_PLAYER_STATE, KEYS, parseSettings, type PlayerCommand, type PlayerHost, type PlayerState } from '@tajdin/core';
+import {
+  createRepository,
+  INITIAL_PLAYER_STATE,
+  KEYS,
+  parseSettings,
+  type PlayerCommand,
+  type PlayerHost,
+  type PlayerState,
+} from '@tajdin/core';
 import { startAudioHost } from '../lib/audio-host';
 import type { BackgroundMessage, HostHello, OffscreenMessage } from '../lib/messages';
 import { QUEUE_KEY } from '../lib/player-client';
@@ -26,7 +34,8 @@ export default defineBackground({
     const session = extensionArea('session');
     const repository = createRepository(local);
     const icon = new ToolbarIcon();
-    const usesOffscreen = import.meta.env.CHROME || !!(browser as { offscreen?: unknown }).offscreen;
+    const usesOffscreen =
+      import.meta.env.CHROME || !!(browser as { offscreen?: unknown }).offscreen;
     let animatedIcon = true;
     let lastQueueKey = '';
     let lastState: PlayerState = INITIAL_PLAYER_STATE;
@@ -50,12 +59,16 @@ export default defineBackground({
       }
       await session.set(items);
       // While something plays, a periodic alarm wakes Chrome's service worker so shortcuts stay instant.
-      if (state.status === 'playing') void browser.alarms.create(KEEPALIVE, { periodInMinutes: 0.5 });
+      if (state.status === 'playing')
+        void browser.alarms.create(KEEPALIVE, { periodInMinutes: 0.5 });
       else void browser.alarms.clear(KEEPALIVE);
     }
 
     async function restoredState(): Promise<HostHello> {
-      const [items, settings] = await Promise.all([session.get([KEYS.player, QUEUE_KEY]), repository.getSettings()]);
+      const [items, settings] = await Promise.all([
+        session.get([KEYS.player, QUEUE_KEY]),
+        repository.getSettings(),
+      ]);
       const saved = items[KEYS.player] as Partial<PlayerState> | undefined;
       return {
         state: saved ? { ...saved, queue: (items[QUEUE_KEY] as PlayerState['queue']) ?? [] } : null,
@@ -82,7 +95,11 @@ export default defineBackground({
       if (!usesOffscreen) {
         if (!firefoxHost) {
           const hello = await restoredState();
-          firefoxHost = startAudioHost({ initial: hello.state, showNowPlaying: hello.showNowPlaying, publish: (s) => void onHostState(s) });
+          firefoxHost = startAudioHost({
+            initial: hello.state,
+            showNowPlaying: hello.showNowPlaying,
+            publish: (s) => void onHostState(s),
+          });
         }
         return;
       }
@@ -107,7 +124,11 @@ export default defineBackground({
     async function dispatch(command: PlayerCommand) {
       await ensureHost();
       if (firefoxHost) return firefoxHost.dispatch(command);
-      await browser.runtime.sendMessage({ target: 'offscreen', type: 'player:command', command } satisfies OffscreenMessage);
+      await browser.runtime.sendMessage({
+        target: 'offscreen',
+        type: 'player:command',
+        command,
+      } satisfies OffscreenMessage);
     }
 
     // ---- Messages, shortcuts, settings ------------------------------------------------------
@@ -117,10 +138,16 @@ export default defineBackground({
       if ('target' in message) return undefined;
       switch (message.type) {
         case 'player:command':
-          dispatch(message.command).then(() => sendResponse({ ok: true }), (e: Error) => sendResponse({ ok: false, error: e.message }));
+          dispatch(message.command).then(
+            () => sendResponse({ ok: true }),
+            (e: Error) => sendResponse({ ok: false, error: e.message }),
+          );
           return true;
         case 'player:ensure-host':
-          ensureHost().then(() => sendResponse({ ok: true }), (e: Error) => sendResponse({ ok: false, error: e.message }));
+          ensureHost().then(
+            () => sendResponse({ ok: true }),
+            (e: Error) => sendResponse({ ok: false, error: e.message }),
+          );
           return true;
         case 'host:hello':
           void restoredState().then((hello) => {
@@ -152,7 +179,8 @@ export default defineBackground({
       icon.update(lastState, animatedIcon);
       if (next.showNowPlaying !== before.showNowPlaying) {
         void (async () => {
-          if (firefoxHost || (usesOffscreen && (await offscreenExists()))) await dispatch({ type: 'setNowPlaying', enabled: next.showNowPlaying });
+          if (firefoxHost || (usesOffscreen && (await offscreenExists())))
+            await dispatch({ type: 'setNowPlaying', enabled: next.showNowPlaying });
         })();
       }
     });
@@ -163,7 +191,11 @@ export default defineBackground({
       const saved = items[KEYS.player] as Partial<PlayerState> | undefined;
       if (!saved) return;
       const alive = !usesOffscreen || (await offscreenExists());
-      lastState = { ...INITIAL_PLAYER_STATE, ...saved, ...(alive ? {} : { status: saved.station ? 'paused' : 'idle' }) };
+      lastState = {
+        ...INITIAL_PLAYER_STATE,
+        ...saved,
+        ...(alive ? {} : { status: saved.station ? 'paused' : 'idle' }),
+      };
       if (!alive) await session.set({ [KEYS.player]: { ...saved, status: lastState.status } });
       icon.update(lastState, animatedIcon);
     });

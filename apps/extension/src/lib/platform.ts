@@ -10,10 +10,14 @@ const isChrome = import.meta.env.CHROME;
 async function openPage(path: string, hash = '') {
   const url = browser.runtime.getURL(path as '/options.html');
   if (isChrome && chrome.runtime.getContexts) {
-    const [existing] = await chrome.runtime.getContexts({ contextTypes: ['TAB' as chrome.runtime.ContextType], documentUrls: [url, `${url}#*`] });
+    const [existing] = await chrome.runtime.getContexts({
+      contextTypes: ['TAB' as chrome.runtime.ContextType],
+      documentUrls: [url, `${url}#*`],
+    });
     if (existing?.tabId !== undefined && existing.tabId >= 0) {
       await browser.tabs.update(existing.tabId, { active: true, url: `${url}${hash}` });
-      if (existing.windowId !== undefined) await browser.windows.update(existing.windowId, { focused: true });
+      if (existing.windowId !== undefined)
+        await browser.windows.update(existing.windowId, { focused: true });
       return;
     }
   }
@@ -40,14 +44,25 @@ export function createExtensionPlatform(surface: Surface): Platform {
       if (surface === 'popup') window.close();
     },
     openShortcutEditor: () => {
-      const commands = browser.commands as typeof browser.commands & { openShortcutSettings?: () => Promise<void> };
+      const commands = browser.commands as typeof browser.commands & {
+        openShortcutSettings?: () => Promise<void>;
+      };
       if (commands.openShortcutSettings) void commands.openShortcutSettings();
-      else void browser.tabs.create({ url: isChrome ? 'chrome://extensions/shortcuts' : 'about:addons' });
+      else
+        void browser.tabs.create({
+          url: isChrome ? 'chrome://extensions/shortcuts' : 'about:addons',
+        });
     },
     getShortcuts: async () =>
       (await browser.commands.getAll())
         .filter((c) => c.name && !c.name.startsWith('_'))
-        .map((c) => ({ name: c.name!, description: c.description ?? c.name!, shortcut: c.shortcut ?? '' })),
-    storeLinks: STORE_LINKS.filter((l) => l.browser === (isChrome ? 'chrome' : 'firefox')).map(({ label, href }) => ({ label, href })),
+        .map((c) => ({
+          name: c.name!,
+          description: c.description ?? c.name!,
+          shortcut: c.shortcut ?? '',
+        })),
+    storeLinks: STORE_LINKS.filter((l) => l.browser === (isChrome ? 'chrome' : 'firefox')).map(
+      ({ label, href }) => ({ label, href }),
+    ),
   };
 }

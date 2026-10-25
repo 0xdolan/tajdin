@@ -2,7 +2,8 @@ import { createContext, useContext, type ReactNode } from 'react';
 import type { Catalog, PlayerClient, Repository, StorageArea } from '@tajdin/core';
 
 export type Surface = 'popup' | 'settings' | 'desktop';
-export type SettingsTab = 'general' | 'playback' | 'stations' | 'playlists' | 'groups' | 'backup' | 'shortcuts' | 'about';
+export type SettingsTab =
+  'general' | 'playback' | 'stations' | 'playlists' | 'groups' | 'backup' | 'shortcuts' | 'about';
 
 export interface ShortcutInfo {
   name: string;
@@ -49,13 +50,27 @@ export const LINKS = {
 
 /** Store listings. The Chrome link points at the listing once its ID is set (see docs/releasing.md). */
 export const STORE_LINKS = [
-  { browser: 'chrome', label: 'Chrome Web Store', href: 'https://chromewebstore.google.com/search/Tajd%C3%AEn' },
-  { browser: 'firefox', label: 'Firefox Add-ons', href: 'https://addons.mozilla.org/firefox/addon/tajdin/' },
+  {
+    browser: 'chrome',
+    label: 'Chrome Web Store',
+    href: 'https://chromewebstore.google.com/search/Tajd%C3%AEn',
+  },
+  {
+    browser: 'firefox',
+    label: 'Firefox Add-ons',
+    href: 'https://addons.mozilla.org/firefox/addon/tajdin/',
+  },
 ] as const;
 
 const PlatformContext = createContext<Platform | null>(null);
 
-export function PlatformProvider({ platform, children }: { platform: Platform; children: ReactNode }) {
+export function PlatformProvider({
+  platform,
+  children,
+}: {
+  platform: Platform;
+  children: ReactNode;
+}) {
   return <PlatformContext.Provider value={platform}>{children}</PlatformContext.Provider>;
 }
 

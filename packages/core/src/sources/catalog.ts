@@ -71,20 +71,28 @@ export function createCatalog(options: CatalogOptions = {}) {
       const results = await Promise.allSettled(
         active.map((s) => {
           // When Kurdish is chosen the curated list is the point, so it gets more room.
-          const n = s.id === 'curated' && (language === 'ku' || !language) ? Math.max(per, 12) : per;
+          const n =
+            s.id === 'curated' && (language === 'ku' || !language) ? Math.max(per, 12) : per;
           return s.random({ count: n, language, hideBroken, httpsOnly }, signal);
         }),
       );
       const lists = results.map((r) => (r.status === 'fulfilled' ? r.value : []));
       if (results.every((r) => r.status === 'rejected')) {
-        throw (results[0] as PromiseRejectedResult | undefined)?.reason ?? new Error('No sources available');
+        throw (
+          (results[0] as PromiseRejectedResult | undefined)?.reason ??
+          new Error('No sources available')
+        );
       }
       return dedupe(interleave(lists)).slice(0, count);
     },
 
     search(opts: SearchOptions): SearchSession {
       const pageSize = opts.pageSize ?? 30;
-      const state = usable(opts.sources, opts.language).map((source) => ({ source, offset: 0, done: false }));
+      const state = usable(opts.sources, opts.language).map((source) => ({
+        source,
+        offset: 0,
+        done: false,
+      }));
       const seen = new Set<string>();
       const errors = new Map<DirectorySourceId, Error>();
       return {
@@ -154,7 +162,10 @@ export function createCatalog(options: CatalogOptions = {}) {
     },
 
     /** Stations of a language group: the pinned ones first, then directory results. */
-    groupSearch(group: Extract<Group, { kind: 'language' }>, opts: Omit<SearchOptions, 'language'>) {
+    groupSearch(
+      group: Extract<Group, { kind: 'language' }>,
+      opts: Omit<SearchOptions, 'language'>,
+    ) {
       return this.search({ ...opts, language: group.language });
     },
 

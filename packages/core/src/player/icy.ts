@@ -20,15 +20,23 @@ export function parseIcyBlock(block: string): NowPlaying | null {
  * Polling like this costs a few KB per check instead of a second full audio stream.
  * Returns `undefined` when the stream doesn't send metadata or the browser blocks the request (CORS).
  */
-export async function readIcyOnce(url: string, signal?: AbortSignal): Promise<NowPlaying | null | undefined> {
+export async function readIcyOnce(
+  url: string,
+  signal?: AbortSignal,
+): Promise<NowPlaying | null | undefined> {
   const controller = new AbortController();
   const abort = () => controller.abort();
   signal?.addEventListener('abort', abort, { once: true });
   const timeout = setTimeout(abort, 10_000);
   try {
-    const res = await fetch(url, { headers: { 'Icy-MetaData': '1' }, signal: controller.signal, cache: 'no-store' });
+    const res = await fetch(url, {
+      headers: { 'Icy-MetaData': '1' },
+      signal: controller.signal,
+      cache: 'no-store',
+    });
     const metaint = Number(res.headers.get('icy-metaint'));
-    if (!res.ok || !res.body || !Number.isFinite(metaint) || metaint <= 0 || metaint > 1_000_000) return undefined;
+    if (!res.ok || !res.body || !Number.isFinite(metaint) || metaint <= 0 || metaint > 1_000_000)
+      return undefined;
     const reader = res.body.getReader();
     let skip = metaint;
     let pending = new Uint8Array(0);

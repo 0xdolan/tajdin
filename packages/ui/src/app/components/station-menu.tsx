@@ -12,7 +12,14 @@ import {
   ShapesIcon,
   Trash2Icon,
 } from 'lucide-react';
-import { addToCollection, deleteCustomStation, isLocalStation, removeFromCollection, type AnyStation, type Station } from '@tajdin/core';
+import {
+  addToCollection,
+  deleteCustomStation,
+  isLocalStation,
+  removeFromCollection,
+  type AnyStation,
+  type Station,
+} from '@tajdin/core';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,8 +55,15 @@ export function StationMenu({ station, trigger }: { station: AnyStation; trigger
   if (isLocalStation(station)) return null;
   const s = station as Station;
 
-  const toggleIn = async (kind: 'playlist' | 'group', id: string, name: string, included: boolean) => {
-    await updateLibrary((l) => (included ? removeFromCollection(l, kind, id, s.id) : addToCollection(l, kind, id, [s])));
+  const toggleIn = async (
+    kind: 'playlist' | 'group',
+    id: string,
+    name: string,
+    included: boolean,
+  ) => {
+    await updateLibrary((l) =>
+      included ? removeFromCollection(l, kind, id, s.id) : addToCollection(l, kind, id, [s]),
+    );
     toast.success(included ? `Removed from “${name}”` : `Added to “${name}”`);
   };
 
@@ -74,7 +88,10 @@ export function StationMenu({ station, trigger }: { station: AnyStation; trigger
                 {library.playlists.map((p) => {
                   const included = p.stationIds.includes(s.id);
                   return (
-                    <DropdownMenuItem key={p.id} onClick={() => void toggleIn('playlist', p.id, p.name, included)}>
+                    <DropdownMenuItem
+                      key={p.id}
+                      onClick={() => void toggleIn('playlist', p.id, p.name, included)}
+                    >
                       {included ? <CheckIcon /> : <span className="size-4" />}
                       <span className="truncate" dir="auto">
                         {p.name}
@@ -83,7 +100,11 @@ export function StationMenu({ station, trigger }: { station: AnyStation; trigger
                   );
                 })}
                 {library.playlists.length > 0 && <DropdownMenuSeparator />}
-                <DropdownMenuItem onClick={() => openCollection({ mode: 'create', kind: 'playlist', addStation: s })}>
+                <DropdownMenuItem
+                  onClick={() =>
+                    openCollection({ mode: 'create', kind: 'playlist', addStation: s })
+                  }
+                >
                   <PlusIcon />
                   New playlist…
                 </DropdownMenuItem>
@@ -100,7 +121,10 @@ export function StationMenu({ station, trigger }: { station: AnyStation; trigger
                 {library.groups.map((g) => {
                   const included = g.stationIds.includes(s.id);
                   return (
-                    <DropdownMenuItem key={g.id} onClick={() => void toggleIn('group', g.id, g.name, included)}>
+                    <DropdownMenuItem
+                      key={g.id}
+                      onClick={() => void toggleIn('group', g.id, g.name, included)}
+                    >
                       {included ? <CheckIcon /> : <span className="size-4" />}
                       <span className="truncate" dir="auto">
                         {g.name}
@@ -109,7 +133,9 @@ export function StationMenu({ station, trigger }: { station: AnyStation; trigger
                   );
                 })}
                 {library.groups.length > 0 && <DropdownMenuSeparator />}
-                <DropdownMenuItem onClick={() => openCollection({ mode: 'create', kind: 'group', addStation: s })}>
+                <DropdownMenuItem
+                  onClick={() => openCollection({ mode: 'create', kind: 'group', addStation: s })}
+                >
                   <FolderPlusIcon />
                   New group…
                 </DropdownMenuItem>
@@ -124,13 +150,17 @@ export function StationMenu({ station, trigger }: { station: AnyStation; trigger
             Copy stream URL
           </DropdownMenuItem>
           {s.homepage && (
-            <DropdownMenuItem onClick={() => window.open(s.homepage, '_blank', 'noopener,noreferrer')}>
+            <DropdownMenuItem
+              onClick={() => window.open(s.homepage, '_blank', 'noopener,noreferrer')}
+            >
               <ExternalLinkIcon />
               Open website
             </DropdownMenuItem>
           )}
           {s.source === 'url' && (
-            <DropdownMenuItem onClick={() => openCustomStation({ name: s.name, streamUrl: s.streamUrl })}>
+            <DropdownMenuItem
+              onClick={() => openCustomStation({ name: s.name, streamUrl: s.streamUrl })}
+            >
               <SaveIcon />
               Save to my stations
             </DropdownMenuItem>

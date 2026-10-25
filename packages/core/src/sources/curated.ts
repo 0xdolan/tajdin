@@ -35,7 +35,8 @@ export function createCuratedSource(): StationSource {
   return {
     id: 'curated',
     label: 'Tajdîn Kurdish list',
-    homepage: 'https://github.com/0xdolan/tajdin/blob/main/packages/core/src/data/kurdish-stations.json',
+    homepage:
+      'https://github.com/0xdolan/tajdin/blob/main/packages/core/src/data/kurdish-stations.json',
     hasLanguages: true,
 
     async search(query) {
@@ -50,7 +51,9 @@ export function createCuratedSource(): StationSource {
 
     async random(query) {
       if (!inLanguage(query.language)) return [];
-      const pool = query.httpsOnly ? CURATED_STATIONS.filter((s) => s.streamUrl.startsWith('https://')) : CURATED_STATIONS;
+      const pool = query.httpsOnly
+        ? CURATED_STATIONS.filter((s) => s.streamUrl.startsWith('https://'))
+        : CURATED_STATIONS;
       return sample(pool, query.count);
     },
 

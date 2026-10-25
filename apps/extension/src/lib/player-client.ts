@@ -1,5 +1,12 @@
 import { browser } from 'wxt/browser';
-import { INITIAL_PLAYER_STATE, KEYS, stationFromFile, uuid, type PlayerClient, type PlayerState } from '@tajdin/core';
+import {
+  INITIAL_PLAYER_STATE,
+  KEYS,
+  stationFromFile,
+  uuid,
+  type PlayerClient,
+  type PlayerState,
+} from '@tajdin/core';
 import { FILE_CHANNEL, type BackgroundMessage, type FileChannelMessage } from './messages';
 import { extensionArea } from './storage';
 
@@ -39,7 +46,10 @@ export function createExtensionPlayerClient(): PlayerClient {
   });
 
   const send: PlayerClient['send'] = async (command) => {
-    await browser.runtime.sendMessage({ type: 'player:command', command } satisfies BackgroundMessage);
+    await browser.runtime.sendMessage({
+      type: 'player:command',
+      command,
+    } satisfies BackgroundMessage);
   };
 
   return {
@@ -56,7 +66,10 @@ export function createExtensionPlayerClient(): PlayerClient {
       const channel = new BroadcastChannel(FILE_CHANNEL);
       try {
         await new Promise<void>((resolve, reject) => {
-          const timeout = setTimeout(() => reject(new Error('The player didn’t receive the file')), 5000);
+          const timeout = setTimeout(
+            () => reject(new Error('The player didn’t receive the file')),
+            5000,
+          );
           channel.onmessage = (event: MessageEvent<FileChannelMessage>) => {
             if (event.data?.type === 'file-ack' && event.data.id === id) {
               clearTimeout(timeout);

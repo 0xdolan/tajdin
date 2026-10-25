@@ -2,5 +2,7 @@
   "name": "@tajdin/tsconfig",
   "version": "0.2.1",
   "private": true,
-  "files": ["*.json"]
+  "files": [
+    "*.json"
+  ]
 }
