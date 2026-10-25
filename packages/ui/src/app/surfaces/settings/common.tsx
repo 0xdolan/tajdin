@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { cn } from '@tajdin/ui/lib/utils';
 import {
   Card,
   CardContent,
@@ -21,8 +22,8 @@ export function Section({
 }) {
   return (
     <Card>
-      <CardHeader className="flex flex-row items-start justify-between gap-4">
-        <div className="flex flex-col gap-1.5">
+      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+        <div className="flex min-w-0 flex-col gap-1.5">
           <CardTitle>{title}</CardTitle>
           {description && <CardDescription>{description}</CardDescription>}
         </div>
@@ -33,25 +34,39 @@ export function Section({
   );
 }
 
-/** A label + description on the left, the control on the right. */
+/**
+ * A label + description with its control. On wide screens the control sits on the right; on
+ * phones it drops below the text and takes the full width. `inline` keeps small controls
+ * (switches) beside the text at every size.
+ */
 export function SettingRow({
   id,
   label,
   description,
   children,
+  inline = false,
 }: {
   id?: string;
   label: string;
   description?: ReactNode;
   children: ReactNode;
+  inline?: boolean;
 }) {
   return (
-    <Field orientation="horizontal" className="items-center justify-between gap-6">
-      <FieldContent>
+    <Field
+      orientation="vertical"
+      className={cn(
+        'gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:*:w-auto',
+        inline && 'flex-row items-center justify-between gap-4 *:w-auto',
+      )}
+    >
+      <FieldContent className="min-w-0">
         <FieldLabel htmlFor={id}>{label}</FieldLabel>
         {description && <FieldDescription>{description}</FieldDescription>}
       </FieldContent>
-      <div className="shrink-0">{children}</div>
+      <div className={cn('min-w-0', inline ? 'shrink-0' : 'w-full sm:w-auto sm:shrink-0')}>
+        {children}
+      </div>
     </Field>
   );
 }

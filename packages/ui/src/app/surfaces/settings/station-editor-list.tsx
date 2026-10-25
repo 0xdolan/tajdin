@@ -67,7 +67,9 @@ function StationItem({
           <GripVerticalIcon className="size-4" />
         </button>
       )}
-      <span className="text-muted-foreground w-6 text-right text-xs tabular-nums">{index + 1}</span>
+      <span className="text-muted-foreground hidden w-6 text-right text-xs tabular-nums sm:inline">
+        {index + 1}
+      </span>
       <StationArt station={station} className="size-8" />
       <div className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-sm font-medium" dir="auto">

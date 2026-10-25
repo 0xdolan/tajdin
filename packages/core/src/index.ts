@@ -21,6 +21,7 @@ export * from './backup/backup';
 export * from './player/types';
 export * from './player/service';
 export * from './player/host';
+export { supportsVolumeControl } from './player/html-audio';
 export { parseIcyBlock, parseStreamTitle, readIcyOnce } from './player/icy';
 
 export * from './util/text';

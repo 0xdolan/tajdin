@@ -25,6 +25,7 @@ export function PlaybackSettings() {
     <div className="flex flex-col gap-6">
       <Section title="Playing stations">
         <SettingRow
+          inline
           id="play-on-select"
           label="Play when selected"
           description="Off: choosing a station only loads it into the player."
@@ -36,6 +37,7 @@ export function PlaybackSettings() {
           />
         </SettingRow>
         <SettingRow
+          inline
           id="autoplay-desktop"
           label="Start playing when the desktop view opens"
           description="Browsers may still ask for one click before sound is allowed."
@@ -62,7 +64,7 @@ export function PlaybackSettings() {
               })
             }
           >
-            <SelectTrigger id="bitrate" className="w-48">
+            <SelectTrigger id="bitrate" className="w-full sm:w-48">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -83,6 +85,7 @@ export function PlaybackSettings() {
         description="Many stations send the artist and title of what’s on air."
       >
         <SettingRow
+          inline
           id="now-playing"
           label="Show what’s playing"
           description={
@@ -115,6 +118,7 @@ export function PlaybackSettings() {
       {kind === 'extension' && (
         <Section title="Toolbar icon">
           <SettingRow
+            inline
             id="animated-icon"
             label="Animate while playing"
             description="The Roj icon pulses green while a station plays, so you can tell at a glance."

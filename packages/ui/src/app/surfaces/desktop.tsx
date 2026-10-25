@@ -423,10 +423,10 @@ export function DesktopApp() {
                   className="absolute inset-0 size-full scale-125 object-cover opacity-20 blur-3xl"
                 />
               )}
-              <div className="relative flex items-center gap-5 px-6 py-6">
+              <div className="relative flex items-center gap-4 px-4 py-4 sm:gap-5 sm:px-6 sm:py-6">
                 <StationArt
                   station={player.station}
-                  className="size-24 rounded-2xl text-2xl shadow-xl"
+                  className="size-16 rounded-xl text-xl shadow-xl sm:size-24 sm:rounded-2xl sm:text-2xl"
                 />
                 <div className="flex min-w-0 flex-col gap-1">
                   <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
@@ -439,7 +439,7 @@ export function DesktopApp() {
                       player.context.kind !== 'single' &&
                       ` · ${player.context.label}`}
                   </span>
-                  <h2 className="truncate text-3xl font-bold tracking-tight" dir="auto">
+                  <h2 className="truncate text-2xl font-bold tracking-tight sm:text-3xl" dir="auto">
                     {player.station.name}
                   </h2>
                   <NowPlayingLine className="text-sm" />
@@ -447,7 +447,7 @@ export function DesktopApp() {
               </div>
             </section>
           )}
-          <div className="flex flex-col gap-4 p-6">
+          <div className="flex flex-col gap-4 p-4 sm:p-6">
             <div className="flex items-center gap-2">
               <h2 className="hidden text-xl font-semibold tracking-tight md:block" dir="auto">
                 {title}
@@ -489,7 +489,7 @@ export function DesktopApp() {
         </main>
       </div>
 
-      <footer className="bg-card/80 border-t backdrop-blur">
+      <footer className="bg-card/80 border-t pb-[env(safe-area-inset-bottom)] backdrop-blur">
         <div className="px-4 py-2 md:px-6 md:py-3">
           <Player variant="full" className="hidden md:grid" />
           <Player className="md:hidden" />

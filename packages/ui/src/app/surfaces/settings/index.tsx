@@ -12,10 +12,12 @@ import {
   ShapesIcon,
 } from 'lucide-react';
 import { Button } from '@tajdin/ui/components/button';
+import { cn } from '@tajdin/ui/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@tajdin/ui/components/tabs';
 import { RojMark } from '../../components/brand';
 import { Footer } from '../../components/footer';
 import { NowPlayingLine, Player } from '../../components/player';
+import { useMediaQuery } from '../../hooks';
 import { usePlatform, type SettingsTab } from '../../platform';
 import { ThemeMenu } from '../../shell';
 import { AboutSettings } from './about';
@@ -56,6 +58,8 @@ function tabFromHash(prefix: string): SettingsTab {
 /** Settings and Options in one page: preferences on top, library management below. */
 export function SettingsApp({ hashPrefix = '' }: { hashPrefix?: string }) {
   const { openDesktop, kind } = usePlatform();
+  // A sidebar on wide screens; a scrollable row of tabs on phones.
+  const wide = useMediaQuery('(min-width: 768px)');
   const [tab, setTab] = useState<SettingsTab>(() => tabFromHash(hashPrefix));
 
   useEffect(() => {
@@ -72,15 +76,17 @@ export function SettingsApp({ hashPrefix = '' }: { hashPrefix?: string }) {
   return (
     <div className="flex min-h-svh flex-col">
       <header className="bg-background/85 sticky top-0 z-20 border-b backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4">
-          <RojMark className="h-5 w-auto" />
+        <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4 sm:gap-3">
+          <RojMark className="h-5 w-auto shrink-0" />
           <span className="font-semibold tracking-tight">Tajdîn</span>
-          <span className="text-muted-foreground">/ {TABS.find((t) => t.id === tab)?.group}</span>
-          <div className="ml-auto flex items-center gap-1">
+          <span className="text-muted-foreground truncate">
+            / {TABS.find((t) => t.id === tab)?.group}
+          </span>
+          <div className="ml-auto flex shrink-0 items-center gap-1">
             {openDesktop && (
-              <Button variant="ghost" size="sm" onClick={openDesktop}>
+              <Button variant="ghost" size="sm" onClick={openDesktop} aria-label="Desktop view">
                 <MonitorIcon data-icon="inline-start" />
-                Desktop view
+                <span className="hidden sm:inline">Desktop view</span>
               </Button>
             )}
             <ThemeMenu />
@@ -89,22 +95,31 @@ export function SettingsApp({ hashPrefix = '' }: { hashPrefix?: string }) {
       </header>
 
       <Tabs
-        orientation="vertical"
+        orientation={wide ? 'vertical' : 'horizontal'}
         value={tab}
         onValueChange={(v) => select(v as SettingsTab)}
-        className="mx-auto w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-6 md:flex-row"
+        className="mx-auto w-full max-w-6xl flex-1 flex-col gap-4 px-4 py-4 md:flex-row md:gap-6 md:py-6"
       >
         <TabsList
           variant="line"
-          className="w-full shrink-0 flex-row flex-wrap items-stretch md:sticky md:top-20 md:w-52 md:flex-col md:self-start"
+          className={
+            wide
+              ? 'sticky top-20 w-52 shrink-0 flex-col items-stretch self-start'
+              : 'bg-background/95 sticky top-14 z-10 -mx-4 w-[calc(100%+2rem)] max-w-none shrink-0 [scrollbar-width:none] justify-start overflow-x-auto px-4'
+          }
         >
           {(['Settings', 'Options'] as const).map((group) => (
-            <div key={group} className="contents md:flex md:flex-col md:gap-0.5">
-              <span className="text-muted-foreground hidden px-2 pt-3 pb-1 text-xs font-medium md:block">
+            <div key={group} className={wide ? 'flex flex-col gap-0.5' : 'contents'}>
+              <span
+                className={cn(
+                  'text-muted-foreground px-2 pt-3 pb-1 text-xs font-medium',
+                  !wide && 'hidden',
+                )}
+              >
                 {group}
               </span>
               {TABS.filter((t) => t.group === group).map(({ id, label, icon: Icon }) => (
-                <TabsTrigger key={id} value={id} className="justify-start gap-2">
+                <TabsTrigger key={id} value={id} className="shrink-0 justify-start gap-2">
                   <Icon />
                   {label}
                 </TabsTrigger>
@@ -112,7 +127,7 @@ export function SettingsApp({ hashPrefix = '' }: { hashPrefix?: string }) {
             </div>
           ))}
         </TabsList>
-        <div className="min-w-0 flex-1 pb-36">
+        <div className="min-w-0 flex-1 pb-40">
           <TabsContent value="general">
             <GeneralSettings />
           </TabsContent>
@@ -143,10 +158,10 @@ export function SettingsApp({ hashPrefix = '' }: { hashPrefix?: string }) {
         </div>
       </Tabs>
 
-      <div className="bg-card/90 fixed inset-x-0 bottom-0 z-20 border-t backdrop-blur">
-        <div className="mx-auto flex max-w-6xl flex-col gap-1.5 px-6 py-3">
+      <div className="bg-card/90 fixed inset-x-0 bottom-0 z-20 border-t pb-[env(safe-area-inset-bottom)] backdrop-blur">
+        <div className="mx-auto flex max-w-6xl flex-col gap-1.5 px-4 py-2 md:px-6 md:py-3">
           <NowPlayingLine />
-          <Player variant="full" />
+          {wide ? <Player variant="full" /> : <Player />}
         </div>
         {kind === 'extension' && <Footer className="border-t py-1.5" />}
       </div>

@@ -19,6 +19,7 @@ import {
   isLocalStation,
   RATES,
   supportsSpeed,
+  supportsVolumeControl,
   toggleFavourite,
   type PlayerState,
   type Station,
@@ -145,6 +146,20 @@ function VolumeControl({ inline }: { inline?: boolean }) {
     });
   };
   const percent = Math.round(level * 100);
+
+  // iPhone/iPad: the page can't change volume (only the device buttons can), so offer mute only.
+  if (!supportsVolumeControl()) {
+    return (
+      <IconButton
+        label={state.muted ? 'Unmute (M)' : 'Mute (M) · use your device buttons for volume'}
+        pressed={state.muted}
+        onClick={() => void send({ type: 'toggleMute' })}
+      >
+        <Icon />
+      </IconButton>
+    );
+  }
+
   const setFromSlider = (v: number | readonly number[]) =>
     void send({ type: 'setVolume', volume: (Array.isArray(v) ? v[0]! : (v as number)) / 100 });
 

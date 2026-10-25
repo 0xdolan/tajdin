@@ -27,6 +27,25 @@ type HlsInstance = {
   on(event: string, cb: (e: unknown, data: { fatal?: boolean }) => void): void;
 };
 
+let volumeSupport: boolean | undefined;
+
+/**
+ * Whether the page can change playback volume. iOS Safari keeps `volume` at 1 (the hardware
+ * buttons control it), so there the UI offers mute only.
+ */
+export function supportsVolumeControl(): boolean {
+  if (volumeSupport !== undefined) return volumeSupport;
+  if (typeof Audio === 'undefined') return (volumeSupport = true);
+  try {
+    const probe = new Audio();
+    probe.volume = 0.5;
+    volumeSupport = Math.abs(probe.volume - 0.5) < 0.01;
+  } catch {
+    volumeSupport = true;
+  }
+  return volumeSupport;
+}
+
 /** {@link AudioBackend} on an HTMLAudioElement, with hls.js loaded on demand for .m3u8 streams. */
 export class HtmlAudioBackend implements AudioBackend {
   readonly audio: HTMLAudioElement;
@@ -99,8 +118,13 @@ export class HtmlAudioBackend implements AudioBackend {
     this.station = null;
   }
 
+  /**
+   * Volume 0 uses the element's real mute switch: iOS Safari ignores `volume` (the device buttons
+   * control it) but does honour `muted`, so mute works everywhere.
+   */
   setVolume(volume: number) {
-    this.audio.volume = volume;
+    this.audio.muted = volume === 0;
+    if (volume > 0) this.audio.volume = volume;
   }
 
   setRate(rate: number) {

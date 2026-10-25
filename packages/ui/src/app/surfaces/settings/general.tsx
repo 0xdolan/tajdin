@@ -142,7 +142,7 @@ export function GeneralSettings() {
             value={encodeStartView(settings.startView)}
             onValueChange={(v) => void update({ startView: decodeStartView(String(v)) })}
           >
-            <SelectTrigger id="start-view" className="w-72">
+            <SelectTrigger id="start-view" className="w-full sm:w-72">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -194,7 +194,7 @@ export function GeneralSettings() {
             value={settings.defaultLanguage}
             onValueChange={(v) => void update({ defaultLanguage: String(v ?? '') })}
           >
-            <SelectTrigger id="default-language" className="w-72">
+            <SelectTrigger id="default-language" className="w-full sm:w-72">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -249,6 +249,7 @@ export function GeneralSettings() {
           </ToggleGroup>
         </SettingRow>
         <SettingRow
+          inline
           id="hide-broken"
           label="Hide offline stations"
           description="Skip stations that failed the directory’s last health check."

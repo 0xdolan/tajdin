@@ -59,15 +59,15 @@ Turn the pulse off in **Settings → Playback → Animate while playing**.
 
 Click a station to play it. Music continues when the popup closes.
 
-| Control             | What it does                                                                                     |
-| ------------------- | ------------------------------------------------------------------------------------------------ |
-| ⏯ Play / pause      | Resuming a live station jumps back to the live broadcast.                                        |
-| ⏮ ⏭ Previous / next | Moves through the list the station was played from.                                              |
-| 🔀 Random           | A random station from the same list.                                                             |
-| 🔁 Repeat           | **Off** → **Whole list** (wraps at the end) → **This station** (reconnects if the stream drops). |
-| ⏱ Speed             | 0.5×–2× for local files. Live radio always plays in real time.                                   |
-| 🔊 Volume           | Click to mute; use the slider or scroll the mouse wheel over it.                                 |
-| ♥ and ⋮             | Favourite the station; add it to a playlist or group; copy its stream link.                      |
+| Control             | What it does                                                                                                                                                                              |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ⏯ Play / pause      | Resuming a live station jumps back to the live broadcast.                                                                                                                                 |
+| ⏮ ⏭ Previous / next | Moves through the list the station was played from.                                                                                                                                       |
+| 🔀 Random           | A random station from the same list.                                                                                                                                                      |
+| 🔁 Repeat           | **Off** → **Whole list** (wraps at the end) → **This station** (reconnects if the stream drops).                                                                                          |
+| ⏱ Speed             | 0.5×–2× for local files. Live radio always plays in real time.                                                                                                                            |
+| 🔊 Volume           | Click to mute; use the slider or scroll the mouse wheel over it. On iPhone and iPad, the button mutes and the device's volume buttons set the level (Safari doesn't let pages change it). |
+| ♥ and ⋮             | Favourite the station; add it to a playlist or group; copy its stream link.                                                                                                               |
 
 **Song information.** Many stations send the artist and title of what's on air. Turn it on in
 **Settings → Playback → Show what's playing** and choose whether the "On air" line sits above or

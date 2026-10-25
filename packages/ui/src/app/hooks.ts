@@ -84,3 +84,16 @@ export function useDebounced<T>(value: T, ms = 300): T {
   }, [value, ms]);
   return debounced;
 }
+
+/** True while a CSS media query matches (e.g. `(min-width: 768px)`), kept in sync as it changes. */
+export function useMediaQuery(query: string): boolean {
+  return useSyncExternalStore(
+    (cb) => {
+      const mq = window.matchMedia(query);
+      mq.addEventListener('change', cb);
+      return () => mq.removeEventListener('change', cb);
+    },
+    () => window.matchMedia(query).matches,
+    () => false,
+  );
+}
