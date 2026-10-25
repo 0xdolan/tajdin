@@ -21,7 +21,17 @@ Kurdish stations and 50,000+ more from around the world, in your browser toolbar
 
 </div>
 
-## Why the name Tajdîn?
+## Why Tajdîn?
+
+Radio keeps people close to home. For Kurdish listeners spread across many countries, it's often
+the easiest way to hear their own language, but Kurdish stations are hard to find in big global
+directories. Tajdîn puts a **hand-picked Kurdish list** next to the world's open radio directories,
+in a player that keeps going while you browse. Its logo is the _Roj_, the sun from Kurdish _deq_
+tattoos, a sign of life and light, here broadcasting.
+
+No accounts. No tracking. No servers of our own. Everything you save stays in your browser.
+
+## The name: Tajdîn, from _Mem û Zîn_
 
 <img src="assets/images/mem-u-zin.webp" width="180" align="right" alt="Cover art of Mem û Zîn: the lovers Mem and Zîn in Kurdish dress beneath the trees" />
 
@@ -34,15 +44,8 @@ Kurdish literature.
 comes to light, it is Tajdîn who avenges him. A loyal companion who never leaves your side: that's
 what this radio wants to be. Hence the motto, _always by your side_.
 
-📖 Read the epic: [_Mem û Zîn_ (Kurdish edition)](https://www.amazon.com/Mem-%C3%BC-Zin-kurdiya-Dost/dp/9944382515)
-
-Radio keeps people close to home. For Kurdish listeners spread across many countries, it's often
-the easiest way to hear their own language, but Kurdish stations are hard to find in big global
-directories. Tajdîn puts a **hand-picked Kurdish list** next to the world's open radio directories,
-in a player that keeps going while you browse. Its logo is the _Roj_, the sun from Kurdish _deq_
-tattoos, a sign of life and light, here broadcasting.
-
-No accounts. No tracking. No servers of our own. Everything you save stays in your browser.
+📖 Read the epic: [_Mem û Zîn_ (Kurdish edition)](https://www.amazon.com/Mem-%C3%BC-Zin-kurdiya-Dost/dp/9944382515) ·
+[Mem û Zîn on Wikipedia](https://en.wikipedia.org/wiki/Mem_and_Zin)
 
 <br clear="right" />
 

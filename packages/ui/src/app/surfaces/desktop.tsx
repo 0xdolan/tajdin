@@ -490,11 +490,11 @@ export function DesktopApp() {
       </div>
 
       <footer className="bg-card/80 border-t backdrop-blur">
-        <div className="flex flex-col gap-1 px-4 pt-3 pb-1">
+        <div className="px-4 py-2 md:px-6 md:py-3">
           <Player variant="full" className="hidden md:grid" />
           <Player className="md:hidden" />
-          <Footer className="py-1" />
         </div>
+        <Footer className="border-t py-1.5" />
       </footer>
 
       {needsTap && player.station && player.status !== 'playing' && player.status !== 'loading' && (

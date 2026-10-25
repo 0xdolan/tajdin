@@ -9,19 +9,23 @@ const isChrome = import.meta.env.CHROME;
 /** Focuses an already-open extension page instead of opening a second copy (Chrome 116+). */
 async function openPage(path: string, hash = '') {
   const url = browser.runtime.getURL(path as '/options.html');
+  const target = `${url}${hash}`;
   if (isChrome && chrome.runtime.getContexts) {
-    const [existing] = await chrome.runtime.getContexts({
-      contextTypes: ['TAB' as chrome.runtime.ContextType],
-      documentUrls: [url, `${url}#*`],
-    });
-    if (existing?.tabId !== undefined && existing.tabId >= 0) {
-      await browser.tabs.update(existing.tabId, { active: true, url: `${url}${hash}` });
-      if (existing.windowId !== undefined)
+    try {
+      const contexts = await chrome.runtime.getContexts({
+        contextTypes: ['TAB' as chrome.runtime.ContextType],
+      });
+      const existing = contexts.find((c) => c.documentUrl?.split('#')[0] === url && c.tabId >= 0);
+      if (existing) {
+        await browser.tabs.update(existing.tabId, { active: true, url: target });
         await browser.windows.update(existing.windowId, { focused: true });
-      return;
+        return;
+      }
+    } catch {
+      /* fall through to a new tab */
     }
   }
-  await browser.tabs.create({ url: `${url}${hash}` });
+  await browser.tabs.create({ url: target });
 }
 
 export function createExtensionPlatform(surface: Surface): Platform {
@@ -35,13 +39,16 @@ export function createExtensionPlatform(surface: Surface): Platform {
     catalog: createCatalog(),
     player: createExtensionPlayerClient(),
     playsHttp: true,
+    // The popup closes only after the tab is open: closing it first would kill the pending call.
     openSettings: (tab?: SettingsTab) => {
-      void openPage('/options.html', tab ? `#${tab}` : '');
-      if (surface === 'popup') window.close();
+      void openPage('/options.html', tab ? `#${tab}` : '').finally(() => {
+        if (surface === 'popup') window.close();
+      });
     },
     openDesktop: () => {
-      void openPage('/desktop.html');
-      if (surface === 'popup') window.close();
+      void openPage('/desktop.html').finally(() => {
+        if (surface === 'popup') window.close();
+      });
     },
     openShortcutEditor: () => {
       const commands = browser.commands as typeof browser.commands & {
