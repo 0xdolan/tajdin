@@ -11,6 +11,13 @@ const { version } = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
 const outDir = join(root, 'apps/extension/.output');
 const out = join(outDir, `tajdin-${version}-sources.zip`);
 mkdirSync(outDir, { recursive: true });
+try {
+  execFileSync('git', ['rev-parse', '--is-inside-work-tree'], { cwd: root, stdio: 'ignore' });
+} catch {
+  // Building from an unpacked sources zip: there is no git history to archive, and no need to.
+  console.log('Not a git checkout, so no sources zip was made.');
+  process.exit(0);
+}
 execFileSync('git', ['archive', '--format=zip', '-o', out, 'HEAD'], {
   cwd: root,
   stdio: 'inherit',
