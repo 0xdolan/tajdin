@@ -9,6 +9,7 @@ import {
   type PlayerState,
 } from '@tajdin/core';
 import { startAudioHost } from '../lib/audio-host';
+import { createOffscreenManager } from '../lib/offscreen';
 import type { BackgroundMessage, HostHello, OffscreenMessage } from '../lib/messages';
 import { QUEUE_KEY } from '../lib/player-client';
 import { extensionArea } from '../lib/storage';
@@ -23,7 +24,6 @@ const COMMANDS: Record<string, PlayerCommand> = {
 };
 
 const KEEPALIVE = 'tajdin-keepalive';
-const OFFSCREEN_URL = '/offscreen.html';
 
 export default defineBackground({
   // Firefox: a persistent page so the <audio> it hosts is never suspended.
@@ -34,8 +34,6 @@ export default defineBackground({
     const session = extensionArea('session');
     const repository = createRepository(local);
     const icon = new ToolbarIcon();
-    const usesOffscreen =
-      import.meta.env.CHROME || !!(browser as { offscreen?: unknown }).offscreen;
     let animatedIcon = true;
     let lastQueueKey = '';
     let lastState: PlayerState = INITIAL_PLAYER_STATE;
@@ -79,47 +77,23 @@ export default defineBackground({
     // ---- Audio host -------------------------------------------------------------------------
 
     let firefoxHost: PlayerHost | null = null;
-    let offscreenReady: Promise<void> | null = null;
-    let resolveReady: (() => void) | null = null;
+    // `import.meta.env.CHROME` is a build-time constant, so Firefox builds drop this module.
+    const offscreen = import.meta.env.CHROME ? createOffscreenManager() : null;
 
-    async function offscreenExists(): Promise<boolean> {
-      const contexts = await chrome.runtime.getContexts({
-        contextTypes: ['OFFSCREEN_DOCUMENT' as chrome.runtime.ContextType],
-        documentUrls: [browser.runtime.getURL(OFFSCREEN_URL)],
-      });
-      return contexts.length > 0;
-    }
-
-    /** Chrome closes a silent offscreen document after ~30 s, so it's (re)created on demand. */
     async function ensureHost(): Promise<void> {
-      if (!usesOffscreen) {
-        if (!firefoxHost) {
-          const hello = await restoredState();
-          firefoxHost = startAudioHost({
-            initial: hello.state,
-            showNowPlaying: hello.showNowPlaying,
-            publish: (s) => void onHostState(s),
-          });
-        }
-        return;
-      }
-      if (await offscreenExists()) {
-        if (offscreenReady) await offscreenReady;
-        return;
-      }
-      offscreenReady = new Promise((resolve) => (resolveReady = resolve));
-      await chrome.offscreen
-        .createDocument({
-          url: OFFSCREEN_URL,
-          reasons: ['AUDIO_PLAYBACK' as chrome.offscreen.Reason],
-          justification: 'Plays the radio station in the background after the popup closes.',
-        })
-        .catch((e: Error) => {
-          // Two callers racing to create it is fine; anything else is real.
-          if (!/single offscreen/i.test(e.message)) throw e;
+      if (offscreen) return offscreen.ensure();
+      if (!firefoxHost) {
+        const hello = await restoredState();
+        firefoxHost = startAudioHost({
+          initial: hello.state,
+          showNowPlaying: hello.showNowPlaying,
+          publish: (s) => void onHostState(s),
         });
-      await offscreenReady;
+      }
     }
+
+    /** Whether an audio host is running right now (without starting one). */
+    const hostRunning = async () => !!firefoxHost || (!!offscreen && (await offscreen.exists()));
 
     async function dispatch(command: PlayerCommand) {
       await ensureHost();
@@ -152,7 +126,7 @@ export default defineBackground({
         case 'host:hello':
           void restoredState().then((hello) => {
             sendResponse(hello);
-            resolveReady?.();
+            offscreen?.markReady();
           });
           return true;
         case 'host:state':
@@ -179,7 +153,7 @@ export default defineBackground({
       icon.update(lastState, animatedIcon);
       if (next.showNowPlaying !== before.showNowPlaying) {
         void (async () => {
-          if (firefoxHost || (usesOffscreen && (await offscreenExists())))
+          if (await hostRunning())
             await dispatch({ type: 'setNowPlaying', enabled: next.showNowPlaying });
         })();
       }
@@ -190,7 +164,7 @@ export default defineBackground({
     void session.get([KEYS.player]).then(async (items) => {
       const saved = items[KEYS.player] as Partial<PlayerState> | undefined;
       if (!saved) return;
-      const alive = !usesOffscreen || (await offscreenExists());
+      const alive = await hostRunning();
       lastState = {
         ...INITIAL_PLAYER_STATE,
         ...saved,
