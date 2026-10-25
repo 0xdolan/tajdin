@@ -1,4 +1,13 @@
-import { BookOpenIcon, BugIcon, CodeIcon, GlobeIcon, ShieldCheckIcon } from 'lucide-react';
+import {
+  BookMarkedIcon,
+  BookOpenIcon,
+  BugIcon,
+  CodeIcon,
+  GlobeIcon,
+  HeartIcon,
+  ShieldCheckIcon,
+} from 'lucide-react';
+import memUZinCover from '../../../../../../assets/images/mem-u-zin.webp';
 import { Button } from '@tajdin/ui/components/button';
 import { Separator } from '@tajdin/ui/components/separator';
 import { RojMark } from '../../components/brand';
@@ -61,22 +70,80 @@ export function AboutSettings() {
         </div>
       </Section>
 
-      <Section title="Why Tajdîn?">
-        <div className="text-muted-foreground flex max-w-prose flex-col gap-3 text-sm leading-relaxed">
-          <p>
-            Radio keeps people close to home. For Kurdish listeners spread across many countries,
-            it’s often the easiest way to hear their own language, news and music, but Kurdish
-            stations are hard to find in big global directories.
-          </p>
-          <p>
-            Tajdîn puts a hand-picked Kurdish station list next to the world’s open radio
-            directories, in a player that stays with you while you browse. Its logo is the{' '}
-            <em>Roj</em>, the sun from Kurdish <em>deq</em> tattoos, a sign of life and light.
-          </p>
-          <p>
-            No accounts, no tracking, no servers of our own. Everything you save stays in your
-            browser.
-          </p>
+      <Section title="Why “Tajdîn”?">
+        <div className="flex flex-col gap-5 sm:flex-row">
+          <figure className="shrink-0">
+            <img
+              src={memUZinCover}
+              alt="Cover of Mem û Zîn: Mem and Zîn in Kurdish dress beneath the trees"
+              width={160}
+              height={160}
+              loading="lazy"
+              className="size-40 rounded-xl object-cover shadow-md"
+            />
+            <figcaption className="text-muted-foreground mt-1.5 text-center text-xs">
+              <em>Mem û Zîn</em>, 1692
+            </figcaption>
+          </figure>
+          <div className="text-muted-foreground flex max-w-prose flex-col gap-3 text-sm leading-relaxed">
+            <p>
+              The name comes from{' '}
+              <a
+                className="text-foreground font-medium underline-offset-2 hover:underline"
+                href={LINKS.memUZinWiki}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <em>Mem û Zîn</em>
+              </a>
+              , the great Kurdish love epic written in 1692 by{' '}
+              <a
+                className="text-foreground font-medium underline-offset-2 hover:underline"
+                href={LINKS.ehmedeXaniWiki}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Ehmedê Xanî
+              </a>
+              . It tells of Mem and Zîn, two lovers kept apart by the jealous Beko, and it is often
+              called the national epic of Kurdish literature.
+            </p>
+            <p>
+              <strong className="text-foreground">Tajdîn</strong> (Tacdîn) is Mem’s best friend. He
+              stands by Mem to the very end, and when Beko’s treachery comes to light, it is Tajdîn
+              who avenges him. A loyal companion who never leaves your side: that’s what this radio
+              wants to be. Hence the motto, <em>always by your side</em>.
+            </p>
+            <p>
+              Radio keeps people close to home. For Kurdish listeners spread across many countries,
+              it’s often the easiest way to hear their own language, news and music, so Tajdîn puts
+              a hand-picked Kurdish station list next to the world’s open radio directories. Its
+              logo is the <em>Roj</em>, the sun from Kurdish <em>deq</em> tattoos, a sign of life
+              and light.
+            </p>
+            <p>
+              No accounts, no tracking, no servers of our own. Everything you save stays in your
+              browser.
+            </p>
+            <div className="flex flex-wrap gap-2 pt-1">
+              <Button
+                variant="outline"
+                size="sm"
+                render={<a href={LINKS.memUZinWiki} target="_blank" rel="noreferrer" />}
+              >
+                <GlobeIcon data-icon="inline-start" />
+                Mem û Zîn on Wikipedia
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                render={<a href={LINKS.memUZinBook} target="_blank" rel="noreferrer" />}
+              >
+                <BookMarkedIcon data-icon="inline-start" />
+                Read the book
+              </Button>
+            </div>
+          </div>
         </div>
       </Section>
 
@@ -120,8 +187,14 @@ export function AboutSettings() {
           </li>
         </ul>
         <Separator />
-        <p className="text-muted-foreground text-xs">
-          Made with love by{' '}
+        <p className="text-muted-foreground flex flex-wrap items-center gap-1 text-xs">
+          Made with
+          <HeartIcon
+            className="fill-destructive text-destructive size-3.5"
+            role="img"
+            aria-label="love"
+          />
+          by
           <a
             className="underline-offset-2 hover:underline"
             href={LINKS.author}
@@ -130,7 +203,7 @@ export function AboutSettings() {
           >
             0xdolan
           </a>
-          . Open source under the MIT licence.
+          · Open source under the MIT licence.
         </p>
       </Section>
     </div>

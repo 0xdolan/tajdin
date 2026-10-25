@@ -21,6 +21,16 @@ export function toggleFavourite(library: Library, station: Station): Library {
   return has ? pruneCache(next) : rememberStations(next, [station]);
 }
 
+/** Reorders favourites (they are also the order the Favourites list plays in). */
+export function moveFavourite(library: Library, from: number, to: number): Library {
+  if (from === to) return library;
+  const ids = [...library.favourites];
+  const [moved] = ids.splice(from, 1);
+  if (moved === undefined) return library;
+  ids.splice(Math.max(0, Math.min(to, ids.length)), 0, moved);
+  return { ...library, favourites: ids };
+}
+
 export function createPlaylist(
   library: Library,
   input: { name: string; description?: string; colour?: Colour },
