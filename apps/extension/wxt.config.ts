@@ -13,18 +13,9 @@ export default defineConfig({
   vite: () => ({ plugins: [tailwindcss()] }),
   zip: {
     artifactTemplate: 'tajdin-{{version}}-{{browser}}.zip',
-    sourcesTemplate: 'tajdin-{{version}}-sources.zip',
-    sourcesRoot: '../..',
-    excludeSources: [
-      '**/node_modules/**',
-      '**/.output/**',
-      '**/.wxt/**',
-      '**/.turbo/**',
-      '**/dist/**',
-      '.claude/**',
-      '.git/**',
-      'assets/store/screenshots/**',
-    ],
+    // The sources zip comes from `git archive` (scripts/zip-sources.mjs), so it is exactly the
+    // committed source and needs no file filtering here.
+    zipSources: false,
   },
   manifest: ({ browser, manifestVersion }) => ({
     name: 'Tajdîn',
