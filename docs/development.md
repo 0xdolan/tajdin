@@ -28,6 +28,10 @@ pnpm install
 | `pnpm icons`           | Re-renders every PNG icon from `assets/brand/*.svg`                                         |
 | `pnpm format`          | Prettier                                                                                    |
 
+`pnpm dev` builds and watches the extension. To have WXT open a browser with it loaded
+automatically, install Mozilla's runner locally first: `pnpm --filter @tajdin/extension add -D web-ext`
+(it isn't a project dependency because its Android tooling pulls in an unpatched `node-forge`).
+
 To try a production build without the dev server, load `apps/extension/.output/chrome-mv3` at
 `chrome://extensions` (Developer mode → Load unpacked), or `.output/firefox-mv2/manifest.json` at
 `about:debugging` → This Firefox → Load Temporary Add-on.
