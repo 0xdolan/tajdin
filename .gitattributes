@@ -1,0 +1,9 @@
+# Normalise line endings in the repository.
+* text=auto eol=lf
+*.png binary
+*.zip binary
+
+# Left out of the release sources zip (scripts/zip-sources.mjs): not needed to build Tajdîn.
+.claude/ export-ignore
+assets/screenshots/ export-ignore
+assets/store/ export-ignore
