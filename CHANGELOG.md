@@ -3,7 +3,7 @@
 All notable changes to Tajdîn. The format follows [Keep a Changelog](https://keepachangelog.com/),
 and versions follow [Semantic Versioning](https://semver.org/).
 
-## [0.2.1](https://github.com/0xdolan/tajdin/releases/tag/v0.2.1) · 2026-10-25
+## [0.1.0](https://github.com/0xdolan/tajdin/releases/tag/v0.1.0) · 2026-10-25
 
 Tajdîn has been rebuilt from scratch, with a new design, a new logo and a Firefox version.
 Your favourites, playlists, custom stations and settings from 0.0.x move over automatically.
