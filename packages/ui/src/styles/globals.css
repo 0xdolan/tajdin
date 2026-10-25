@@ -1,8 +1,22 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
-@import '@fontsource-variable/inter';
-@import '@fontsource-variable/vazirmatn';
+@import '@fontsource-variable/manrope';
+
+/*
+ * Arabic-script text (Kurdish Sorani, Arabic, Persian…) uses Sahel; everything else uses Manrope.
+ * Sahel also contains Latin letters, so it is limited to the Arabic Unicode blocks: the browser then
+ * picks the font per character, and pages without Arabic script never download it.
+ */
+@font-face {
+  font-family: 'Sahel';
+  src: url('../../node_modules/sahel-font/dist/Sahel-VF.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range:
+    U+0600-06FF, U+0750-077F, U+0870-089F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F;
+}
 
 @custom-variant dark (&:is(.dark *));
 @source '../../../apps/**/*.{ts,tsx}';
@@ -49,7 +63,7 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
-  --font-sans: 'Inter Variable', 'Vazirmatn Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Manrope Variable', 'Sahel', ui-sans-serif, system-ui, sans-serif;
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-live: var(--live);
@@ -147,7 +161,6 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: 'cv11', 'ss01';
   }
   /* The search inputs have their own clear button. */
   input[type='search']::-webkit-search-cancel-button {
