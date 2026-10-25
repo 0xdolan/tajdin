@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// Gitflow release helper (see docs/releasing.md).
-//   pnpm release:start minor    → release/x.y.z from develop, bumped version and changelog
-//   pnpm release:finish         → release PR into main, tag vX.Y.Z, back-merge PR into develop
-// Every change reaches main and develop through a pull request that passed CI.
+// Release helper (see docs/releasing.md). main is the only working branch.
+//   pnpm release:start minor    → release/x.y.z from main, bumped version and changelog
+//   pnpm release:finish         → release PR into main, merged when CI passes, tagged vX.Y.Z
+// The tag publishes everything; the Sync develop workflow then mirrors main into develop.
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -32,7 +32,8 @@ if (read('git', ['status', '--porcelain'])) {
 }
 
 if (action === 'start') {
-  run('git', ['switch', 'develop']);
+  run('git', ['switch', 'main']);
+  run('git', ['pull', '--ff-only']);
   run('node', ['scripts/bump-version.mjs', bump]);
   const v = version();
   run('git', ['stash', 'push', '--quiet', '--', '.']);
@@ -44,11 +45,9 @@ if (action === 'start') {
     `\nOn release/${v}. Polish the new CHANGELOG.md section (it becomes the release notes), test, then: pnpm release:finish`,
   );
 } else if (action === 'finish') {
-  // Everything goes through pull requests, so main and develop are never pushed to directly
-  // (and GitHub never shows a stray "had recent pushes" banner for them).
   const branch = read('git', ['branch', '--show-current']);
-  if (!branch.startsWith('release/') && !branch.startsWith('hotfix/')) {
-    console.error('Run this on a release/* or hotfix/* branch.');
+  if (!branch.startsWith('release/')) {
+    console.error('Run this on a release/* branch (pnpm release:start makes one).');
     process.exit(1);
   }
   const v = version();
@@ -56,7 +55,7 @@ if (action === 'start') {
   run('pnpm', ['check']);
   run('git', ['push', '-u', 'origin', branch]);
 
-  // 1. Release PR into main, merged once CI passes.
+  // 1. Release PR into main, merged once CI passes; GitHub deletes the branch.
   run('gh', [
     'pr',
     'create',
@@ -70,37 +69,26 @@ if (action === 'start') {
     notes,
   ]);
   waitForChecks(branch);
-  run('gh', ['pr', 'merge', branch, '--merge', '--subject', `Merge ${branch}: release v${v}`]);
-
-  // 2. Tag the merge commit on main; the tag publishes the GitHub Release and submits to the stores.
-  run('git', ['fetch', 'origin']);
-  run('git', ['tag', '-a', `v${v}`, '-m', `Tajdîn v${v}`, 'origin/main']);
-  run('git', ['push', 'origin', `v${v}`]);
-
-  // 3. Back-merge main into develop through a PR as well.
-  const backMerge = `chore/back-merge-v${v}`;
-  run('git', ['switch', '-c', backMerge, 'origin/main']);
-  run('git', ['push', '-u', 'origin', backMerge]);
   run('gh', [
     'pr',
-    'create',
-    '--base',
-    'develop',
-    '--head',
-    backMerge,
-    '--title',
-    `chore: merge v${v} back into develop`,
-    '--body',
-    `Gitflow back-merge after releasing v${v}.`,
+    'merge',
+    branch,
+    '--merge',
+    '--delete-branch',
+    '--subject',
+    `Merge ${branch}: release v${v}`,
   ]);
-  waitForChecks(backMerge);
-  run('gh', ['pr', 'merge', backMerge, '--merge', '--delete-branch']);
 
-  // 4. Tidy up.
-  run('git', ['switch', 'develop']);
+  // 2. Tag the merge commit; the tag publishes the GitHub Release, the stores and the website.
+  run('git', ['switch', 'main']);
   run('git', ['pull', '--ff-only']);
-  run('git', ['push', 'origin', '--delete', branch]);
-  run('git', ['branch', '-D', branch]);
+  run('git', ['tag', '-a', `v${v}`, '-m', `Tajdîn v${v}`, 'HEAD']);
+  run('git', ['push', 'origin', `v${v}`]);
+  try {
+    run('git', ['branch', '-D', branch]);
+  } catch {
+    /* gh already deleted it */
+  }
   console.log(
     `\nReleased v${v}. Watch the Release workflow: gh run watch $(gh run list --workflow release.yml --limit 1 --json databaseId --jq '.[0].databaseId')`,
   );

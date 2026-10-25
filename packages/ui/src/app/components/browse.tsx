@@ -355,7 +355,7 @@ export function SearchBar({
           onKeyDown={(e) =>
             e.key === 'Escape' && setState((s) => ({ ...s, query: '', searchOpen: false }))
           }
-          className={cn(regex && 'font-mono text-xs')}
+          className={cn(regex && 'font-mono sm:text-xs')}
         />
         <InputGroupAddon align="inline-end">
           {state.query && (

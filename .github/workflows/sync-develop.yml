@@ -1,0 +1,27 @@
+name: Sync develop
+
+# develop is a read-only mirror of main: after every push to main it's moved to the same commit.
+# The push comes from github-actions, so GitHub shows no "develop had recent pushes" banner and
+# there's never a back-merge pull request to wait for. Work goes into main (see CONTRIBUTING.md).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-develop
+  cancel-in-progress: true
+
+jobs:
+  mirror:
+    name: Point develop at main
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - run: git push --force origin HEAD:refs/heads/develop

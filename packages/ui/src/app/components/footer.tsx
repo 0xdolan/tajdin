@@ -11,7 +11,7 @@ export function Footer({ className }: { className?: string }) {
   return (
     <footer
       className={cn(
-        'text-muted-foreground flex items-center justify-center gap-1.5 text-[11px]',
+        'text-muted-foreground flex flex-wrap items-center justify-center gap-x-1.5 gap-y-0.5 px-2 text-[11px]',
         className,
       )}
     >

@@ -1,11 +1,10 @@
 name: Website
 
-# The site at https://0xdolan.github.io/tajdin/ tracks main (the latest release).
+# The site at https://0xdolan.github.io/tajdin/ shows the latest release: it deploys from each
+# version tag (main itself may already hold the next release's changes).
 on:
   push:
-    branches: [main]
-    paths:
-      ['apps/web/**', 'packages/**', 'docs/**', 'pnpm-lock.yaml', '.github/workflows/pages.yml']
+    tags: ['v*.*.*']
   workflow_dispatch:
 
 permissions:

@@ -62,5 +62,6 @@ The repo includes two Claude Code skills in `.claude/skills/`:
 
 ## Commits and branches
 
-See [CONTRIBUTING.md](../CONTRIBUTING.md). In short: gitflow branches, Conventional Commits
-(checked by a commit hook), and pull requests into `develop`.
+See [CONTRIBUTING.md](../CONTRIBUTING.md). In short: short-lived branches from `main`, Conventional
+Commits (checked by a commit hook), and `pnpm pr` to open a pull request into `main` that merges
+itself once CI passes.

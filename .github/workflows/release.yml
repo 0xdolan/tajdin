@@ -1,6 +1,6 @@
 name: Release
 
-# Runs when a version tag (v1.2.3) is pushed to main by the gitflow release process
+# Runs when a version tag (v1.2.3) is pushed to main by `pnpm release:finish`
 # (see docs/releasing.md). Builds once, publishes a GitHub Release with installable zips,
 # then submits the same zips to the Chrome Web Store and Firefox Add-ons.
 

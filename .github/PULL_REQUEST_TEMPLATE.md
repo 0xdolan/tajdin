@@ -8,7 +8,7 @@
 
 ## Checklist
 
-- [ ] Targets `develop`; commits follow Conventional Commits
+- [ ] Targets `main`; commits follow Conventional Commits
 - [ ] `pnpm check` passes
 - [ ] No new permissions or network destinations (or explained here, and the privacy policy updated)
 - [ ] Stored data or backup format unchanged (or a migration and a test are included)

@@ -15,9 +15,12 @@ pnpm check          # what CI checks first: lint, formatting, types, unit tests
 More detail is in [docs/development.md](docs/development.md) and
 [docs/architecture.md](docs/architecture.md).
 
-## Workflow (gitflow)
+## Workflow
 
-1. Branch from `develop`: `feature/<short-name>` (or `fix/<short-name>`).
+`main` is the only working branch; `develop` is an automatic mirror of it, so never branch from it
+or target it.
+
+1. Branch from `main`: `git switch -c feature/<short-name> main` (or `fix/<short-name>`).
 2. Commit with [Conventional Commits](https://www.conventionalcommits.org/). A commit hook checks
    this:
    - `feat(popup): add sleep timer`
@@ -26,8 +29,11 @@ More detail is in [docs/development.md](docs/development.md) and
    - `docs: explain language groups`
    - Others: `refactor`, `perf`, `test`, `chore`, `ci`, `build`. Add `!` or a `BREAKING CHANGE:`
      footer for breaking changes.
-3. Open a pull request into **`develop`**. CI must pass.
-4. Maintainers cut releases from `develop` (see [docs/releasing.md](docs/releasing.md)).
+3. Open a pull request into **`main`**. CI must pass. Maintainers run `pnpm pr`, which pushes the
+   branch, opens the PR and turns on auto-merge: GitHub merges it when CI is green and deletes
+   the branch.
+4. Releases are cut from `main` with `pnpm release:start` / `pnpm release:finish` (see
+   [docs/releasing.md](docs/releasing.md)).
 
 ## Rules of the house
 
