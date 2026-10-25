@@ -13,7 +13,8 @@
     "zip:firefox": "wxt zip -b firefox",
     "typecheck": "wxt prepare && tsc --noEmit",
     "test": "vitest run --passWithNoTests",
-    "postinstall": "wxt prepare"
+    "postinstall": "wxt prepare",
+    "lint:firefox": "web-ext lint --source-dir .output/firefox-mv2 --warnings-as-errors=false"
   },
   "dependencies": {
     "@tajdin/core": "workspace:*",
@@ -31,6 +32,7 @@
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.3",
     "vitest": "^5.0.5",
-    "wxt": "^0.21.4"
+    "wxt": "^0.21.4",
+    "web-ext": "^9.2.0"
   }
 }

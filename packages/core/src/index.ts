@@ -1,3 +1,5 @@
+import './zod-config';
+
 export * from './model/station';
 export * from './model/library';
 export * from './model/library-ops';

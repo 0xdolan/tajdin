@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: [develop, main, 'release/**', 'hotfix/**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Lint, types, tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm typecheck
+      - run: pnpm test
+
+  build:
+    name: Build extension and website
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build and zip Chrome + Firefox
+        run: pnpm build:extension
+      - name: Lint the Firefox build (Mozilla's validator)
+        run: pnpm --filter @tajdin/extension lint:firefox
+      - name: Check the zips
+        run: pnpm verify:release
+      - run: pnpm build:web
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tajdin-extension-${{ github.sha }}
+          path: apps/extension/.output/*.zip
+          if-no-files-found: error
+
+  e2e:
+    name: Smoke test in Chromium
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm build:extension && pnpm build:web
+      - name: Drive the extension and site, fail on page errors
+        run: |
+          pnpm --filter @tajdin/web preview &
+          npx wait-on http://localhost:4319/tajdin/
+          pnpm screenshots --theme=dark --out=test-results/screenshots
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots-${{ github.sha }}
+          path: test-results/screenshots
