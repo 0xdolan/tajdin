@@ -29,6 +29,8 @@ jobs:
       - run: pnpm format:check
       - run: pnpm typecheck
       - run: pnpm test
+      - name: Audit dependencies for known vulnerabilities
+        run: pnpm audit --audit-level high
 
   build:
     name: Build extension and website
