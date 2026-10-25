@@ -13,6 +13,10 @@ on:
         description: Submit to the stores
         type: boolean
         default: false
+      dry_run:
+        description: Only check the store credentials (sign in, upload nothing)
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -70,7 +74,7 @@ jobs:
   stores:
     name: Submit to Chrome Web Store and Firefox Add-ons
     needs: build
-    if: startsWith(github.ref, 'refs/tags/') || inputs.submit
+    if: startsWith(github.ref, 'refs/tags/') || inputs.submit || inputs.dry_run
     runs-on: ubuntu-latest
     # Add required reviewers to this environment to approve each store submission by hand.
     environment: stores
@@ -103,4 +107,5 @@ jobs:
           if [ -n "$CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL" ]; then ARGS="$ARGS --chrome-zip ../../zips/tajdin-$V-chrome.zip"; else echo "::warning::Chrome secrets not set, skipping Chrome Web Store"; fi
           if [ -n "$FIREFOX_JWT_ISSUER" ]; then ARGS="$ARGS --firefox-zip ../../zips/tajdin-$V-firefox.zip --firefox-sources-zip ../../zips/tajdin-$V-sources.zip"; else echo "::warning::Firefox secrets not set, skipping Firefox Add-ons"; fi
           if [ -z "$ARGS" ]; then echo "No store credentials configured"; exit 0; fi
+          if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; echo "Dry run: checking credentials only"; fi
           pnpm exec wxt submit $ARGS
