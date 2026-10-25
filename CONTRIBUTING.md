@@ -31,6 +31,9 @@ More detail is in [docs/development.md](docs/development.md) and
 
 ## Rules of the house
 
+- **People are the contributors.** Don't let AI tools add themselves to commits
+  (`Co-authored-by: Cursor Agent`, `Made-with: Cursor`, and similar). The commit hook strips these
+  lines and CI rejects commits that still have them.
 - **Privacy first.** No analytics, tracking, remote code or new third-party services without
   discussion. Any new network destination must go in the privacy policy.
 - **Minimal permissions.** Adding a browser permission needs a strong reason, explained in the PR.

@@ -1,1 +1,2 @@
+node scripts/attribution.mjs strip "$1"
 pnpm exec commitlint --edit "$1"
