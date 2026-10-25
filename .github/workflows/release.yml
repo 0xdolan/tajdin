@@ -27,11 +27,11 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v5
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -50,7 +50,7 @@ jobs:
       - name: Checksums
         working-directory: apps/extension/.output
         run: sha256sum *.zip > SHA256SUMS.txt
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         if: startsWith(github.ref, 'refs/tags/')
         with:
           name: Tajdîn ${{ steps.version.outputs.version }}
@@ -60,7 +60,7 @@ jobs:
             apps/extension/.output/tajdin-*-firefox.zip
             apps/extension/.output/tajdin-*-sources.zip
             apps/extension/.output/SHA256SUMS.txt
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: release-zips
           path: apps/extension/.output/*.zip
@@ -73,14 +73,14 @@ jobs:
     # Add required reviewers to this environment to approve each store submission by hand.
     environment: stores
     steps:
-      - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: release-zips
           path: zips
