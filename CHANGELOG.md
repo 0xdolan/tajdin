@@ -3,6 +3,16 @@
 All notable changes to Tajdîn. The format follows [Keep a Changelog](https://keepachangelog.com/),
 and versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.4](https://github.com/0xdolan/tajdin/releases/tag/v0.1.4) · 2026-10-25
+
+### Fixes
+
+- Replace regexes flagged by codeql with linear string scans
+
+### Maintenance
+
+- Keep design-skill scripts out of github language stats
+
 ## [0.1.3](https://github.com/0xdolan/tajdin/releases/tag/v0.1.3) · 2026-10-25
 
 No changes to how Tajdîn works; this release brings the project's release process up to date.
