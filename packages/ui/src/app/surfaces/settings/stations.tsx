@@ -24,6 +24,8 @@ import { useDialogs } from '../../dialogs';
 import { usePlayer } from '../../hooks';
 import { StationArt } from '../../components/station-art';
 import { copyStreamUrl } from '../../components/station-menu';
+import { ListToolbar } from '../../components/list-toolbar';
+import { useListTools } from '../../list-tools';
 import { Section } from './common';
 
 export function StationsSettings() {
@@ -31,6 +33,7 @@ export function StationsSettings() {
   const { openCustomStation } = useDialogs();
   const { send } = usePlayer();
   const stations = library.customStations;
+  const list = useListTools(stations);
 
   return (
     <Section
@@ -61,70 +64,76 @@ export function StationsSettings() {
           </EmptyContent>
         </Empty>
       ) : (
-        <ItemGroup className="gap-1">
-          {stations.map((s) => (
-            <Item key={s.id} variant="outline" size="sm">
-              <ItemMedia>
-                <StationArt station={s} className="size-9" />
-              </ItemMedia>
-              <ItemContent className="min-w-0">
-                <ItemTitle className="truncate" dir="auto">
-                  {s.name}
-                </ItemTitle>
-                <ItemDescription className="truncate font-mono text-xs">
-                  {s.streamUrl}
-                </ItemDescription>
-              </ItemContent>
-              <ItemActions>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label={`Play ${s.name}`}
-                  onClick={() =>
-                    void send({
-                      type: 'play',
-                      station: s,
-                      queue: stations,
-                      context: { kind: 'search', label: 'My stations' },
-                    })
-                  }
-                >
-                  <PlayIcon />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label={`Copy URL of ${s.name}`}
-                  onClick={() => void copyStreamUrl(s)}
-                >
-                  <CopyIcon />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label={`Edit ${s.name}`}
-                  onClick={() => openCustomStation(s)}
-                >
-                  <PencilIcon />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label={`Delete ${s.name}`}
-                  onClick={async () => {
-                    const before = library;
-                    await updateLibrary((l) => deleteCustomStation(l, s.id));
-                    toast(`Deleted “${s.name}”`, {
-                      action: { label: 'Undo', onClick: () => void updateLibrary(() => before) },
-                    });
-                  }}
-                >
-                  <Trash2Icon />
-                </Button>
-              </ItemActions>
-            </Item>
-          ))}
-        </ItemGroup>
+        <div className="flex flex-col gap-2">
+          <ListToolbar list={list} count={{ shown: list.shown.length, total: stations.length }} />
+          {list.shown.length === 0 && (
+            <p className="text-muted-foreground py-4 text-center text-sm">No stations match.</p>
+          )}
+          <ItemGroup className="gap-1">
+            {list.shown.map((s) => (
+              <Item key={s.id} variant="outline" size="sm">
+                <ItemMedia>
+                  <StationArt station={s} className="size-9" />
+                </ItemMedia>
+                <ItemContent className="min-w-0">
+                  <ItemTitle className="truncate" dir="auto">
+                    {s.name}
+                  </ItemTitle>
+                  <ItemDescription className="truncate font-mono text-xs">
+                    {s.streamUrl}
+                  </ItemDescription>
+                </ItemContent>
+                <ItemActions>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label={`Play ${s.name}`}
+                    onClick={() =>
+                      void send({
+                        type: 'play',
+                        station: s,
+                        queue: list.shown,
+                        context: { kind: 'search', label: 'My stations' },
+                      })
+                    }
+                  >
+                    <PlayIcon />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label={`Copy URL of ${s.name}`}
+                    onClick={() => void copyStreamUrl(s)}
+                  >
+                    <CopyIcon />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label={`Edit ${s.name}`}
+                    onClick={() => openCustomStation(s)}
+                  >
+                    <PencilIcon />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label={`Delete ${s.name}`}
+                    onClick={async () => {
+                      const before = library;
+                      await updateLibrary((l) => deleteCustomStation(l, s.id));
+                      toast(`Deleted “${s.name}”`, {
+                        action: { label: 'Undo', onClick: () => void updateLibrary(() => before) },
+                      });
+                    }}
+                  >
+                    <Trash2Icon />
+                  </Button>
+                </ItemActions>
+              </Item>
+            ))}
+          </ItemGroup>
+        </div>
       )}
     </Section>
   );

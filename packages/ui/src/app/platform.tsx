@@ -3,7 +3,15 @@ import type { Catalog, PlayerClient, Repository, StorageArea } from '@tajdin/cor
 
 export type Surface = 'popup' | 'settings' | 'desktop';
 export type SettingsTab =
-  'general' | 'playback' | 'stations' | 'playlists' | 'groups' | 'backup' | 'shortcuts' | 'about';
+  | 'general'
+  | 'playback'
+  | 'favourites'
+  | 'stations'
+  | 'playlists'
+  | 'groups'
+  | 'backup'
+  | 'shortcuts'
+  | 'about';
 
 export interface ShortcutInfo {
   name: string;
@@ -46,6 +54,9 @@ export const LINKS = {
   radioBrowser: 'https://www.radio-browser.info/',
   somafm: 'https://somafm.com/',
   lautfm: 'https://laut.fm/',
+  memUZinWiki: 'https://en.wikipedia.org/wiki/Mem_and_Zin',
+  memUZinBook: 'https://www.amazon.com/Mem-%C3%BC-Zin-kurdiya-Dost/dp/9944382515',
+  ehmedeXaniWiki: 'https://en.wikipedia.org/wiki/Ahmad_Khani',
 } as const;
 
 /** Store listings (IDs also in .github/workflows/release.yml). */
