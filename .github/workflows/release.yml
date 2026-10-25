@@ -64,6 +64,8 @@ jobs:
         with:
           name: release-zips
           path: apps/extension/.output/*.zip
+          if-no-files-found: error
+          include-hidden-files: true
 
   stores:
     name: Submit to Chrome Web Store and Firefox Add-ons
