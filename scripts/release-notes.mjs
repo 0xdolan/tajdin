@@ -8,7 +8,13 @@ const root = resolve(import.meta.dirname, '..');
 const version =
   process.argv[2] ?? JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version;
 const changelog = readFileSync(join(root, 'CHANGELOG.md'), 'utf8');
-const start = changelog.search(new RegExp(`^## \\[?${version.replace(/\./g, '\\.')}\\]?`, 'm'));
+// Plain string matching (no regex built from input): the heading is "## [x.y.z](…)" or "## x.y.z".
+const lines = changelog.split('\n');
+const headingAt = lines.findIndex(
+  (line) => line.startsWith(`## [${version}]`) || line.trim() === `## ${version}`,
+);
+const start =
+  headingAt < 0 ? -1 : lines.slice(0, headingAt).join('\n').length + (headingAt > 0 ? 1 : 0);
 if (start < 0) {
   console.error(`CHANGELOG.md has no section for ${version}`);
   process.exit(1);
