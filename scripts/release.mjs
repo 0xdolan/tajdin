@@ -10,6 +10,19 @@ import { join, resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const run = (cmd, args) => execFileSync(cmd, args, { cwd: root, stdio: 'inherit' });
 const read = (cmd, args) => execFileSync(cmd, args, { cwd: root, encoding: 'utf8' }).trim();
+/** Waits until GitHub has registered the PR's checks, then watches them; throws if any fail. */
+function waitForChecks(branch) {
+  for (let i = 0; i < 40; i++) {
+    try {
+      if (read('gh', ['pr', 'checks', branch]).includes('\t')) break;
+    } catch {
+      /* "no checks reported" until CI has started */
+    }
+    execFileSync('sleep', ['5']);
+  }
+  run('gh', ['pr', 'checks', branch, '--watch', '--fail-fast', '--interval', '15']);
+}
+
 const version = () => JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version;
 
 const [action, bump = 'minor'] = process.argv.slice(2);
@@ -56,7 +69,7 @@ if (action === 'start') {
     '--body',
     notes,
   ]);
-  run('gh', ['pr', 'checks', branch, '--watch', '--fail-fast']);
+  waitForChecks(branch);
   run('gh', ['pr', 'merge', branch, '--merge', '--subject', `Merge ${branch}: release v${v}`]);
 
   // 2. Tag the merge commit on main; the tag publishes the GitHub Release and submits to the stores.
@@ -80,7 +93,7 @@ if (action === 'start') {
     '--body',
     `Gitflow back-merge after releasing v${v}.`,
   ]);
-  run('gh', ['pr', 'checks', backMerge, '--watch', '--fail-fast']);
+  waitForChecks(backMerge);
   run('gh', ['pr', 'merge', backMerge, '--merge', '--delete-branch']);
 
   // 4. Tidy up.
