@@ -23,7 +23,8 @@ Turborepo monorepo. Read `docs/architecture.md` before larger changes.
 - Never add AI attribution to commits (no `Co-authored-by`/`Made-with` lines for tools); CI rejects
   them (`scripts/attribution.mjs`).
 - Conventional Commits with lower-case subjects (enforced by commitlint). Branch from `develop`
-  (gitflow); never commit straight to `main`.
+  (gitflow); never push straight to `main` or `develop`: every change, including the release and
+  the back-merge, lands through a pull request (`pnpm release:finish` does this).
 - Keep permissions, network destinations and stored data minimal. Update
   `docs/privacy-policy.md` if any of them change.
 - Validate external data with Zod; keep `http(s)`-only URLs; never use `eval`, inline scripts or
