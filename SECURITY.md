@@ -29,5 +29,4 @@ laut.fm, stations); please report problems to them.
 ## Hardening already in place
 
 Strict CSP (no remote scripts, no eval), minimal permissions, no content scripts, schema
-validation of all stored, imported and fetched data, `http(s)`-only URLs, and CodeQL, dependency
-review and `pnpm audit` in CI.
+validation of all stored, imported and fetched data, `http(s)`-only URLs, and CodeQL and `pnpm audit` in CI.
