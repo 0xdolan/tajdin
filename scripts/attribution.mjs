@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Keeps AI coding tools (Cursor's "Cursor Agent", etc.) from being credited as contributors.
+// Keeps AI coding tools from being credited as repository contributors through commit trailers
+// or commit identities. Add a tool's pattern below if it starts signing commits.
 //
 //   node scripts/attribution.mjs strip <commit-msg-file>   Remove tool trailers (used by the commit-msg hook)
 //   node scripts/attribution.mjs check [rev-range]         Fail if any commit credits a tool (used in CI)
