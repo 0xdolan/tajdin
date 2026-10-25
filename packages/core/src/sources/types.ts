@@ -92,9 +92,32 @@ export function matchesQuery(
  * narrows large directories. `^radio\s+(kurd|kurdistan)` → "radio".
  */
 export function literalHint(pattern: string): string {
-  const runs = pattern
-    .replace(/\\[pPu]\{[^}]*\}|\\./g, ' ')
-    .split(/[\^$.*+?()[\]{}|\s]+/)
-    .filter((run) => run.length >= 2);
+  // A single linear pass (the pattern is user input): escapes and metacharacters end a run.
+  const META = new Set(['^', '$', '.', '*', '+', '?', '(', ')', '[', ']', '{', '}', '|']);
+  const runs: string[] = [];
+  let run = '';
+  const flush = () => {
+    if (run.length >= 2) runs.push(run);
+    run = '';
+  };
+  for (let i = 0; i < pattern.length; i++) {
+    const ch = pattern[i]!;
+    if (ch === '\\') {
+      flush();
+      const next = pattern[i + 1];
+      // \p{…} / \P{…} / \u{…}: skip to the closing brace.
+      if ((next === 'p' || next === 'P' || next === 'u') && pattern[i + 2] === '{') {
+        const close = pattern.indexOf('}', i + 3);
+        i = close < 0 ? pattern.length : close;
+      } else {
+        i++;
+      }
+    } else if (META.has(ch) || /\s/.test(ch)) {
+      flush();
+    } else {
+      run += ch;
+    }
+  }
+  flush();
   return runs.sort((a, b) => b.length - a.length)[0] ?? '';
 }

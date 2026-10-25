@@ -3,6 +3,19 @@
 All notable changes to Tajdîn. The format follows [Keep a Changelog](https://keepachangelog.com/),
 and versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.4](https://github.com/0xdolan/tajdin/releases/tag/v0.1.4) · 2026-10-25
+
+### Security
+
+- Song information from radio streams and regex searches are now parsed with simple linear scans,
+  so a malicious stream or pattern can't slow Tajdîn down (all four code-scanning alerts
+  resolved).
+
+### Maintenance
+
+- The release-notes tool no longer builds a regular expression from its input.
+- The repository's language statistics no longer count the design-tool scripts.
+
 ## [0.1.3](https://github.com/0xdolan/tajdin/releases/tag/v0.1.3) · 2026-10-25
 
 No changes to how Tajdîn works; this release brings the project's release process up to date.

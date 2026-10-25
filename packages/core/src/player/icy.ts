@@ -10,9 +10,14 @@ export function parseStreamTitle(raw: string): NowPlaying | null {
   return { title: text };
 }
 
+/** Extracts `StreamTitle='…';` from a metadata block. A linear scan, since the block is untrusted. */
 export function parseIcyBlock(block: string): NowPlaying | null {
-  const match = /StreamTitle='(.*?)';/s.exec(block);
-  return match ? parseStreamTitle(match[1] ?? '') : null;
+  const key = "StreamTitle='";
+  const start = block.indexOf(key);
+  if (start < 0) return null;
+  const end = block.indexOf("';", start + key.length);
+  if (end < 0) return null;
+  return parseStreamTitle(block.slice(start + key.length, end));
 }
 
 /**
