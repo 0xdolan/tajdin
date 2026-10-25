@@ -3,6 +3,12 @@
 All notable changes to Tajdîn. The format follows [Keep a Changelog](https://keepachangelog.com/),
 and versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.3](https://github.com/0xdolan/tajdin/releases/tag/v0.1.3) · 2026-10-25
+
+### Maintenance
+
+- Release and back-merge through pull requests only
+
 ## [0.1.2](https://github.com/0xdolan/tajdin/releases/tag/v0.1.2) · 2026-10-25
 
 ### Changes
