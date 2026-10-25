@@ -5,7 +5,7 @@ import { LINKS, usePlatform } from '../platform';
 const link =
   'rounded-sm underline-offset-2 hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none';
 
-/** "Made with ♥ by 0xdolan · Source · Docs · Site · v0.2.1" */
+/** "Made with ♥ by 0xdolan · Source · Docs · Site · v0.1.0" */
 export function Footer({ className }: { className?: string }) {
   const { version } = usePlatform();
   return (

@@ -34,7 +34,7 @@ describe('backup', () => {
       createBackup({
         settings: { ...DEFAULT_SETTINGS, theme: 'dark' },
         library,
-        appVersion: '0.2.1',
+        appVersion: '0.1.0',
       }),
     );
     const parsed = parseBackup(file);
@@ -59,7 +59,7 @@ describe('backup', () => {
         createBackup({
           settings: DEFAULT_SETTINGS,
           library,
-          appVersion: '0.2.1',
+          appVersion: '0.1.0',
           sections: ['favourites', 'playlists'],
         }),
       ),
@@ -81,7 +81,7 @@ describe('backup', () => {
         createBackup({
           settings: { ...DEFAULT_SETTINGS, theme: 'light' },
           library,
-          appVersion: '0.2.1',
+          appVersion: '0.1.0',
         }),
       ),
     );
