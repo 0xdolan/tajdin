@@ -78,8 +78,8 @@ the stores_.
    reviewer so every store submission needs a click. Add the secrets below to this environment.
 3. **Settings → General → Pull Requests:** allow auto-merge and _Automatically delete head
    branches_. **Settings → Rules → Rulesets:** a ruleset for `main` that requires a pull request
-   and the CI checks, and blocks force pushes and deletion. Leave `develop` unprotected so the
-   **Sync develop** workflow can move it. **Settings → Environments → github-pages:** allow
+   and the CI checks, and blocks force pushes and deletion. A second ruleset for `develop` only
+   blocks deletion, so the **Sync develop** workflow can still move it. **Settings → Environments → github-pages:** allow
    deployments from `main` and from tags `v*.*.*`.
 4. Optional: set the repository's website to `https://0xdolan.github.io/tajdin/`, and add topics
    such as `radio`, `kurdish`, `browser-extension` and `chrome-extension`.
