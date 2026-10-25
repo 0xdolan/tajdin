@@ -87,7 +87,17 @@ export function AboutSettings() {
         </div>
       </Section>
 
-      <Section title="The name: Tajdîn, from Mem û Zîn">
+      <Section
+        title={
+          <>
+            The name: Tajdîn (
+            <bdi lang="ckb" dir="rtl">
+              تاژدین
+            </bdi>
+            ), from Mem û Zîn
+          </>
+        }
+      >
         <div className="flex flex-col gap-5 sm:flex-row">
           <figure className="shrink-0">
             <img
@@ -126,10 +136,14 @@ export function AboutSettings() {
               called the national epic of Kurdish literature.
             </p>
             <p>
-              <strong className="text-foreground">Tajdîn</strong> (Tacdîn) is Mem’s best friend. He
-              stands by Mem to the very end, and when Beko’s treachery comes to light, it is Tajdîn
-              who avenges him. A loyal companion who never leaves your side: that’s what this radio
-              wants to be. Hence the motto, <em>always by your side</em>.
+              <strong className="text-foreground">Tajdîn</strong> (
+              <bdi lang="ckb" dir="rtl">
+                تاژدین
+              </bdi>
+              ) is Mem’s best friend. He stands by Mem to the very end, and when Beko’s treachery
+              comes to light, it is Tajdîn who avenges him. A loyal companion who never leaves your
+              side: that’s what this radio wants to be. Hence the motto,{' '}
+              <em>always by your side</em>.
             </p>
             <div className="flex flex-wrap gap-2 pt-1">
               <Button
