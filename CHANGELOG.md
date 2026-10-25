@@ -7,17 +7,21 @@ and versions follow [Semantic Versioning](https://semver.org/).
 
 ### Fixes
 
-- Make mute work on iphone and fit every page to phone screens
-- **desktop:** Keep the desktop view within narrow phone screens
-
-### Documentation
-
-- Describe the develop ruleset
+- **Mute works on iPhone and iPad.** Safari there doesn't let pages change the volume, so muting
+  did nothing. Mute now uses the audio's own mute switch, and on iPhone and iPad the volume button
+  simply mutes and unmutes (the device's volume buttons set the level).
+- **The website and desktop view fit phone screens.** Settings switches to a scrollable tab strip,
+  options stack under their labels, selects fit the width, the player uses its compact layout,
+  nothing scrolls sideways (even on 320px-wide phones), search fields no longer make Safari zoom
+  in, and the bottom bar clears the iPhone home indicator.
 
 ### Maintenance
 
-- Check every page on phone screens in webkit
-- Make main the only working branch and mirror it into develop
+- Every page is now checked on iPhone and Android screen sizes in WebKit, Safari's engine, on
+  each change.
+- A simpler branch flow: all changes go to `main` through pull requests that merge themselves when
+  the checks pass, and `develop` automatically mirrors `main`. The website now updates with each
+  release.
 
 ## [0.1.4](https://github.com/0xdolan/tajdin/releases/tag/v0.1.4) · 2026-10-25
 
