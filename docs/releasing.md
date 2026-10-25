@@ -1,25 +1,35 @@
 # Releasing
 
-Tajdîn follows **gitflow** and **semantic versioning**. A version tag on `main` triggers one
-workflow, which builds once, then publishes everywhere from the same zips:
+Tajdîn uses **one working branch, `main`**, and **semantic versioning**. Every change reaches
+`main` through a pull request that merges itself once CI passes. A version tag on `main` triggers
+one workflow, which builds once, then publishes everywhere from the same zips:
 
 ```
-feature/* ──▶ develop ──▶ release/x.y.z ──▶ main ──tag vX.Y.Z──▶ Release workflow
-                 ▲                            │                  ├─ GitHub Release (Chrome, Firefox, sources zips + SHA256SUMS)
-                 └──────── merged back ───────┘                  ├─ Chrome Web Store (upload + submit for review)
-                                                                 └─ Firefox Add-ons (upload + sources + submit)
-main ──push──▶ Website workflow ──▶ GitHub Pages
+fix/* feature/* ──PR, auto-merge──▶ main ──tag vX.Y.Z──▶ Release workflow
+                                     │                   ├─ GitHub Release (Chrome, Firefox, sources zips + SHA256SUMS)
+                                     │                   ├─ Chrome Web Store (upload + submit for review)
+                                     │                   ├─ Firefox Add-ons (upload + sources + submit)
+                                     │                   └─ Website (GitHub Pages)
+                                     └──Sync develop──▶ develop (same commit as main)
 ```
 
 ## Branches
 
-| Branch           | Purpose                                                      |
-| ---------------- | ------------------------------------------------------------ |
-| `main`           | What's released. Every commit on it is a tagged version.     |
-| `develop`        | Integration branch; pull requests go here.                   |
-| `feature/<name>` | New work, from `develop`.                                    |
-| `release/x.y.z`  | Stabilising a release: version bump, changelog, final fixes. |
-| `hotfix/x.y.z`   | Urgent fix, from `main`, merged into `main` and `develop`.   |
+| Branch                         | Purpose                                                                                        |
+| ------------------------------ | ---------------------------------------------------------------------------------------------- |
+| `main`                         | The default and only working branch. Protected: changes arrive only by pull request with CI.   |
+| `fix/<name>`, `feature/<name>` | Short-lived work from `main`. `pnpm pr` opens the PR with auto-merge; GitHub deletes it after. |
+| `release/x.y.z`                | Version bump and changelog only, made and merged by `pnpm release:*`.                          |
+| `develop`                      | Read-only mirror of `main`, moved by the **Sync develop** workflow. Never push or target it.   |
+
+These rules keep the repository tidy without any manual merging:
+
+- No open pull requests are left behind: auto-merge merges each one when CI is green, and a red
+  one is fixed on its branch (push again) or closed.
+- No stale branches: _Automatically delete head branches_ is on.
+- No "had recent pushes" banners: you only push short-lived branches that already have a PR, and
+  `develop` is updated by the github-actions bot.
+- No back-merges: `develop` isn't a separate line of work, so it can't fall behind.
 
 ## Versions
 
@@ -33,29 +43,26 @@ main ──push──▶ Website workflow ──▶ GitHub Pages
 ## Cutting a release
 
 ```bash
-git switch develop && git pull
-pnpm release:start minor        # creates release/x.y.z, bumps versions, prepends CHANGELOG.md
+pnpm release:start minor        # from main: creates release/x.y.z, bumps versions, prepends CHANGELOG.md
 # Edit the new CHANGELOG.md section: it becomes the GitHub release notes, so write it for users.
 pnpm build:extension && pnpm verify:release   # try the zips (load them unpacked)
 git commit -am "docs(changelog): polish x.y.z notes"
 pnpm release:finish
 ```
 
-`release:finish` does the rest, entirely through pull requests (nothing is pushed to `main` or
-`develop` directly):
+`release:finish` does the rest, entirely through a pull request:
 
 1. runs `pnpm check`, pushes `release/x.y.z` and opens the release PR into `main`;
-2. waits for CI, merges it, and tags the merge commit `vX.Y.Z`;
-3. opens a back-merge PR `main` → `develop`, waits for CI and merges it;
-4. deletes the release branch.
+2. waits for CI, merges it (deleting the branch) and tags the merge commit `vX.Y.Z`.
 
-Pushing the tag starts **Release** in GitHub Actions. With required reviewers on the `stores`
+Pushing the tag starts **Release** (GitHub Release, then both stores) and **Website** in GitHub
+Actions. The merge into `main` also runs **Sync develop**. With required reviewers on the `stores`
 environment, store submission waits for your approval in the Actions tab.
 
-**Hotfix:** `git switch -c hotfix/x.y.z origin/main`, fix, `pnpm version:bump patch`, update
-CHANGELOG.md, commit, then `pnpm release:finish` (same pull-request flow).
+**Urgent fix:** the same as any change: `git switch -c fix/<name> main`, commit, `pnpm pr`; once it
+has merged, `pnpm release:start patch` and `pnpm release:finish`.
 
-**Check store credentials** without uploading: Actions → Release → Run workflow (branch `develop`)
+**Check store credentials** without uploading: Actions → Release → Run workflow (branch `main`)
 → tick _Only check the store credentials_. Each configured store signs in and reports success.
 
 **Re-run store submission** without a new tag: Actions → Release → Run workflow → tick _Submit to
@@ -69,7 +76,11 @@ the stores_.
    `https://0xdolan.github.io/tajdin/`.
 2. **Settings → Environments → New environment `stores`.** Optionally add yourself as a required
    reviewer so every store submission needs a click. Add the secrets below to this environment.
-3. **Settings → Branches:** protect `main` and `develop` (require pull requests and the CI checks).
+3. **Settings → General → Pull Requests:** allow auto-merge and _Automatically delete head
+   branches_. **Settings → Rules → Rulesets:** a ruleset for `main` that requires a pull request
+   and the CI checks, and blocks force pushes and deletion. Leave `develop` unprotected so the
+   **Sync develop** workflow can move it. **Settings → Environments → github-pages:** allow
+   deployments from `main` and from tags `v*.*.*`.
 4. Optional: set the repository's website to `https://0xdolan.github.io/tajdin/`, and add topics
    such as `radio`, `kurdish`, `browser-extension` and `chrome-extension`.
 

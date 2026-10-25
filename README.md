@@ -11,7 +11,7 @@ Kurdish stations and 50,000+ more from around the world, in your browser toolbar
 [![Firefox Add-ons](https://img.shields.io/amo/v/tajdin?label=Firefox%20Add-ons&logo=firefoxbrowser&logoColor=white&color=f59e0b)](https://addons.mozilla.org/firefox/addon/tajdin/)
 [![Website](https://img.shields.io/badge/web-0xdolan.github.io%2Ftajdin-312e81)](https://0xdolan.github.io/tajdin/)
 <br />
-[![CI](https://github.com/0xdolan/tajdin/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/0xdolan/tajdin/actions/workflows/ci.yml)
+[![CI](https://github.com/0xdolan/tajdin/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/0xdolan/tajdin/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/0xdolan/tajdin?color=312e81)](https://github.com/0xdolan/tajdin/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-64748b)](LICENSE)
 
@@ -186,7 +186,7 @@ Built with TypeScript, React 19, Tailwind CSS 4, [shadcn/ui](https://ui.shadcn.c
 
 - [Architecture](docs/architecture.md) · [Development](docs/development.md) ·
   [Releasing and store setup](docs/releasing.md) · [Store listing](docs/store-listing.md)
-- [Contributing](CONTRIBUTING.md): gitflow, Conventional Commits, house rules
+- [Contributing](CONTRIBUTING.md): branches, pull requests, Conventional Commits, house rules
 - [Add a Kurdish station](docs/adding-stations.md): one line of JSON, or
   [open an issue](https://github.com/0xdolan/tajdin/issues/new?template=station.yml)
 

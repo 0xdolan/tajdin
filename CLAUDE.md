@@ -22,9 +22,12 @@ Turborepo monorepo. Read `docs/architecture.md` before larger changes.
 
 - Never add AI attribution to commits (no `Co-authored-by`/`Made-with` lines for tools); CI rejects
   them (`scripts/attribution.mjs`).
-- Conventional Commits with lower-case subjects (enforced by commitlint). Branch from `develop`
-  (gitflow); never push straight to `main` or `develop`: every change, including the release and
-  the back-merge, lands through a pull request (`pnpm release:finish` does this).
+- Conventional Commits with lower-case subjects (enforced by commitlint).
+- Branches: `main` is the only working branch. Branch from `main` (`fix/…`, `feature/…`), finish
+  with `pnpm pr` (PR into `main` + auto-merge; GitHub deletes the branch). Never push to `main`
+  directly. Never push to, branch from or open PRs against `develop`: the Sync develop workflow
+  mirrors `main` into it. Release with `pnpm release:start` / `pnpm release:finish` (PR + tag).
+  Leave no open PRs or stray branches behind.
 - Keep permissions, network destinations and stored data minimal. Update
   `docs/privacy-policy.md` if any of them change.
 - Validate external data with Zod; keep `http(s)`-only URLs; never use `eval`, inline scripts or
