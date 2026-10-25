@@ -193,3 +193,13 @@
     transform: scaleY(1);
   }
 }
+
+/*
+ * Chrome injects a system font on <body> in extension pages, and Sonner sets its own font on
+ * toasts. Both are unlayered, so they would win over the layered theme above and Arabic text would
+ * fall back to Arial. These unlayered, slightly more specific rules keep Manrope + Sahel everywhere.
+ */
+html body,
+html [data-sonner-toaster] {
+  font-family: var(--font-sans);
+}
