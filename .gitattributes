@@ -7,3 +7,6 @@
 .claude/ export-ignore
 assets/screenshots/ export-ignore
 assets/store/ export-ignore
+
+# Not part of Tajdîn: keep the design-skill scripts out of GitHub's language statistics.
+.claude/** linguist-vendored

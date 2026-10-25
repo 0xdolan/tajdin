@@ -116,11 +116,28 @@ describe('helpers', () => {
     ['.*', ''],
   ])('literal hint of %s is %s', (pattern, hint) => expect(literalHint(pattern)).toBe(hint));
 
+  it('handles hostile input quickly (no regex backtracking)', () => {
+    const t0 = performance.now();
+    literalHint('\\p{'.repeat(20000) + 'a'.repeat(20000));
+    literalHint('(' + 'ab|'.repeat(20000));
+    parseIcyBlock("StreamTitle='" + "'".repeat(50000));
+    parseIcyBlock('x'.repeat(100000));
+    expect(performance.now() - t0).toBeLessThan(500);
+  });
+
+  it('extracts literal hints from escapes and classes', () => {
+    expect(literalHint('\\bkurd\\w+radio')).toBe('radio');
+    expect(literalHint('[abc]{2,3}hello')).toBe('hello');
+  });
+
   it('parses ICY titles', () => {
     expect(parseIcyBlock("StreamTitle='Şivan Perwer - Kîne Em';StreamUrl='';")).toEqual({
       artist: 'Şivan Perwer',
       title: 'Kîne Em',
     });
     expect(parseIcyBlock("StreamTitle='';")).toBeNull();
+    expect(parseIcyBlock("StreamUrl='x';StreamTitle='Live';")).toEqual({ title: 'Live' });
+    expect(parseIcyBlock("StreamTitle='unterminated")).toBeNull();
+    expect(parseIcyBlock('no metadata')).toBeNull();
   });
 });
