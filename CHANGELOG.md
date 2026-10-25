@@ -5,9 +5,12 @@ and versions follow [Semantic Versioning](https://semver.org/).
 
 ## [0.1.3](https://github.com/0xdolan/tajdin/releases/tag/v0.1.3) · 2026-10-25
 
+No changes to how Tajdîn works; this release brings the project's release process up to date.
+
 ### Maintenance
 
-- Release and back-merge through pull requests only
+- Releases and the merge back into development now go entirely through reviewed pull requests,
+  with checks passing before anything reaches the released branch.
 
 ## [0.1.2](https://github.com/0xdolan/tajdin/releases/tag/v0.1.2) · 2026-10-25
 
