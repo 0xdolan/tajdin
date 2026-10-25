@@ -3,7 +3,7 @@
 All notable changes to Tajdîn. The format follows [Keep a Changelog](https://keepachangelog.com/),
 and versions follow [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## [0.1.1](https://github.com/0xdolan/tajdin/releases/tag/v0.1.1) · 2026-10-25
 
 ### Features
 
@@ -15,7 +15,6 @@ and versions follow [Semantic Versioning](https://semver.org/).
   quality or source. The playlist and group lists in Options can be searched and sorted too.
 - **About and README:** "Why Tajdîn?" and the story behind the name, from the Kurdish epic
   _Mem û Zîn_, with links to Wikipedia and the book. "Made with ♥" now shows the heart.
-
 - **New fonts:** Manrope for Latin text and Sahel for Arabic script (Kurdish Sorani, Arabic,
   Persian), chosen per character and bundled with the extension.
 
