@@ -205,7 +205,11 @@ export function PopupApp() {
           count={{ shown: list.shown.length, total: feed.stations.length }}
         />
       )}
-      {!settings.welcomeDismissed && <WelcomeTips className="mx-3 mt-1" />}
+      {!settings.welcomeDismissed && (
+        <div className="shrink-0 px-3 pt-1">
+          <WelcomeTips />
+        </div>
+      )}
 
       <StationList
         feed={browse.ready ? { ...feed, stations: list.shown } : { ...feed, status: 'loading' }}
@@ -215,7 +219,7 @@ export function PopupApp() {
         empty={emptyFor(browse.view.kind, openCustomStation)}
       />
 
-      <div className={cn('bg-card/60 shrink-0 border-t px-3 pt-2 pb-1.5 backdrop-blur')}>
+      <div className="bg-card/60 shrink-0 border-t px-3 py-1.5 backdrop-blur">
         {settings.nowPlayingPosition === 'top' && <NowPlayingLine className="mb-1.5" />}
         <Player />
         {settings.nowPlayingPosition === 'bottom' && <NowPlayingLine className="mt-1" />}

@@ -333,7 +333,7 @@ export function Player({
       aria-label={isPlaying || isLoading ? 'Pause (Space)' : 'Play (Space)'}
       onClick={() => void send({ type: 'toggle' })}
       disabled={!station && state.queue.length === 0}
-      className={cn('rounded-full', full ? 'size-12' : 'size-10')}
+      className={cn('rounded-full', full ? 'size-12' : 'size-9')}
     >
       {isLoading ? (
         <LoaderCircleIcon className="animate-spin" />
@@ -390,14 +390,21 @@ export function Player({
   ) : null;
 
   const info = (
-    <div className="flex min-w-0 flex-1 items-center gap-3">
+    <div className={cn('flex min-w-0 flex-1 items-center', full ? 'gap-3' : 'gap-2.5')}>
       <div className="relative">
         <StationArt
           station={station}
-          className={full ? 'size-14 rounded-xl' : 'size-12 rounded-xl'}
+          className={full ? 'size-14 rounded-xl' : 'size-10 rounded-lg'}
         />
         {isPlaying && !isLocalStation(station!) && (
-          <span className="bg-live text-live-foreground absolute -top-1 -left-1 rounded px-1 text-[9px] leading-4 font-bold tracking-wider">
+          <span
+            className={cn(
+              'bg-live text-live-foreground absolute rounded font-bold tracking-wider',
+              full
+                ? '-top-1 -left-1 px-1 text-[9px] leading-4'
+                : '-top-1.5 -left-1.5 px-0.5 text-[8px] leading-3',
+            )}
+          >
             LIVE
           </span>
         )}
@@ -470,14 +477,14 @@ export function Player({
   }
 
   return (
-    <section aria-label="Player" className={cn('flex flex-col gap-2', className)}>
+    <section aria-label="Player" className={cn('flex flex-col gap-1', className)}>
       <div className="flex items-center gap-2">
         {info}
         {stationActions}
       </div>
       {progress}
       {error}
-      <div className="flex items-center justify-between">
+      <div className="flex h-9 items-center justify-between">
         <div className="w-16" />
         {controls}
         <div className="flex w-16 items-center justify-end">

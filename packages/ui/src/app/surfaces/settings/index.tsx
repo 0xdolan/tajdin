@@ -144,11 +144,11 @@ export function SettingsApp({ hashPrefix = '' }: { hashPrefix?: string }) {
       </Tabs>
 
       <div className="bg-card/90 fixed inset-x-0 bottom-0 z-20 border-t backdrop-blur">
-        <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-2">
+        <div className="mx-auto flex max-w-6xl flex-col gap-1.5 px-6 py-3">
           <NowPlayingLine />
           <Player variant="full" />
-          {kind === 'extension' && <Footer className="pt-1" />}
         </div>
+        {kind === 'extension' && <Footer className="border-t py-1.5" />}
       </div>
     </div>
   );
