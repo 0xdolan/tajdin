@@ -205,7 +205,7 @@ export function ViewPicker({
               <LanguagesIcon />
               By language
             </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent className="max-h-80 w-56 overflow-y-auto">
+            <DropdownMenuSubContent className="max-h-80 w-64 overflow-y-auto">
               <DropdownMenuGroup>
                 {LANGUAGES.map((l) =>
                   item(

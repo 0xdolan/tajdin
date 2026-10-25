@@ -144,18 +144,11 @@ function VolumeControl({ inline }: { inline?: boolean }) {
       volume: Math.min(1, Math.max(0, level - Math.sign(e.deltaY) * 0.05)),
     });
   };
-  const slider = (
-    <Slider
-      aria-label="Volume"
-      value={[Math.round(level * 100)]}
-      max={100}
-      step={1}
-      onValueChange={(v) =>
-        void send({ type: 'setVolume', volume: (Array.isArray(v) ? v[0]! : v) / 100 })
-      }
-      className={inline ? 'w-24' : 'w-36'}
-    />
-  );
+  const percent = Math.round(level * 100);
+  const setFromSlider = (v: number | readonly number[]) =>
+    void send({ type: 'setVolume', volume: (Array.isArray(v) ? v[0]! : (v as number)) / 100 });
+
+  // Wide players (desktop view, settings) show a horizontal slider next to the button.
   if (inline) {
     return (
       <div className="flex items-center gap-2" onWheel={onWheel}>
@@ -165,10 +158,19 @@ function VolumeControl({ inline }: { inline?: boolean }) {
         >
           <Icon />
         </IconButton>
-        {slider}
+        <Slider
+          aria-label="Volume"
+          value={[percent]}
+          max={100}
+          step={1}
+          onValueChange={setFromSlider}
+          className="w-24"
+        />
       </div>
     );
   }
+
+  // The narrow popup opens a slim vertical slider above the button instead.
   return (
     <Popover>
       <PopoverTrigger
@@ -176,26 +178,40 @@ function VolumeControl({ inline }: { inline?: boolean }) {
           <Button
             variant="ghost"
             size="icon-sm"
-            aria-label={`Volume ${Math.round(level * 100)}%`}
+            aria-label={`Volume ${percent}%`}
             onWheel={onWheel}
           />
         }
       >
         <Icon />
       </PopoverTrigger>
-      <PopoverContent side="top" align="end" className="flex w-auto items-center gap-2 p-2">
+      <PopoverContent
+        side="top"
+        align="center"
+        className="flex w-12 flex-col items-center gap-2 px-1 py-3"
+        onWheel={onWheel}
+      >
+        <span className="text-xs font-medium tabular-nums" aria-hidden>
+          {percent}
+        </span>
+        <Slider
+          aria-label="Volume"
+          orientation="vertical"
+          value={[percent]}
+          max={100}
+          step={1}
+          onValueChange={setFromSlider}
+          className="h-40"
+        />
         <Button
           variant="ghost"
           size="icon-sm"
           aria-label={state.muted ? 'Unmute' : 'Mute'}
+          aria-pressed={state.muted}
           onClick={() => void send({ type: 'toggleMute' })}
         >
           <Icon />
         </Button>
-        {slider}
-        <span className="text-muted-foreground w-8 text-right text-xs tabular-nums">
-          {Math.round(level * 100)}
-        </span>
       </PopoverContent>
     </Popover>
   );
