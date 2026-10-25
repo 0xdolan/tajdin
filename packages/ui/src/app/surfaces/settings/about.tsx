@@ -70,7 +70,24 @@ export function AboutSettings() {
         </div>
       </Section>
 
-      <Section title="Why “Tajdîn”?">
+      <Section title="Why Tajdîn?">
+        <div className="text-muted-foreground flex max-w-prose flex-col gap-3 text-sm leading-relaxed">
+          <p>
+            Radio keeps people close to home. For Kurdish listeners spread across many countries,
+            it’s often the easiest way to hear their own language, but Kurdish stations are hard to
+            find in big global directories. Tajdîn puts a hand-picked Kurdish list next to the
+            world’s open radio directories, in a player that keeps going while you browse. Its logo
+            is the <em>Roj</em>, the sun from Kurdish <em>deq</em> tattoos, a sign of life and
+            light, here broadcasting.
+          </p>
+          <p>
+            No accounts. No tracking. No servers of our own. Everything you save stays in your
+            browser.
+          </p>
+        </div>
+      </Section>
+
+      <Section title="The name: Tajdîn, from Mem û Zîn">
         <div className="flex flex-col gap-5 sm:flex-row">
           <figure className="shrink-0">
             <img
@@ -113,17 +130,6 @@ export function AboutSettings() {
               stands by Mem to the very end, and when Beko’s treachery comes to light, it is Tajdîn
               who avenges him. A loyal companion who never leaves your side: that’s what this radio
               wants to be. Hence the motto, <em>always by your side</em>.
-            </p>
-            <p>
-              Radio keeps people close to home. For Kurdish listeners spread across many countries,
-              it’s often the easiest way to hear their own language, news and music, so Tajdîn puts
-              a hand-picked Kurdish station list next to the world’s open radio directories. Its
-              logo is the <em>Roj</em>, the sun from Kurdish <em>deq</em> tattoos, a sign of life
-              and light.
-            </p>
-            <p>
-              No accounts, no tracking, no servers of our own. Everything you save stays in your
-              browser.
             </p>
             <div className="flex flex-wrap gap-2 pt-1">
               <Button
