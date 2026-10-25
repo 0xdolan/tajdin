@@ -124,6 +124,7 @@ async function extensionShots() {
       await setup.goto(url('options.html'));
       await setup.evaluate(
         async ({ library, theme }) => {
+          await chrome.storage.session.clear();
           await chrome.storage.local.set({
             'tajdin.v2.schema': 2,
             'tajdin.v2.library': library,
@@ -173,7 +174,7 @@ async function extensionShots() {
 
       const desktop = await context.newPage();
       watch(desktop, 'desktop');
-      await desktop.setViewportSize({ width: 1440, height: 900 });
+      await desktop.setViewportSize({ width: 1280, height: 800 });
       await desktop.goto(url('desktop.html'));
       await desktop
         .getByRole('button', { name: /^Play / })
