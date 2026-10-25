@@ -88,7 +88,7 @@ jobs:
         working-directory: apps/extension
         env:
           CHROME_API_VERSION: v2
-          CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+          CHROME_EXTENSION_ID: igldoeednndfkhmigohfblmlppmphock
           CHROME_PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
           CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL: ${{ secrets.CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL }}
           CHROME_SERVICE_ACCOUNT_PRIVATE_KEY: ${{ secrets.CHROME_SERVICE_ACCOUNT_PRIVATE_KEY }}
@@ -98,7 +98,7 @@ jobs:
         run: |
           V=${{ needs.build.outputs.version }}
           ARGS=""
-          if [ -n "$CHROME_EXTENSION_ID" ]; then ARGS="$ARGS --chrome-zip ../../zips/tajdin-$V-chrome.zip"; else echo "::warning::Chrome secrets not set, skipping Chrome Web Store"; fi
+          if [ -n "$CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL" ]; then ARGS="$ARGS --chrome-zip ../../zips/tajdin-$V-chrome.zip"; else echo "::warning::Chrome secrets not set, skipping Chrome Web Store"; fi
           if [ -n "$FIREFOX_JWT_ISSUER" ]; then ARGS="$ARGS --firefox-zip ../../zips/tajdin-$V-firefox.zip --firefox-sources-zip ../../zips/tajdin-$V-sources.zip"; else echo "::warning::Firefox secrets not set, skipping Firefox Add-ons"; fi
           if [ -z "$ARGS" ]; then echo "No store credentials configured"; exit 0; fi
           pnpm exec wxt submit $ARGS
