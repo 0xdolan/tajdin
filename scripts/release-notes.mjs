@@ -17,5 +17,5 @@ const rest = changelog.slice(start);
 const end = rest.slice(3).search(/^## /m);
 const section = (end < 0 ? rest : rest.slice(0, end + 3)).split('\n').slice(1).join('\n').trim();
 console.log(
-  `${section}\n\n**Install:** [Chrome Web Store](https://chromewebstore.google.com/search/Tajd%C3%AEn) · [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/tajdin/) · or download a zip below and follow [installing from a zip](https://github.com/0xdolan/tajdin#install-from-a-release-zip).`,
+  `${section}\n\n**Install:** [Chrome Web Store](https://chromewebstore.google.com/detail/igldoeednndfkhmigohfblmlppmphock) · [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/tajdin/) · or download a zip below and follow [installing from a zip](https://github.com/0xdolan/tajdin#install-from-a-release-zip).`,
 );

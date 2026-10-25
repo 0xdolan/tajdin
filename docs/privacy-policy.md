@@ -1,59 +1,69 @@
-# Tajdîn — Privacy policy
+# Tajdîn privacy policy
 
-**Last updated:** April 2025
+**Last updated:** 25 October 2026 (version 0.2.1)
 
-**Extension:** Tajdîn (Chrome extension, Manifest V3)  
-**Source:** [github.com/0xdolan/tajdin](https://github.com/0xdolan/tajdin)
+Tajdîn is a radio player for Chrome, Firefox and the web. It is open source:
+[github.com/0xdolan/tajdin](https://github.com/0xdolan/tajdin).
 
-## Summary
+## In short
 
-Tajdîn does **not** operate its own servers for the extension and does **not** collect, store, or sell personally identifiable information for advertising or analytics. Data needed for the product (favourites, playlists, settings) is kept **on your device** using Chrome’s extension storage APIs.
-
-## What we (the developers) collect
-
-We **do not** intentionally collect any of the following through Tajdîn:
-
-- Name, email, postal address, or government ID
-- Health or financial information
-- Passwords or authentication secrets for Tajdîn (the extension has no Tajdîn user account)
-- Your emails, texts, or chats
-- Your browsing history or the text/content of web pages you visit
-- Precise GPS location
-- Keystrokes, mouse positions, or scroll analytics
-- Payment information
-
-There is **no** Tajdîn-run analytics or telemetry in the distributed extension package.
+Tajdîn has **no accounts, no analytics, no telemetry and no servers of its own**. We (the
+developers) receive nothing about you. Everything you save stays in your browser.
 
 ## What stays on your device
 
-The extension uses **Chrome `storage`** APIs to save, locally on your computer:
+Tajdîn saves the following in your browser's extension storage (or, on the website, the site's
+local storage):
 
-- Settings (for example theme, popup size, search defaults)
-- Favourite station identifiers
-- Playlists and custom station entries you create
-- Short-lived session data for the player (for example current station, volume)
+- settings (theme, start screen, playback and search preferences);
+- favourites, playlists, groups and the stations you added, plus a copy of those stations' public
+  details (name, stream link, logo link) so your library works offline;
+- for the current browser session only: what's playing, the play queue and your search text.
 
-You can export or delete this data using the extension’s **Backup** options where provided, or by removing the extension / clearing extension data in Chrome.
+Local audio files you choose are played from memory for the current session. They are **never
+stored, exported or uploaded**.
 
-## Network and third parties
+You can export this data (Options → Backup), and remove it by uninstalling Tajdîn or clearing the
+site's data.
 
-When you use Tajdîn:
+## Network requests
 
-- **Radio Browser** (public API at `radio-browser.info` and related hosts) receives requests for station **metadata** (names, tags, stream URLs, etc.). Those requests are made **from your device** like any other HTTPS client. Radio Browser’s handling of requests is governed by their policies, not ours.
-- **Stream operators** receive requests when you play a station; their servers deliver audio. We do not control those operators.
-- Your **IP address** may be visible to those third-party servers as part of normal internet routing; **we do not receive a separate copy** of that data because we do not run the extension’s backend.
+Tajdîn connects only to the services needed to find and play stations. Each one sees your IP
+address like any website you visit:
 
-The extension may use **`clipboardWrite`** only when you explicitly choose an action to **copy** content (for example a station URL) to the clipboard.
+| Service                                                                       | Why                                                                                                                                                       |
+| ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Radio Browser](https://www.radio-browser.info/) (`*.api.radio-browser.info`) | Station search and details. When you play one of its stations, Tajdîn tells Radio Browser (anonymously) so it can rank popular stations, as its API asks. |
+| [SomaFM](https://somafm.com/) (`somafm.com`, `api.somafm.com`)                | Channel list and, if you turn it on, the current song.                                                                                                    |
+| [laut.fm](https://laut.fm/) (`api.laut.fm`)                                   | Station search and, if you turn it on, the current song.                                                                                                  |
+| Each station's stream and logo server                                         | The audio you play and the station's logo.                                                                                                                |
+| GitHub Pages (website only)                                                   | Serves the website files.                                                                                                                                 |
+
+If you turn on **Show what's playing**, the extension briefly connects to the station's stream to
+read the song title the station broadcasts.
+
+Their handling of requests is governed by their own policies.
+
+## Permissions (extension)
+
+| Permission                     | Why                                                                                                                                             |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `storage`                      | Save your settings and library on your device.                                                                                                  |
+| `alarms`                       | Keep keyboard shortcuts responsive while a station plays.                                                                                       |
+| `offscreen` (Chrome)           | Play audio after the popup closes.                                                                                                              |
+| Access to all http/https sites | Stations stream from thousands of different servers, and the directories must be reachable. Tajdîn does not read or change the pages you visit. |
+
+Tajdîn has no content scripts and never accesses your tabs, history or page contents.
 
 ## Children
 
-Tajdîn is not directed at children under 13, and we do not knowingly collect personal information from children.
+Tajdîn is not directed at children and collects no personal information from anyone.
 
 ## Changes
 
-We may update this policy if the extension’s behaviour changes. The **Last updated** date and the GitHub repository will reflect the current version.
+If Tajdîn's behaviour changes, this page will be updated, along with the date above.
 
 ## Contact
 
-- **Issues & support:** [github.com/0xdolan/tajdin/issues](https://github.com/0xdolan/tajdin/issues)
-- For private security reports, see the **SECURITY.md** file in the [repository root](https://github.com/0xdolan/tajdin).
+Questions or concerns: [open an issue](https://github.com/0xdolan/tajdin/issues). For security
+reports, see [SECURITY.md](https://github.com/0xdolan/tajdin/blob/main/SECURITY.md).
