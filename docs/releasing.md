@@ -38,15 +38,22 @@ pnpm release:start minor        # creates release/x.y.z, bumps versions, prepend
 # Edit the new CHANGELOG.md section: it becomes the GitHub release notes, so write it for users.
 pnpm build:extension && pnpm verify:release   # try the zips (load them unpacked)
 git commit -am "docs(changelog): polish x.y.z notes"
-pnpm release:finish             # runs checks, merges into main, tags vX.Y.Z, merges back into develop
-git push origin main develop vX.Y.Z
+pnpm release:finish
 ```
+
+`release:finish` does the rest, entirely through pull requests (nothing is pushed to `main` or
+`develop` directly):
+
+1. runs `pnpm check`, pushes `release/x.y.z` and opens the release PR into `main`;
+2. waits for CI, merges it, and tags the merge commit `vX.Y.Z`;
+3. opens a back-merge PR `main` → `develop`, waits for CI and merges it;
+4. deletes the release branch.
 
 Pushing the tag starts **Release** in GitHub Actions. With required reviewers on the `stores`
 environment, store submission waits for your approval in the Actions tab.
 
-**Hotfix:** `git switch -c hotfix/x.y.z main`, fix, `pnpm version:bump patch`, update
-CHANGELOG.md, commit, then `pnpm release:finish`.
+**Hotfix:** `git switch -c hotfix/x.y.z origin/main`, fix, `pnpm version:bump patch`, update
+CHANGELOG.md, commit, then `pnpm release:finish` (same pull-request flow).
 
 **Check store credentials** without uploading: Actions → Release → Run workflow (branch `develop`)
 → tick _Only check the store credentials_. Each configured store signs in and reports success.

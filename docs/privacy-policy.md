@@ -1,6 +1,6 @@
 # Tajdîn privacy policy
 
-**Last updated:** 25 October 2026 (version 0.1.2)
+**Last updated:** 25 October 2026 (version 0.1.3)
 
 Tajdîn is a radio player for Chrome, Firefox and the web. It is open source:
 [github.com/0xdolan/tajdin](https://github.com/0xdolan/tajdin).
