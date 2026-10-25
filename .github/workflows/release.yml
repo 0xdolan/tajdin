@@ -1,45 +1,106 @@
 name: Release
 
-# Build, verify, and upload a Chrome Web Store–ready zip when a version tag is pushed,
-# or run manually from the Actions tab.
+# Runs when a version tag (v1.2.3) is pushed to main by the gitflow release process
+# (see docs/releasing.md). Builds once, publishes a GitHub Release with installable zips,
+# then submits the same zips to the Chrome Web Store and Firefox Add-ons.
 
 on:
-  workflow_dispatch:
   push:
-    tags: ["v*"]
+    tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      submit:
+        description: Submit to the stores
+        type: boolean
+        default: false
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
-  group: release-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: release-${{ github.ref }}
 
 jobs:
-  package:
-    name: Build and pack extension
+  build:
+    name: Build and publish GitHub Release
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
         with:
-          node-version: "22"
-          cache: npm
-          cache-dependency-path: package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Verify extension (build + dist checks)
-        run: npm run verify:extension
-
-      - name: Zip dist for Web Store
-        run: npm run pack:zip
-
-      - name: Upload extension zip
-        uses: actions/upload-artifact@v4
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
-          name: tajdin-extension-zip
-          path: artifacts/tajdin-extension-v*.zip
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - id: version
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Tag matches package version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: test "v${{ steps.version.outputs.version }}" = "${GITHUB_REF_NAME}"
+      - run: pnpm check
+      - run: pnpm build:extension
+      - run: pnpm --filter @tajdin/extension lint:firefox
+      - run: pnpm verify:release
+      - name: Release notes from CHANGELOG.md
+        run: node scripts/release-notes.mjs > RELEASE_NOTES.md
+      - name: Checksums
+        working-directory: apps/extension/.output
+        run: sha256sum *.zip > SHA256SUMS.txt
+      - uses: softprops/action-gh-release@v3
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: Tajdîn ${{ steps.version.outputs.version }}
+          body_path: RELEASE_NOTES.md
+          files: |
+            apps/extension/.output/tajdin-*-chrome.zip
+            apps/extension/.output/tajdin-*-firefox.zip
+            apps/extension/.output/tajdin-*-sources.zip
+            apps/extension/.output/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v7
+        with:
+          name: release-zips
+          path: apps/extension/.output/*.zip
           if-no-files-found: error
+          include-hidden-files: true
+
+  stores:
+    name: Submit to Chrome Web Store and Firefox Add-ons
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/') || inputs.submit
+    runs-on: ubuntu-latest
+    # Add required reviewers to this environment to approve each store submission by hand.
+    environment: stores
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/download-artifact@v8
+        with:
+          name: release-zips
+          path: zips
+      - name: Submit
+        working-directory: apps/extension
+        env:
+          CHROME_API_VERSION: v2
+          CHROME_EXTENSION_ID: igldoeednndfkhmigohfblmlppmphock
+          CHROME_PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
+          CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL: ${{ secrets.CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL }}
+          CHROME_SERVICE_ACCOUNT_PRIVATE_KEY: ${{ secrets.CHROME_SERVICE_ACCOUNT_PRIVATE_KEY }}
+          FIREFOX_EXTENSION_ID: tajdin@0xdolan.github.io
+          FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
+          FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
+        run: |
+          V=${{ needs.build.outputs.version }}
+          ARGS=""
+          if [ -n "$CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL" ]; then ARGS="$ARGS --chrome-zip ../../zips/tajdin-$V-chrome.zip"; else echo "::warning::Chrome secrets not set, skipping Chrome Web Store"; fi
+          if [ -n "$FIREFOX_JWT_ISSUER" ]; then ARGS="$ARGS --firefox-zip ../../zips/tajdin-$V-firefox.zip --firefox-sources-zip ../../zips/tajdin-$V-sources.zip"; else echo "::warning::Firefox secrets not set, skipping Firefox Add-ons"; fi
+          if [ -z "$ARGS" ]; then echo "No store credentials configured"; exit 0; fi
+          pnpm exec wxt submit $ARGS

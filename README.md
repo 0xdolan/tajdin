@@ -1,42 +1,168 @@
+<div align="center">
+
+<img src="assets/brand/tajdin-icon-512.png" width="112" height="112" alt="Tajdîn logo: the Kurdish deq sun, broadcasting" />
+
 # Tajdîn
 
+**Internet radio, always by your side.**<br />
+Kurdish stations and 50,000+ more from around the world, in your browser toolbar.
+
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/igldoeednndfkhmigohfblmlppmphock?label=Chrome%20Web%20Store&logo=googlechrome&logoColor=white&color=16a34a)](https://chromewebstore.google.com/detail/igldoeednndfkhmigohfblmlppmphock)
+[![Firefox Add-ons](https://img.shields.io/amo/v/tajdin?label=Firefox%20Add-ons&logo=firefoxbrowser&logoColor=white&color=f59e0b)](https://addons.mozilla.org/firefox/addon/tajdin/)
+[![Website](https://img.shields.io/badge/web-0xdolan.github.io%2Ftajdin-312e81)](https://0xdolan.github.io/tajdin/)
+<br />
+[![CI](https://github.com/0xdolan/tajdin/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/0xdolan/tajdin/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/0xdolan/tajdin?color=312e81)](https://github.com/0xdolan/tajdin/releases/latest)
+[![License: MIT](https://img.shields.io/badge/license-MIT-64748b)](LICENSE)
+
+[Install](#install) · [User guide](https://0xdolan.github.io/tajdin/docs/) · [Website](https://0xdolan.github.io/tajdin/) · [Changelog](CHANGELOG.md) · [Privacy](docs/privacy-policy.md)
+
+<img src="assets/store/screenshot-1-popup.png" alt="The Tajdîn popup playing a Kurdish station" width="860" />
+
+</div>
+
+## Why Tajdîn?
+
+Radio keeps people close to home. For Kurdish listeners spread across many countries, it's often
+the easiest way to hear their own language, but Kurdish stations are hard to find in big global
+directories. Tajdîn puts a **hand-picked Kurdish list** next to the world's open radio directories,
+in a player that keeps going while you browse. Its logo is the _Roj_, the sun from Kurdish _deq_
+tattoos, a sign of life and light, here broadcasting.
+
+No accounts. No tracking. No servers of our own. Everything you save stays in your browser.
+
+## Features
+
+- 🎲 **A fresh mix every time.** The popup opens on new random stations, or on your favourites, a
+  playlist, a group or a language.
+- 🌍 **Four directories, one search.** Tajdîn's Kurdish list, [Radio Browser](https://www.radio-browser.info/)
+  (50,000+ stations), [SomaFM](https://somafm.com/) and [laut.fm](https://laut.fm/). Search by name
+  or tag, filter by language, or use regular expressions.
+- ▶️ **A real player.** It keeps playing when the popup closes and has play/pause, previous/next,
+  random, repeat (list, or one station with automatic reconnect), volume with mouse-wheel control,
+  speed for local files, and an optional "On air" song line.
+- 🌞 **A living toolbar icon.** The Roj is grey when idle, amber when paused, and its wave pulses
+  green while playing.
+- 📚 **Your library.** Favourites, ordered playlists that skip offline stations, hand-picked
+  groups, and **language groups** that gather every station in a language.
+- 🔗 **Play anything.** Add any stream URL as your own station, or play a link or an audio file
+  once.
+- 🖥️ **Desktop view and website.** A full-window player that starts as soon as it opens, also at
+  [0xdolan.github.io/tajdin](https://0xdolan.github.io/tajdin/).
+- ⌨️ **Keyboard-first.** Media keys and browser-wide shortcuts, in-app keys, and keyboard
+  reordering of playlists.
+- 💾 **Backup you control.** JSON export/import with a preview and merge or replace per section,
+  between Chrome, Firefox and the web.
+- 🌙 Light, dark and system themes · accessible · right-to-left names · Kurdish Sorani fonts
+  included.
+
+<table>
+  <tr>
+    <td><img src="assets/screenshots/desktop-dark.png" alt="Desktop view" /></td>
+    <td><img src="assets/screenshots/settings-playlists-dark.png" alt="Playlist editor" /></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Desktop view: grid, now playing, big player</sub></td>
+    <td align="center"><sub>Playlists: drag or keyboard to reorder</sub></td>
+  </tr>
+  <tr>
+    <td><img src="assets/screenshots/desktop-light.png" alt="Desktop view, light theme" /></td>
+    <td><img src="assets/screenshots/settings-backup-light.png" alt="Backup settings" /></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Light theme</sub></td>
+    <td align="center"><sub>Backup: export and import with preview</sub></td>
+  </tr>
+</table>
+
 <p align="center">
-  <img src="public/logo/tajdin-logo-black.png" alt="Tajdîn mark" width="128" height="128" />
-</p>
-<p align="center">
-  <sub>Vector: <code>tajdin-logo-black.svg</code> / <code>tajdin-logo-white.svg</code> · Raster: <code>tajdin-logo-white.png</code> · Also <code>.jpg</code>, <code>.pdf</code> under <code>public/logo/</code> for print or other tools.</sub>
-</p>
-
-**Tajdîn** — always by your side; Radio Browser. A Chrome extension (**Manifest V3**, **Chrome 116+**) for discovering and playing stations via the [Radio Browser](https://www.radio-browser.info/) public API. Compact **popup** (Browse, Favs, Lists, About), **background playback** through an offscreen document, and a full-tab **options** page.
-
-<p align="center">
-  <img src="docs/screenshots/tajdin-browse-and-about.jpg" alt="Tajdîn popup: Browse tab with Spanish stations and playing EXA FM; About tab with Why Tajdîn story" width="1024" />
-</p>
-<p align="center">
-  <sub><strong>Left:</strong> Browse — search, language filter, station list, player bar. <strong>Right:</strong> About — version, links, and <em>Why Tajdîn?</em> (Mem û Zîn).</sub>
+  <img src="assets/screenshots/popup-mix-light.png" width="260" alt="Popup, light theme, first run" />
+  <img src="assets/screenshots/popup-search-dark.png" width="260" alt="Popup search" />
+  <img src="assets/screenshots/web-mobile-dark.png" width="200" alt="Website on a phone" />
 </p>
 
-## What it does
+## Install
 
-- **Browse and search** — Stations by name with exact or regex mode, language filter (default includes a **curated Kurdish** list bundled in the extension), random discovery when idle, optional **custom stations only** mode.
-- **Play in the background** — Audio in an offscreen page; **service worker** + `chrome.offscreen` + **alarms** keep playback alive. **Session state** (current station, playlist position, volume) lives in `chrome.storage.session` so shortcuts work with the popup closed.
-- **Controls** — **Keyboard shortcuts** (defaults: media play/pause, next, previous, mute; **open popup** has no default—add it at `chrome://extensions/shortcuts`; all commands are remappable there) and **OS media keys** / lock screen where Chromium exposes **Media Session** for the offscreen player.
-- **Feedback** — Short **playback error** messages (toast + `aria-live`) when a stream fails; playlist-aware copy when skips apply. **Welcome tips** strip (dismissible, stored in settings).
-- **Your library** — **Favourites**, **playlists** (ordered lists, drag-and-drop edit, optional skip-on-failed-stream), and **custom stations** in `chrome.storage.local`. **Playlist delete** offers a short **Undo** window.
-- **Settings & data** — Theme, popup size, search defaults, backup **export/import** JSON (**merge** unions favourites and updates matching IDs; **replace** overwrites per section). **Copy** actions use the **clipboardWrite** permission.
+| Browser                             | Install                                                                                       |
+| ----------------------------------- | --------------------------------------------------------------------------------------------- |
+| Chrome, Edge, Brave, Vivaldi, Opera | [Chrome Web Store](https://chromewebstore.google.com/detail/igldoeednndfkhmigohfblmlppmphock) |
+| Firefox (desktop and Android)       | [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/tajdin/)                           |
+| Any browser, nothing to install     | [0xdolan.github.io/tajdin](https://0xdolan.github.io/tajdin/)                                 |
 
-Task tracking lives in **Task Master** (`.taskmaster/tasks/tasks.json`). The product requirements document is **`.taskmaster/docs/tajdin-prd-v1.txt`** (optional **`.docx`** alongside it).
+### Install from a release zip
 
-## Quick links
+Every [release](https://github.com/0xdolan/tajdin/releases/latest) has ready-built zips:
 
-- **Setup, build, load unpacked, tests, layout:** [docs/development.md](docs/development.md)
-- **Product / UX spec:** [.taskmaster/docs/tajdin-prd-v1.txt](.taskmaster/docs/tajdin-prd-v1.txt)
-- **Branching:** integrate on `develop`; `main` only with explicit maintainer approval (see `.cursor/rules/git-flow.mdc`)
-- **Security:** [SECURITY.md](SECURITY.md) · **Privacy (store listing):** [docs/privacy-policy.md](docs/privacy-policy.md)
+- **Chrome / Chromium:** download `tajdin-<version>-chrome.zip` and unzip it. Open
+  `chrome://extensions`, turn on **Developer mode**, click **Load unpacked** and pick the unzipped
+  folder.
+- **Firefox:** download `tajdin-<version>-firefox.zip`. Open `about:debugging#/runtime/this-firefox`,
+  click **Load Temporary Add-on…** and pick the zip. A temporary add-on lasts until Firefox
+  restarts; for a permanent install use Firefox Add-ons.
 
-## Logo and icons
+Check downloads against `SHA256SUMS.txt` with `sha256sum -c SHA256SUMS.txt`.
 
-- **`public/logo/`** — **SVG** (UI via `tajdinMarkSvgUrl()`), **PNG** / **JPG** / **PDF** for README, stores, print. Black for light backgrounds; white for dark.
-- **README** — Uses **`tajdin-logo-black.png`** for broad client compatibility.
-- **Extension UI** — Packaged **`logo/*.svg`** via `chrome.runtime.getURL` for a sharp mark in the popup and settings.
-- **Toolbar / manifest** — **`logo/tajdin-logo-black.png`** at 16/32/48; **128** uses **`logo/tajdin-extension-icon-128.png`** (96×96 mark + 16px transparent padding per Chrome Web Store icon rules; regenerate with `npm run generate:icon-128`). Vite copies **`public/logo/`** into **`dist/logo/`** on build.
+### Build it yourself
+
+```bash
+git clone https://github.com/0xdolan/tajdin.git && cd tajdin
+corepack enable && pnpm install
+pnpm build:extension     # → apps/extension/.output/{chrome-mv3,firefox-mv2} and zips
+```
+
+Each release also includes `tajdin-<version>-sources.zip`, which contains the exact source for that
+version.
+
+## Using Tajdîn
+
+1. Click the **Roj** icon. A random mix appears; click any station to play it.
+2. Tap **♥** to keep a station; use **⋮** to add it to a playlist or group, or copy its link.
+3. Use the list menu at the top to switch to Kurdish stations, a language, your favourites, a
+   playlist or a group.
+4. Use **🔍** to search everything, and **+** to play a link or file or add your own station.
+5. Open **⚙ Settings** to choose what the popup opens on, turn on song titles, and back up your
+   library.
+
+Media keys work anywhere. In the popup: <kbd>Space</kbd> play/pause · <kbd>N</kbd>/<kbd>P</kbd>
+next/previous · <kbd>R</kbd> random · <kbd>M</kbd> mute.
+
+📖 Full guide: **[0xdolan.github.io/tajdin/docs](https://0xdolan.github.io/tajdin/docs/)** ([source](docs/user-guide.md))
+
+## Privacy
+
+Tajdîn collects nothing. Your settings and library are stored locally in your browser; station
+searches go to the directories and audio comes from each station's own server. Read the
+[privacy policy](docs/privacy-policy.md).
+
+## For developers
+
+```text
+apps/extension   WXT, Chrome MV3 (offscreen audio) + Firefox MV2 (background audio)
+apps/web         Vite, GitHub Pages site + /docs
+packages/core    data model, station sources, storage, backup, player (no React)
+packages/ui      shadcn/ui components + the shared app (popup, settings, desktop)
+```
+
+| Command                | What it does                                      |
+| ---------------------- | ------------------------------------------------- |
+| `pnpm dev`             | Chrome with hot reload (`dev:firefox`, `dev:web`) |
+| `pnpm check`           | Lint, format, types, unit tests                   |
+| `pnpm build:extension` | Chrome, Firefox and sources zips                  |
+| `pnpm screenshots`     | End-to-end run in Chromium + screenshots          |
+
+Built with TypeScript, React 19, Tailwind CSS 4, [shadcn/ui](https://ui.shadcn.com/),
+[WXT](https://wxt.dev/), Vite, Zod, Vitest, Playwright, pnpm and Turborepo.
+
+- [Architecture](docs/architecture.md) · [Development](docs/development.md) ·
+  [Releasing and store setup](docs/releasing.md) · [Store listing](docs/store-listing.md)
+- [Contributing](CONTRIBUTING.md): gitflow, Conventional Commits, house rules
+- [Add a Kurdish station](docs/adding-stations.md): one line of JSON, or
+  [open an issue](https://github.com/0xdolan/tajdin/issues/new?template=station.yml)
+
+## Credits
+
+Station data from [Radio Browser](https://www.radio-browser.info/) (community-run),
+[SomaFM](https://somafm.com/) (listener-supported, please consider donating) and
+[laut.fm](https://laut.fm/). The Kurdish station list is curated by the Tajdîn community.
+
+Made with ❤️ by [0xdolan](https://github.com/0xdolan) · [MIT License](LICENSE)

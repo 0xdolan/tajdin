@@ -1,43 +1,41 @@
-import eslint from "@eslint/js";
-import globals from "globals";
-import tseslint from "typescript-eslint";
-import vitest from "eslint-plugin-vitest";
+import js from '@eslint/js';
+import reactHooks from 'eslint-plugin-react-hooks';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ["dist/**", "node_modules/**"] },
-  eslint.configs.recommended,
+  {
+    ignores: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/.output/**',
+      '**/.wxt/**',
+      '**/.turbo/**',
+      '.claude/**',
+      'coverage/**',
+    ],
+  },
+  js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ["**/*.{ts,tsx}"],
-    languageOptions: {
-      ecmaVersion: "latest",
-      sourceType: "module",
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-      },
-    },
+    files: ['**/*.{ts,tsx}'],
+    plugins: { 'react-hooks': reactHooks },
+    languageOptions: { globals: { ...globals.browser, ...globals.webextensions } },
     rules: {
-      "@typescript-eslint/no-unused-vars": [
-        "warn",
-        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ...reactHooks.configs.recommended.rules,
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
+      '@typescript-eslint/consistent-type-imports': 'error',
     },
   },
   {
-    files: ["**/*.{test,spec}.{ts,tsx}"],
-    ...vitest.configs.recommended,
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-      },
-    },
+    files: ['**/*.{js,mjs}'],
+    languageOptions: { globals: { ...globals.node } },
   },
   {
-    files: ["scripts/**/*.mjs"],
-    languageOptions: {
-      globals: { ...globals.node },
-    },
+    files: ['apps/*/public/**/*.js'],
+    languageOptions: { globals: { ...globals.browser } },
   },
 );
