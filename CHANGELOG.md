@@ -16,8 +16,14 @@ and versions follow [Semantic Versioning](https://semver.org/).
 - **About:** the story behind the name, from the Kurdish epic _Mem û Zîn_, with links to
   Wikipedia and the book. "Made with ♥" now shows the heart.
 
+- **New fonts:** Manrope for Latin text and Sahel for Arabic script (Kurdish Sorani, Arabic,
+  Persian), chosen per character and bundled with the extension.
+
 ### Fixes
 
+- The volume control in the popup is now a slim vertical slider that fits the popup; wider
+  players keep the horizontal slider.
+- The language submenu in the popup fully covers the menu behind it.
 - The release sources zip is built with `git archive`, so building no longer prints a warning
   per file.
 
