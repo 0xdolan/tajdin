@@ -21,7 +21,7 @@
     "dev:firefox": "pnpm --filter @tajdin/extension dev:firefox",
     "dev:web": "turbo run dev --filter=@tajdin/web",
     "build": "turbo run build",
-    "build:extension": "pnpm --filter @tajdin/extension zip && pnpm --filter @tajdin/extension zip:firefox",
+    "build:extension": "pnpm --filter @tajdin/extension zip && pnpm --filter @tajdin/extension zip:firefox && node scripts/zip-sources.mjs",
     "build:web": "turbo run build --filter=@tajdin/web",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -39,7 +39,8 @@
     "prepare": "husky",
     "release:start": "node scripts/release.mjs start",
     "release:finish": "node scripts/release.mjs finish",
-    "store-images": "node scripts/store-images.mjs"
+    "store-images": "node scripts/store-images.mjs",
+    "zip:sources": "node scripts/zip-sources.mjs"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.0.0",
