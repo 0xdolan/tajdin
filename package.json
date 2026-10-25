@@ -38,7 +38,8 @@
     "icons": "node scripts/build-icons.mjs",
     "prepare": "husky",
     "release:start": "node scripts/release.mjs start",
-    "release:finish": "node scripts/release.mjs finish"
+    "release:finish": "node scripts/release.mjs finish",
+    "store-images": "node scripts/store-images.mjs"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.0.0",
