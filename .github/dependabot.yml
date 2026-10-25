@@ -1,16 +1,41 @@
 version: 2
 updates:
   - package-ecosystem: npm
-    directory: "/"
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 10
-    labels:
-      - dependencies
-
+    directory: /
+    target-branch: develop
+    schedule: { interval: weekly }
+    open-pull-requests-limit: 8
+    groups:
+      react: { patterns: ['react', 'react-dom', '@types/react*'] }
+      tooling:
+        patterns:
+          [
+            'eslint*',
+            '@eslint/*',
+            'typescript*',
+            'prettier*',
+            'vitest',
+            'vite',
+            '@vitejs/*',
+            'turbo',
+            'wxt',
+            '@wxt-dev/*',
+          ]
+      ui:
+        {
+          patterns:
+            [
+              '@base-ui/*',
+              'shadcn',
+              'lucide-react',
+              'tailwindcss',
+              '@tailwindcss/*',
+              'tw-animate-css',
+            ],
+        }
+    commit-message: { prefix: 'chore(deps)' }
   - package-ecosystem: github-actions
-    directory: "/"
-    schedule:
-      interval: weekly
-    labels:
-      - dependencies
+    directory: /
+    target-branch: develop
+    schedule: { interval: monthly }
+    commit-message: { prefix: 'ci' }

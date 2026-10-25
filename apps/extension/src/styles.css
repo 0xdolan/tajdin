@@ -1,0 +1,5 @@
+@import '@tajdin/ui/globals.css';
+
+/* Tailwind scans the shared UI package plus this app. */
+@source '../../../packages/ui/src';
+@source './';
