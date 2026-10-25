@@ -3,6 +3,22 @@
 All notable changes to Tajdîn. The format follows [Keep a Changelog](https://keepachangelog.com/),
 and versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.5](https://github.com/0xdolan/tajdin/releases/tag/v0.1.5) · 2026-10-25
+
+### Fixes
+
+- Make mute work on iphone and fit every page to phone screens
+- **desktop:** Keep the desktop view within narrow phone screens
+
+### Documentation
+
+- Describe the develop ruleset
+
+### Maintenance
+
+- Check every page on phone screens in webkit
+- Make main the only working branch and mirror it into develop
+
 ## [0.1.4](https://github.com/0xdolan/tajdin/releases/tag/v0.1.4) · 2026-10-25
 
 ### Security
