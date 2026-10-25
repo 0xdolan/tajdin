@@ -37,7 +37,9 @@ Click the Roj icon to open the popup.
 - **List menu** (for example "Random mix ▾"): switch between the random mix, Kurdish stations, any
   language, favourites, your own stations, playlists and groups. You can also create a playlist or
   group from here.
-- **🎲** gives you a new random mix. **🔍** searches. **+** plays a link or file, or adds a station.
+- **🎲** gives you a new random mix. **♥** jumps to your favourites (tap again to go back).
+  **Sort & filter** narrows and orders the list you're looking at. **🔍** searches every directory.
+  **+** plays a link or file, or adds a station.
 - **Player** at the bottom, and the footer with links and the version.
 
 Every time you open the popup you get a **new random mix**. To open on something else (Kurdish
@@ -98,8 +100,23 @@ first.
 
 ### Favourites
 
-Tap ♥ on any station. Favourites appear under **Favourites** in the list menu and work offline,
-because Tajdîn keeps a copy of each station's details.
+Tap ♥ on any station and it's added to your favourites automatically. Open them with the **♥**
+button in the popup, from the list menu, or in **Options → Favourites**, where you can also drag
+them into the order they play in, play them all, or remove any with undo. Favourites work
+offline, because Tajdîn keeps a copy of each station's details.
+
+### Filter and sort any list
+
+Every list (the random mix, search results, a language, favourites, playlists, groups and your
+own stations) has a **filter box** and a **Sort & filter** menu:
+
+- **Filter** by any word in the name, tags, country or language, by **language**, or by
+  **source** (Kurdish list, Radio Browser, SomaFM, laut.fm, your stations).
+- **Sort** by name (A–Z or Z–A), country, language, quality (highest bitrate first) or source.
+  "Default order" keeps the list as it is, which for playlists and favourites is your order.
+- Playing a station from a filtered list plays through just what you see.
+
+In Options, dragging to reorder pauses while a sort or filter is on; reset them to reorder again.
 
 ### Playlists
 

@@ -156,7 +156,13 @@ async function extensionShots() {
       await popup.waitForTimeout(2500);
       await shoot(popup, `popup-playing-${theme}`);
 
-      await popup.getByRole('button', { name: 'Search' }).click();
+      await popup.getByRole('button', { name: 'Sort and filter this list' }).click();
+      await popup.getByRole('textbox', { name: 'Filter this list…' }).fill('kurd');
+      await popup.waitForTimeout(500);
+      await shoot(popup, `popup-filter-${theme}`);
+      await popup.getByRole('button', { name: 'Hide sort and filter' }).click();
+
+      await popup.getByRole('button', { name: 'Search all stations' }).click();
       await popup.getByRole('searchbox').fill('rudaw');
       await popup.waitForTimeout(1500);
       await shoot(popup, `popup-search-${theme}`);
@@ -165,7 +171,7 @@ async function extensionShots() {
       const settings = await context.newPage();
       watch(settings, 'settings');
       await settings.setViewportSize({ width: 1280, height: 800 });
-      for (const tab of ['general', 'playlists', 'groups', 'backup']) {
+      for (const tab of ['general', 'favourites', 'playlists', 'groups', 'backup', 'about']) {
         await settings.goto(url(`options.html#${tab}`));
         await settings.waitForTimeout(1500);
         await shoot(settings, `settings-${tab}-${theme}`);
