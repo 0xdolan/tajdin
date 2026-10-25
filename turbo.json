@@ -1,0 +1,12 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "stream",
+  "tasks": {
+    "build": { "dependsOn": ["^build"], "outputs": ["dist/**", ".output/**"] },
+    "zip": { "dependsOn": ["^build"], "outputs": [".output/*.zip"] },
+    "zip:firefox": { "dependsOn": ["^build"], "outputs": [".output/*.zip"] },
+    "typecheck": { "dependsOn": ["^build"] },
+    "test": { "dependsOn": ["^build"] },
+    "dev": { "cache": false, "persistent": true }
+  }
+}
