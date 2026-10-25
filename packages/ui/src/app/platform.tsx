@@ -48,12 +48,12 @@ export const LINKS = {
   lautfm: 'https://laut.fm/',
 } as const;
 
-/** Store listings. The Chrome link points at the listing once its ID is set (see docs/releasing.md). */
+/** Store listings (IDs also in .github/workflows/release.yml). */
 export const STORE_LINKS = [
   {
     browser: 'chrome',
     label: 'Chrome Web Store',
-    href: 'https://chromewebstore.google.com/search/Tajd%C3%AEn',
+    href: 'https://chromewebstore.google.com/detail/igldoeednndfkhmigohfblmlppmphock',
   },
   {
     browser: 'firefox',
